@@ -1,0 +1,14 @@
+name: BossMessage
+version: 1.1.0
+authors: [michidk]
+
+main: me.michidk.BossMessage.Main
+
+commands:
+  BossMessage:
+    description: main command
+    usage: /<command>
+    aliases: [bm]
+
+depend:
+- BarAPI
