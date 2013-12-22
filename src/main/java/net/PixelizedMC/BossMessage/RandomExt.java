@@ -1,4 +1,4 @@
-package me.michidk.BossMessage;
+package net.PixelizedMC.BossMessage;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package me.michidk.BossMessage;
+package net.PixelizedMC.BossMessage;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -36,21 +36,26 @@ public class ConfigManager {
 
         config.addDefault("BossMessage.Enabled", true);
         config.addDefault("BossMessage.Random", false);
-        config.addDefault("BossMessage.Interval", 25);
-        config.addDefault("BossMessage.Show", 10);
+        config.addDefault("BossMessage.Interval", 250);
+        config.addDefault("BossMessage.Show", 100);
         config.addDefault("BossMessage.Whitelist", false);
 
         List<List<String>> exampleList = new ArrayList<List<String>>();
         
         List<String> msg1 = new ArrayList<>();
-        msg1.add("&5First message");
+        msg1.add("&bYo &5%player%&b, wazzup?");
         msg1.add("100");
         exampleList.add(msg1);
-        
+
         List<String> msg2 = new ArrayList<>();
-        msg2.add("&bSecond message with 60% on BossBar");
+        msg2.add("&aBossMessage - best BossBar plugin by &bplay.pixelizedmc.net");
         msg2.add("60");
         exampleList.add(msg2);
+        
+        List<String> msg3 = new ArrayList<>();
+        msg3.add("&cThis message is &4&o&nHOT&c because it displays 30% on the bar");
+        msg3.add("30");
+        exampleList.add(msg3);
         
         config.addDefault("BossMessage.Messages", exampleList);
 

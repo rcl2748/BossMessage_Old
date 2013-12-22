@@ -1,4 +1,4 @@
-package me.michidk.BossMessage;
+package net.PixelizedMC.BossMessage;
 
 import me.confuser.barapi.BarAPI;
 import net.minecraft.util.org.apache.commons.lang3.math.NumberUtils;
@@ -89,9 +89,9 @@ public class Main extends JavaPlugin implements Listener {
                 		}
             			isset = false;
                 	}
-                }, cm.show*1000);
+                }, cm.show*50);
             }
-        }, 20L, (cm.interval + cm.show)*20L + 2L);
+        }, 20L, cm.interval + cm.show + 2L);
 
 
     }
