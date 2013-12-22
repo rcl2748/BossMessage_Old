@@ -1,6 +1,8 @@
 package me.michidk.BossMessage;
 
 import me.confuser.barapi.BarAPI;
+import net.minecraft.util.org.apache.commons.lang3.math.NumberUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -33,6 +35,7 @@ public class Main extends JavaPlugin implements Listener {
     ConfigManager cm;
 
     public static List<String> current = new ArrayList<>();
+    public static boolean isset = false;
 
     BarAPI barAPI;
 
@@ -72,16 +75,19 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
+            	
                 current = getMessage();
                 //BossBroadcastAPI.timedMessage(plugin, message, cm.interval*20);
                 //Bukkit.broadcastMessage(current + " is now the brot");
-                setMsg(current.get(0), Float.parseFloat(current.get(1)));
+                setMsg(current);
+                isset = true;
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
                 	public void run() {
                 		for (Player p:Bukkit.getOnlinePlayers()) {
                 			BarAPI.removeBar(p);
                 		}
+            			isset = false;
                 	}
                 }, cm.show*1000);
             }
@@ -100,7 +106,7 @@ public class Main extends JavaPlugin implements Listener {
         if (cm.whitelist) {
         	List<String> worlds = cm.worlds;
         	if (worlds.contains(e.getTo().getWorld().getName())) {
-        		BarAPI.setMessage(p, current.get(0), Float.parseFloat(current.get(1)));
+        		setPlayerMsg(p, current);
         	} else {
         		BarAPI.removeBar(p);
         	}
@@ -117,7 +123,7 @@ public class Main extends JavaPlugin implements Listener {
         if (cm.whitelist) {
         	List<String> worlds = cm.worlds;
         	if (worlds.contains(e.getTo().getWorld().getName())) {
-        		BarAPI.setMessage(p, current.get(0), Float.parseFloat(current.get(1)));
+        		setPlayerMsg(p, current);
         	} else {
         		BarAPI.removeBar(p);
         	}
@@ -131,13 +137,14 @@ public class Main extends JavaPlugin implements Listener {
         if (!cm.enabled) {
             return;
         }
-        
+        if (isset) {
         if (cm.whitelist) {
         	if (cm.worlds.contains(p.getWorld().getName())) {
-        		BarAPI.setMessage(p, current.get(0), Float.parseFloat(current.get(1)));
+        		setPlayerMsg(p, current);
         	}
         } else {
-        	BarAPI.setMessage(p, current.get(0), Float.parseFloat(current.get(1)));
+        	setPlayerMsg(p, current);
+        }
         }
     }
 
@@ -147,22 +154,23 @@ public class Main extends JavaPlugin implements Listener {
         if (cm.random) {
             List<List<String>> messages = cm.messages;
             int r = random.randInt(0, messages.size() - 1);
-            String coloredmsg =  ChatColor.translateAlternateColorCodes('&', messages.get(r).get(0));
-            messages.get(r).set(0, coloredmsg);
-            return messages.get(r);
+            List<String> message = messages.get(r);
+            String coloredmsg = ChatColor.translateAlternateColorCodes('&', message.get(0));
+            message.set(0, coloredmsg);
+            return message;
         } else {
         	List<List<String>> messages = cm.messages;
             List<String> message = messages.get(count);
             count++;
             if (count >= messages.size())
                 count = 0;
-            String coloredmsg =  ChatColor.translateAlternateColorCodes('&', message.get(0));
+            String coloredmsg = ChatColor.translateAlternateColorCodes('&', message.get(0));
             message.set(0, coloredmsg);
             return message;
         }
     }
     
-    public void setMsg(String msg, float persent) {
+    public void setMsg(List<String> msg) {
     	if (cm.whitelist) {
     		List<String> worlds = cm.worlds;
     		List<Player> players;
@@ -170,18 +178,31 @@ public class Main extends JavaPlugin implements Listener {
     			if (Bukkit.getWorld(w) != null) {
     				players = Bukkit.getWorld(w).getPlayers();
 	    			for (Player p:players) {
-	    				BarAPI.setMessage(p, msg, persent);
+	    				setPlayerMsg(p, msg);
 	    			}
 	    			players.clear();
     			}
     		}
         } else {
         	for (Player p:Bukkit.getOnlinePlayers()) {
-    			BarAPI.setMessage(p, msg, persent);
+        		setPlayerMsg(p, msg);
     		}
         }
     }
-
+    
+    public void setPlayerMsg(Player p, List<String> msg) {
+    	if (msg.size() == 2) {
+	    	if (msg.get(0) != null && msg.get(0).length() < 65 && NumberUtils.isNumber(msg.get(1))) {
+	    		
+		    	String message = msg.get(0);
+		    	float percent = Float.parseFloat(msg.get(1));
+		    	
+		    	message = msg.get(0).replaceAll("%player%", p.getName());
+		    	BarAPI.setMessage(p, message, percent);
+	    	}
+    	}
+    }
+    
     public static Main getInstance() {
         return instance;
     }
