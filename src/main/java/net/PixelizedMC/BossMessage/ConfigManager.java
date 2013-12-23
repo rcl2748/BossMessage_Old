@@ -24,6 +24,7 @@ public class ConfigManager {
     public boolean random = true;
     public int interval = 60;
     public int show = 20;
+    public String colorcodes;
     public List<List<String>> messages;
     public List<String> players;
     public boolean whitelist = false;
@@ -37,6 +38,7 @@ public class ConfigManager {
         config.addDefault("BossMessage.Enabled", true);
         config.addDefault("BossMessage.Random", false);
         config.addDefault("BossMessage.Interval", 250);
+        config.addDefault("BossMessage.ColorCodes", "0123456789abcdef");
         config.addDefault("BossMessage.Show", 100);
         config.addDefault("BossMessage.Whitelist", false);
 
@@ -53,7 +55,7 @@ public class ConfigManager {
         exampleList.add(msg2);
         
         List<String> msg3 = new ArrayList<>();
-        msg3.add("&cThis message is &4&o&nHOT&c because it displays 30% on the bar");
+        msg3.add("%rdm_color%Now %rdm_color%supports %rdm_color%custom %rdm_color%random %rdm_color%colors");
         msg3.add("30");
         exampleList.add(msg3);
         
@@ -78,29 +80,13 @@ public class ConfigManager {
         save();
     }
 
-    /*      --- addDefault dont overwrite values ---
-    //return true: generate new config
-    private boolean newConfig() {
-        if (!config.contains("BossMessage.configVersion")) {
-            return true;
-        }
-        configVersion = config.getString("BossMessage.configVersion");
-
-        if (configVersion.equalsIgnoreCase(Main.getInstance().getDescription().getVersion())) {
-            System.out.println("return false");
-            return false;
-        } else {
-            System.out.println("return true");
-            return true;
-        }
-    }
-    */
-
-    public void readConfig() {
+    @SuppressWarnings("unchecked")
+	public void readConfig() {
         enabled = config.getBoolean("BossMessage.Enabled");
         random = config.getBoolean("BossMessage.Random");
         interval = config.getInt("BossMessage.Interval");
         show = config.getInt("BossMessage.Show");
+        colorcodes = config.getString("BossMessage.ColorCodes");
         messages = (List<List<String>>) config.getList("BossMessage.Messages");
         players = config.getStringList("BossMessage.IgnorePlayers");
         whitelist = config.getBoolean("BossMessage.Whitelist");
