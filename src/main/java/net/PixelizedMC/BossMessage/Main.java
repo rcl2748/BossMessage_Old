@@ -3,6 +3,7 @@ package net.PixelizedMC.BossMessage;
 import me.confuser.barapi.BarAPI;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,23 +67,23 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-            	
-                current = Lib.getMessage();
-                Lib.setMsg(current);
-                isset = true;
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                	public void run() {
-                		for (Player p:Bukkit.getOnlinePlayers()) {
-                			BarAPI.removeBar(p);
-                		}
-            			isset = false;
-                	}
-                }, cm.show*50);
-            }
+        BukkitScheduler scr = Bukkit.getScheduler();
+    	scr.scheduleSyncRepeatingTask(this, new Runnable() {
+    		@Override
+	        public void run() {
+	            current = Lib.getMessage();
+	            Lib.setMsg(current);
+	            isset = true;
+	            Timer timer = new Timer();
+	            timer.schedule(new TimerTask() {
+	            	public void run() {
+	            		for (Player p:Bukkit.getOnlinePlayers()) {
+	            			BarAPI.removeBar(p);
+	            		}
+	        			isset = false;
+	            	}
+	            }, cm.show*50);
+	        }
         }, 20L, cm.interval + cm.show + 2L);
 
 
@@ -89,7 +91,13 @@ public class Main extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command c, String cmd, String[] args) {
     	
     	if (cmd.equalsIgnoreCase("bm")) {
-    		
+    		if (args.length == 0) {
+    			if (sender.hasPermission("bossmessage.help")) {
+    				sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
+    				sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
+    				sender.sendMessage(ChatColor.YELLOW + "/bm add ");
+    			}
+    		}
     	}
     	
 		return false;
