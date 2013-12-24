@@ -1,13 +1,13 @@
 name: BossMessage
 version: 1.3.0
-authors: [michidk]
+authors: [victor2748, michidk]
 
 main: net.PixelizedMC.BossMessage.Main
+
+depend: [BarAPI]
 
 commands:
   BossMessage:
     description: main command
     usage: /<command>
     aliases: [bm, bmessage]
-
-depend: [BarAPI]
