@@ -32,7 +32,7 @@ public class Main extends JavaPlugin implements Listener {
     public static List<String> current = new ArrayList<>();
     public static boolean isset = false;
 
-    BarAPI barAPI;
+  
 
     @Override
     public void onEnable(){
@@ -40,9 +40,7 @@ public class Main extends JavaPlugin implements Listener {
         
         Lib.onEnable();
 
-        //reg api
-        barAPI = new BarAPI();
-        Bukkit.getPluginManager().registerEvents(barAPI, this);
+        regBarAPI();
 
         //config
         cm = new ConfigManager();
@@ -58,6 +56,17 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
 
+    }
+    
+    public void regBarAPI(){
+        Plugin pluginBarAPI = Bukkit.getPluginManager().getPlugin("BarAPI");
+        if ((pluginBarAPI != null) && (pluginBarAPI.isEnabled())) {
+            //succeesfully hooked into BarAPI
+        } else {
+            Bukkit.getLogger().warning(PREFIX + " §4YOU NEED BARAPI IN ORDER TO RUN THIS PLUGIN");
+            Bukkit.getLogger().warning("http://dev.bukkit.org/bukkit-plugins/bar-api/");
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
     }
 
     private void startProcess() {
