@@ -1,5 +1,6 @@
 package net.PixelizedMC.BossMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -20,16 +21,23 @@ public class Lib {
 	}
 	
 	public static List<String> getMessage() {
-		if (CM.random) {
-			int r = random.randInt(0, CM.messages.size() - 1);
-			List<String> message = CM.messages.get(r);
-			return message;
-		} else {
-			List<String> message = CM.messages.get(count);
-			count++;
-			if (count >= CM.messages.size()) {
-				resetCount();
+		if (CM.messages.size() > 0) {
+			if (CM.random) {
+				int r = random.randInt(0, CM.messages.size() - 1);
+				List<String> message = CM.messages.get(r);
+				return message;
+			} else {
+				List<String> message = CM.messages.get(count);
+				count++;
+				if (count >= CM.messages.size()) {
+					resetCount();
+				}
+				return message;
 			}
+		} else {
+			List<String> message = new ArrayList<>();
+			message.add("&cNo messages were found! Please check your &bconfig.yml&c!");
+			message.add("100");
 			return message;
 		}
 	}
