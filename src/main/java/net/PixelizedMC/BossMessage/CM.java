@@ -27,6 +27,7 @@ public class CM {
     public static int show = 20;
     public static String colorcodes;
     public static List<List<String>> messages;
+    public static List<List<String>> rawmessages;
     public static String noperm;
     public static List<String> players;
     public static boolean whitelist = false;
@@ -82,8 +83,8 @@ public class CM {
 
         save();
     }
-
-    @SuppressWarnings("unchecked")
+    
+	@SuppressWarnings("unchecked")
 	public static void readConfig() {
         enabled = config.getBoolean("BossMessage.Enabled");
         random = config.getBoolean("BossMessage.Random");
@@ -91,7 +92,8 @@ public class CM {
         show = config.getInt("BossMessage.Show");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
         colorcodes = config.getString("BossMessage.ColorCodes");
-        messages = (List<List<String>>) config.getList("BossMessage.Messages");
+        messages = getMsgs();
+        rawmessages = (List<List<String>>) config.getList("BossMessage.Messages");
         players = config.getStringList("BossMessage.IgnorePlayers");
         whitelist = config.getBoolean("BossMessage.Whitelist");
         worlds = config.getStringList("BossMessage.WhitelistedWorlds");
@@ -103,5 +105,16 @@ public class CM {
         } catch (IOException e) {
             System.out.println("[BossMessage] Error 'createConfig' on " + path);
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+	public static List<List<String>> getMsgs() {
+    	List<List<String>> output = new ArrayList<List<String>>();
+    	List<List<String>> messages = (List<List<String>>) config.getList("BossMessage.Messages");
+    	for (List<String> msg:messages) {
+    		msg.set(0, ChatColor.translateAlternateColorCodes('&', msg.get(0)));
+    		output.add(msg);
+    	}
+		return output;
     }
 }

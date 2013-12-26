@@ -23,8 +23,6 @@ public class Lib {
 		if (CM.random) {
 			int r = random.randInt(0, CM.messages.size() - 1);
 			List<String> message = CM.messages.get(r);
-			String coloredmsg = ChatColor.translateAlternateColorCodes('&', message.get(0));
-			message.set(0, coloredmsg);
 			return message;
 		} else {
 			List<String> message = CM.messages.get(count);
@@ -32,8 +30,6 @@ public class Lib {
 			if (count >= CM.messages.size()) {
 				resetCount();
 			}
-			String coloredmsg = ChatColor.translateAlternateColorCodes('&', message.get(0));
-			message.set(0, coloredmsg);
 			return message;
 		}
 	}

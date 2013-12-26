@@ -23,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+@SuppressWarnings("deprecation")
 public class Main extends JavaPlugin implements Listener {
 
     private static Main instance;
@@ -84,7 +85,7 @@ public class Main extends JavaPlugin implements Listener {
     @SuppressWarnings("deprecation")
 	public boolean onCommand(CommandSender sender, Command c, String cmd, String[] args) {
     	
-    	if (cmd.equalsIgnoreCase("bm")) {
+    	if (cmd.equalsIgnoreCase("bm") || cmd.equalsIgnoreCase("bmessage") || cmd.equalsIgnoreCase("bossmessage")){
     		if (args.length == 0) {
     			if (sender.hasPermission("bossmessage.help")) {
     				sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
@@ -100,6 +101,7 @@ public class Main extends JavaPlugin implements Listener {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
+    				if (args.length != 3)
     				
     				sender.sendMessage("nyi");
     			} else if (args[0].equalsIgnoreCase("remove")) {
@@ -113,7 +115,8 @@ public class Main extends JavaPlugin implements Listener {
     					int num = Integer.parseInt(args[1]);
     					if (CM.messages.size() >= num && num > 0) {
     						CM.messages.remove(num - 1);
-    						CM.config.set("BossMessage.Messages", CM.messages);
+    						CM.rawmessages.remove(num - 1);
+    						CM.config.set("BossMessage.Messages", CM.rawmessages);
     						CM.save();
     						Lib.resetCount();
     					}
@@ -131,7 +134,7 @@ public class Main extends JavaPlugin implements Listener {
     				int i = 0;
     				for (List<String> msg:CM.messages) {
     					i++;
-    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.YELLOW + msg.get(0));
+    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.get(0));
     				}
     			}
     		}
