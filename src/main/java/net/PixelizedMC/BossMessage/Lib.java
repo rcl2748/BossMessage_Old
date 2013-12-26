@@ -11,30 +11,27 @@ import me.confuser.barapi.BarAPI;
 
 public class Lib {
 	
-	static ConfigManager cm;
 	static RandomExt random = new RandomExt(new Random());
 	static int count = 0;
 	
 	public static void onEnable() {
-        cm = new ConfigManager();
-        cm.createConfig();
-        cm.readConfig();
+        CM.createConfig();
+        CM.readConfig();
 	}
 	
 	public static List<String> getMessage() {
-		if (cm.random) {
-			List<List<String>> messages = cm.messages;
-			int r = random.randInt(0, messages.size() - 1);
-			List<String> message = messages.get(r);
+		if (CM.random) {
+			int r = random.randInt(0, CM.messages.size() - 1);
+			List<String> message = CM.messages.get(r);
 			String coloredmsg = ChatColor.translateAlternateColorCodes('&', message.get(0));
 			message.set(0, coloredmsg);
 			return message;
 		} else {
-			List<List<String>> messages = cm.messages;
-			List<String> message = messages.get(count);
+			List<String> message = CM.messages.get(count);
 			count++;
-			if (count >= messages.size())
-			count = 0;
+			if (count >= CM.messages.size()) {
+				resetCount();
+			}
 			String coloredmsg = ChatColor.translateAlternateColorCodes('&', message.get(0));
 			message.set(0, coloredmsg);
 			return message;
@@ -54,7 +51,7 @@ public class Lib {
 				if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 					String colorcode;
 					while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-						colorcode = ChatColor.COLOR_CHAR + "" + cm.colorcodes.charAt(random.randInt(cm.colorcodes.length()));
+						colorcode = ChatColor.COLOR_CHAR + "" + CM.colorcodes.charAt(random.randInt(CM.colorcodes.length()));
 						message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 					}
 				}
@@ -65,8 +62,8 @@ public class Lib {
 	}
 	
 	public static void setMsg(List<String> msg) {
-		if (cm.whitelist) {
-			List<String> worlds = cm.worlds;
+		if (CM.whitelist) {
+			List<String> worlds = CM.worlds;
 			List<Player> players;
 			for (String w:worlds) {
 				if (Bukkit.getWorld(w) != null) {
@@ -82,5 +79,9 @@ public class Lib {
 				setPlayerMsg(p, msg);
 			}
 		}
+	}
+	
+	public static void resetCount() {
+		count = 0;
 	}
 }

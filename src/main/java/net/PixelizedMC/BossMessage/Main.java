@@ -2,6 +2,7 @@ package net.PixelizedMC.BossMessage;
 
 import me.confuser.barapi.BarAPI;
 
+import org.apache.commons.lang.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,12 +28,9 @@ public class Main extends JavaPlugin implements Listener {
     private static Main instance;
     public static String PREFIX = "§f[§bBossMessage§f] ";
     RandomExt random = new RandomExt(new Random());
-    ConfigManager cm;
 
     public static List<String> current = new ArrayList<>();
     public static boolean isset = false;
-
-    BarAPI barAPI;
 
     @Override
     public void onEnable(){
@@ -40,14 +38,9 @@ public class Main extends JavaPlugin implements Listener {
         
         Lib.onEnable();
 
-        //reg api
-        barAPI = new BarAPI();
-        Bukkit.getPluginManager().registerEvents(barAPI, this);
-
         //config
-        cm = new ConfigManager();
-        cm.createConfig();
-        cm.readConfig();
+        CM.createConfig();
+        CM.readConfig();
 
         Bukkit.getPluginManager().registerEvents(this, this);
         //enabled
@@ -61,7 +54,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private void startProcess() {
-        if (!cm.enabled) {
+        if (!CM.enabled) {
             for (int i = 0; 3 > i ;i++)
                 getLogger().warning("disabled: to enable set 'enabled' in the BossMessage config to 'true'");
             return;
@@ -82,20 +75,64 @@ public class Main extends JavaPlugin implements Listener {
 	            		}
 	        			isset = false;
 	            	}
-	            }, cm.show*50);
+	            }, CM.show*50);
 	        }
-        }, 20L, cm.interval + cm.show + 2L);
+        }, 20L, CM.interval + CM.show + 2L);
 
 
     }
-    public boolean onCommand(CommandSender sender, Command c, String cmd, String[] args) {
+    @SuppressWarnings("deprecation")
+	public boolean onCommand(CommandSender sender, Command c, String cmd, String[] args) {
     	
     	if (cmd.equalsIgnoreCase("bm")) {
     		if (args.length == 0) {
     			if (sender.hasPermission("bossmessage.help")) {
     				sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
     				sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
-    				sender.sendMessage(ChatColor.YELLOW + "/bm add ");
+    				sender.sendMessage(ChatColor.YELLOW + "/bm add <message> <percent> - adds a message");
+    				sender.sendMessage(ChatColor.YELLOW + "/bm remove <#> - removes a message");
+    				sender.sendMessage(ChatColor.YELLOW + "/bm list - lists the messages");
+    			}
+    		} else {
+    			if (args[0].equalsIgnoreCase("add")) {
+    				
+    				if (!sender.hasPermission("bossmessage.add")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				
+    				sender.sendMessage("nyi");
+    			} else if (args[0].equalsIgnoreCase("remove")) {
+    				
+    				if (!sender.hasPermission("bossmessage.remove")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				
+    				if (NumberUtils.isNumber(args[1])) {
+    					int num = Integer.parseInt(args[1]);
+    					if (CM.messages.size() >= num && num > 0) {
+    						CM.messages.remove(num - 1);
+    						CM.config.set("BossMessage.Messages", CM.messages);
+    						CM.save();
+    						Lib.resetCount();
+    					}
+    				}
+    				
+    				
+    			} else if (args[0].equalsIgnoreCase("list")) {
+    				
+    				if (!sender.hasPermission("bossmessage.list")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				
+    				sender.sendMessage(ChatColor.GREEN + "=== Message list ===");
+    				int i = 0;
+    				for (List<String> msg:CM.messages) {
+    					i++;
+    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.YELLOW + msg.get(0));
+    				}
     			}
     		}
     	}
@@ -105,12 +142,12 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent e) {
         Player p = e.getPlayer();
-        if (!cm.enabled) {
+        if (!CM.enabled) {
             return;
         }
         
-        if (cm.whitelist) {
-        	List<String> worlds = cm.worlds;
+        if (CM.whitelist) {
+        	List<String> worlds = CM.worlds;
         	if (worlds.contains(e.getTo().getWorld().getName())) {
         		Lib.setPlayerMsg(p, current);
         	} else {
@@ -122,12 +159,12 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
-        if (!cm.enabled) {
+        if (!CM.enabled) {
             return;
         }
         
-        if (cm.whitelist) {
-        	List<String> worlds = cm.worlds;
+        if (CM.whitelist) {
+        	List<String> worlds = CM.worlds;
         	if (worlds.contains(e.getTo().getWorld().getName())) {
         		Lib.setPlayerMsg(p, current);
         	} else {
@@ -140,12 +177,12 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (!cm.enabled) {
+        if (!CM.enabled) {
             return;
         }
         if (isset) {
-	        if (cm.whitelist) {
-	        	if (cm.worlds.contains(p.getWorld().getName())) {
+	        if (CM.whitelist) {
+	        	if (CM.worlds.contains(p.getWorld().getName())) {
 	        		Lib.setPlayerMsg(p, current);
 	        	}
 	        } else {

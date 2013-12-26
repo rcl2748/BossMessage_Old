@@ -1,5 +1,6 @@
 package net.PixelizedMC.BossMessage;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
@@ -14,32 +15,34 @@ import java.util.List;
  * Time: 00:42
  * To change this template use File | Settings | File Templates.
  */
-public class ConfigManager {
+public class CM {
 
     final static String path = "plugins/BossMessage/config.yml";
-    File file = new File(path);
-    FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+    static File file = new File(path);
+    static FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-    public boolean enabled = false;
-    public boolean random = true;
-    public int interval = 60;
-    public int show = 20;
-    public String colorcodes;
-    public List<List<String>> messages;
-    public List<String> players;
-    public boolean whitelist = false;
-    public List<String> worlds;
+    public static boolean enabled = false;
+    public static boolean random = true;
+    public static int interval = 60;
+    public static int show = 20;
+    public static String colorcodes;
+    public static List<List<String>> messages;
+    public static String noperm;
+    public static List<String> players;
+    public static boolean whitelist = false;
+    public static List<String> worlds;
     //public String configVersion = Main.getInstance().getDescription().getVersion();
 
-    public void createConfig () {
+    public static void createConfig() {
         //if (newConfig() == false)
         //    return;
 
         config.addDefault("BossMessage.Enabled", true);
         config.addDefault("BossMessage.Random", false);
         config.addDefault("BossMessage.Interval", 250);
-        config.addDefault("BossMessage.ColorCodes", "0123456789abcdef");
         config.addDefault("BossMessage.Show", 100);
+        config.addDefault("BossMessage.ColorCodes", "\'0123456789abcdef\'");
+        config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
         config.addDefault("BossMessage.Whitelist", false);
 
         List<List<String>> exampleList = new ArrayList<List<String>>();
@@ -81,11 +84,12 @@ public class ConfigManager {
     }
 
     @SuppressWarnings("unchecked")
-	public void readConfig() {
+	public static void readConfig() {
         enabled = config.getBoolean("BossMessage.Enabled");
         random = config.getBoolean("BossMessage.Random");
         interval = config.getInt("BossMessage.Interval");
         show = config.getInt("BossMessage.Show");
+        noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
         colorcodes = config.getString("BossMessage.ColorCodes");
         messages = (List<List<String>>) config.getList("BossMessage.Messages");
         players = config.getStringList("BossMessage.IgnorePlayers");
@@ -93,7 +97,7 @@ public class ConfigManager {
         worlds = config.getStringList("BossMessage.WhitelistedWorlds");
     }
 
-    private void save() {
+    public static void save() {
         try {
             config.save(path);
         } catch (IOException e) {
