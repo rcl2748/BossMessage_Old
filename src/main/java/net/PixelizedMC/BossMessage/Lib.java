@@ -15,11 +15,6 @@ public class Lib {
 	static RandomExt random = new RandomExt(new Random());
 	static int count = 0;
 	
-	public static void onEnable() {
-        CM.createConfig();
-        CM.readConfig();
-	}
-	
 	public static List<String> getMessage() {
 		if (CM.messages.size() > 0) {
 			if (CM.random) {

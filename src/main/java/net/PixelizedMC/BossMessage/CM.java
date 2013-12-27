@@ -1,5 +1,6 @@
 package net.PixelizedMC.BossMessage;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,7 +43,7 @@ public class CM {
         config.addDefault("BossMessage.Random", false);
         config.addDefault("BossMessage.Interval", 250);
         config.addDefault("BossMessage.Show", 100);
-        config.addDefault("BossMessage.ColorCodes", "\'0123456789abcdef\'");
+        config.addDefault("BossMessage.ColorCodes", "'0123456789abcdef'");
         config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
         config.addDefault("BossMessage.Whitelist", false);
 
@@ -92,8 +93,8 @@ public class CM {
         show = config.getInt("BossMessage.Show");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
         colorcodes = config.getString("BossMessage.ColorCodes");
-        messages = getMsgs();
         rawmessages = (List<List<String>>) config.getList("BossMessage.Messages");
+        messages = getMsgs();
         players = config.getStringList("BossMessage.IgnorePlayers");
         whitelist = config.getBoolean("BossMessage.Whitelist");
         worlds = config.getStringList("BossMessage.WhitelistedWorlds");
@@ -110,10 +111,13 @@ public class CM {
     @SuppressWarnings("unchecked")
 	public static List<List<String>> getMsgs() {
     	List<List<String>> output = new ArrayList<List<String>>();
-    	List<List<String>> messages = (List<List<String>>) config.getList("BossMessage.Messages");
-    	for (List<String> msg:messages) {
+    	List<List<String>> msgs = (List<List<String>>) config.getList("BossMessage.Messages");
+    	for (List<String> msg:msgs) {
     		msg.set(0, ChatColor.translateAlternateColorCodes('&', msg.get(0)));
     		output.add(msg);
+    	}
+    	for (List<String> msg:rawmessages) {
+    		Bukkit.broadcastMessage(msg.get(0));
     	}
 		return output;
     }

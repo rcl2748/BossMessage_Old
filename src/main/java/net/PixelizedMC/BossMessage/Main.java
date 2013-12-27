@@ -34,8 +34,6 @@ public class Main extends JavaPlugin implements Listener {
     public void onEnable(){
         instance = this;
         
-        Lib.onEnable();
-
         //config
         CM.createConfig();
         CM.readConfig();
