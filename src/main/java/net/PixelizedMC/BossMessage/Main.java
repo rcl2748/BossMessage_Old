@@ -3,6 +3,7 @@ package net.PixelizedMC.BossMessage;
 import me.confuser.barapi.BarAPI;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -26,13 +28,18 @@ public class Main extends JavaPlugin implements Listener {
     private static Main instance;
     public static String PREFIX = "§f[§bBossMessage§f] ";
     RandomExt random = new RandomExt(new Random());
+	public static PluginManager plm = Bukkit.getPluginManager();
 
     public static List<String> current = new ArrayList<>();
     public static boolean isset = false;
-
-    @Override
+    
     public void onEnable(){
         instance = this;
+        if (plm.getPlugin("BarAPI") == null) {
+        	System.out.println(ChatColor.DARK_RED + "THIS PLUGIN REQUIRES BARAPI TO BE INSTALLED!!!");
+        	System.out.println(ChatColor.DARK_RED + "BOSSMESSAGE IS NOW BEING DISABLED!!!");
+        	plm.disablePlugin(this);
+        }
         
         //config
         CM.createConfig();

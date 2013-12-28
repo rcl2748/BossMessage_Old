@@ -15,8 +15,6 @@ import org.bukkit.plugin.PluginManager;
 @SuppressWarnings("deprecation")
 public class Commands {
 	
-	public static PluginManager plm = Bukkit.getPluginManager();
-	
     public static boolean Command(CommandSender sender, Command c, String cmd, String[] args) {
     	
     	if (cmd.equalsIgnoreCase("bm") || cmd.equalsIgnoreCase("bmessage") || cmd.equalsIgnoreCase("bossmessage")){
@@ -102,8 +100,7 @@ public class Commands {
     					return true;
     				}
     				
-    				plm.disablePlugin(Main.getInstance());
-    				plm.enablePlugin(Main.getInstance());
+    				
     				
     			} else {
     				sender.sendMessage(ChatColor.RED + "");
