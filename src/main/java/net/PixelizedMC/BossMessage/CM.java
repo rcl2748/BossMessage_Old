@@ -9,13 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: ml
- * Date: 01.09.13
- * Time: 00:42
- * To change this template use File | Settings | File Templates.
- */
 public class CM {
 
     final static String path = "plugins/BossMessage/config.yml";
@@ -113,8 +106,10 @@ public class CM {
     	List<List<String>> output = new ArrayList<List<String>>();
     	List<List<String>> msgs = (List<List<String>>) config.getList("BossMessage.Messages");
     	for (List<String> msg:msgs) {
-    		msg.set(0, ChatColor.translateAlternateColorCodes('&', msg.get(0)));
-    		output.add(msg);
+    		List<String> a = new ArrayList<>();
+    		a.add(ChatColor.translateAlternateColorCodes('&', msg.get(0)));
+    		a.add(msg.get(1));
+    		output.add(a);
     	}
     	for (List<String> msg:rawmessages) {
     		Bukkit.broadcastMessage(msg.get(0));

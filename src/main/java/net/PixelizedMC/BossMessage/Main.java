@@ -44,14 +44,12 @@ public class Main extends JavaPlugin implements Listener {
         //config
         CM.createConfig();
         CM.readConfig();
-
+        
         Bukkit.getPluginManager().registerEvents(this, this);
         //enabled
-
         startProcess();
     }
     
-    @Override
     public void onDisable() {
 
     }

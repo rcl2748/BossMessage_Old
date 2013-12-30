@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginManager;
 
 @SuppressWarnings("deprecation")
 public class Commands {
@@ -31,8 +30,12 @@ public class Commands {
     				if (args.length > 2) {
     					if (NumberUtils.isNumber(args[1])) {
     						
-    						List<String> arraymsg = Arrays.asList(args);
-    						String textmsg = StringUtils.join(arraymsg, " ");
+    						List<String> listmsg = new ArrayList<>();
+    						for (int i = 2;i <= (args.length-1);i++) {
+    							listmsg.add(args[i]);
+    						}
+    						
+    						String textmsg = StringUtils.join(listmsg, " ");
     						Bukkit.broadcastMessage(textmsg);
     						List<String> rawmessage = new ArrayList<>();
     						rawmessage.add(textmsg);
@@ -99,11 +102,42 @@ public class Commands {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
+
+    				Main.plm.disablePlugin(Main.plm.getPlugin("BossMessage"));
+    				Main.plm.enablePlugin(Main.plm.getPlugin("BossMessage"));
     				
+    			} else if (args[0].equalsIgnoreCase("help")) {
     				
+    				printHelp(sender);
     				
+    			} else if (args[0].equalsIgnoreCase("list")) {
+    				
+    				if (!sender.hasPermission("bossmessage.list")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				
+    				sender.sendMessage(ChatColor.GREEN + "=== Message list ===");
+    				int i = 0;
+    				for (List<String> msg:CM.messages) {
+    					i++;
+    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.get(0));
+    				}
+    			} else if (args[0].equalsIgnoreCase("list")) {
+    				
+    				if (!sender.hasPermission("bossmessage.list")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				
+    				sender.sendMessage(ChatColor.GREEN + "=== Message list ===");
+    				int i = 0;
+    				for (List<String> msg:CM.messages) {
+    					i++;
+    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.get(0));
+    				}
     			} else {
-    				sender.sendMessage(ChatColor.RED + "");
+    				sender.sendMessage(ChatColor.DARK_RED + "Invalid command! Usage: " + ChatColor.RED + "/bm help");
     			}
     		}
     	}
@@ -123,6 +157,9 @@ public class Commands {
 		}
 		if (sender.hasPermission("bossmessage.list")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm list - lists the messages");
+		}
+		if (sender.hasPermission("bossmessage.reload")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm reload - reloads the plugin");
 		}
     }
 }
