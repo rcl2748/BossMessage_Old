@@ -1,17 +1,14 @@
 package net.PixelizedMC.BossMessage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.NumberUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-@SuppressWarnings("deprecation")
 public class Commands {
 	
     public static boolean Command(CommandSender sender, Command c, String cmd, String[] args) {
@@ -21,6 +18,7 @@ public class Commands {
     			printHelp(sender);
     			
     		} else {
+    			// Command: ADD
     			if (args[0].equalsIgnoreCase("add")) {
     				
     				if (!sender.hasPermission("bossmessage.add")) {
@@ -28,7 +26,7 @@ public class Commands {
     					return true;
     				}
     				if (args.length > 2) {
-    					if (NumberUtils.isNumber(args[1])) {
+    					if (isInteger(args[1])) {
     						
     						List<String> listmsg = new ArrayList<>();
     						for (int i = 2;i <= (args.length-1);i++) {
@@ -57,14 +55,16 @@ public class Commands {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <percent> <message>");
     				}
     				
-    			} else if (args[0].equalsIgnoreCase("remove")) {
+    			}
+    			// Command: REMOVE
+    			else if (args[0].equalsIgnoreCase("remove")) {
     				
     				if (!sender.hasPermission("bossmessage.remove")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
     				if (args.length == 2) {
-	    				if (NumberUtils.isNumber(args[1])) {
+	    				if (isInteger(args[1])) {
 	    					int num = Integer.parseInt(args[1]);
 	    					if (CM.messages.size() >= num && num > 0) {
 	    						CM.messages.remove(num - 1);
@@ -83,7 +83,9 @@ public class Commands {
     				}
     				
     				
-    			} else if (args[0].equalsIgnoreCase("list")) {
+    			}
+    			// Command: LIST
+    			else if (args[0].equalsIgnoreCase("list")) {
     				
     				if (!sender.hasPermission("bossmessage.list")) {
     					sender.sendMessage(CM.noperm);
@@ -96,7 +98,9 @@ public class Commands {
     					i++;
     					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.get(0));
     				}
-    			} else if (args[0].equalsIgnoreCase("reload")) {
+    			}
+    			// Command: RELOAD
+    			else if (args[0].equalsIgnoreCase("reload")) {
     				
     				if (!sender.hasPermission("bossmessage.reload")) {
     					sender.sendMessage(CM.noperm);
@@ -106,36 +110,44 @@ public class Commands {
     				Main.plm.disablePlugin(Main.plm.getPlugin("BossMessage"));
     				Main.plm.enablePlugin(Main.plm.getPlugin("BossMessage"));
     				
-    			} else if (args[0].equalsIgnoreCase("help")) {
+    			}
+    			// Command: HELP
+    			else if (args[0].equalsIgnoreCase("help")) {
     				
     				printHelp(sender);
     				
-    			} else if (args[0].equalsIgnoreCase("list")) {
+    			}
+    			// Command: INTERVAL
+    			else if (args[0].equalsIgnoreCase("interval")) {
     				
-    				if (!sender.hasPermission("bossmessage.list")) {
+    				if (!sender.hasPermission("bossmessage.interval")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
     				
-    				sender.sendMessage(ChatColor.GREEN + "=== Message list ===");
-    				int i = 0;
-    				for (List<String> msg:CM.messages) {
-    					i++;
-    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.get(0));
+    				if (isInteger(args[1])) {
+    					CM.config.set("BossMessage.Interval", Integer.parseInt(args[1]));
+    					CM.save();
+    				} else {
+    					sender.sendMessage(ChatColor.RED + args[1] + " is not a valid number!");
     				}
-    			} else if (args[0].equalsIgnoreCase("list")) {
     				
-    				if (!sender.hasPermission("bossmessage.list")) {
+    			}
+    			// Command: SHOW
+    			else if (args[0].equalsIgnoreCase("show")) {
+    				
+    				if (!sender.hasPermission("bossmessage.show")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
     				
-    				sender.sendMessage(ChatColor.GREEN + "=== Message list ===");
-    				int i = 0;
-    				for (List<String> msg:CM.messages) {
-    					i++;
-    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.get(0));
+    				if (isInteger(args[1])) {
+    					CM.config.set("BossMessage.Show", Integer.parseInt(args[1]));
+    					CM.save();
+    				} else {
+    					sender.sendMessage(ChatColor.RED + args[1] + " is not a valid number!");
     				}
+    				
     			} else {
     				sender.sendMessage(ChatColor.DARK_RED + "Invalid command! Usage: " + ChatColor.RED + "/bm help");
     			}
@@ -161,5 +173,20 @@ public class Commands {
 		if (sender.hasPermission("bossmessage.reload")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm reload - reloads the plugin");
 		}
+		if (sender.hasPermission("bossmessage.interval")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm interval <ticks> - sets the interval between messages");
+		}
+		if (sender.hasPermission("bossmessage.show")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm show <ticks> - sets the message broadcast length");
+		}
+    }
+    
+	public static boolean isInteger(String s) {
+    	try { 
+        	Integer.parseInt(s); 
+    	} catch(NumberFormatException e) { 
+    		return false; 
+    	}
+    	return true;
     }
 }
