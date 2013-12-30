@@ -29,7 +29,7 @@ public class Main extends JavaPlugin implements Listener {
     public static String PREFIX = "§f[§bBossMessage§f] ";
     RandomExt random = new RandomExt(new Random());
 	public static PluginManager plm = Bukkit.getPluginManager();
-
+	public static BukkitScheduler scr = Bukkit.getScheduler();;
     public static List<String> current = new ArrayList<>();
     public static boolean isset = false;
     
@@ -53,15 +53,19 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable() {
 
     }
-
+    
+    public static void rsp() {
+    	scr.cancelAllTasks();
+    	instance.startProcess();
+    }
+    
     private void startProcess() {
         if (!CM.enabled) {
             for (int i = 0; 3 > i ;i++)
                 getLogger().warning("disabled: to enable set 'enabled' in the BossMessage config to 'true'");
             return;
         }
-
-        BukkitScheduler scr = Bukkit.getScheduler();
+        
     	scr.scheduleSyncRepeatingTask(this, new Runnable() {
     		@Override
 	        public void run() {

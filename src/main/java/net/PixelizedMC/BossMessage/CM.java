@@ -1,6 +1,5 @@
 package net.PixelizedMC.BossMessage;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -110,9 +109,6 @@ public class CM {
     		a.add(ChatColor.translateAlternateColorCodes('&', msg.get(0)));
     		a.add(msg.get(1));
     		output.add(a);
-    	}
-    	for (List<String> msg:rawmessages) {
-    		Bukkit.broadcastMessage(msg.get(0));
     	}
 		return output;
     }
