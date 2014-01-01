@@ -32,6 +32,7 @@ permissions:
     description: Permission to add messages
   bossmessage.see:
     description: Permission to see messages
+    default: true
   bossmessage.remove:
     description: Permission to remove messages
   bossmessage.list:
