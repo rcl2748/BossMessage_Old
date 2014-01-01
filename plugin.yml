@@ -17,6 +17,7 @@ permissions:
       bossmessage.list: true
       bossmessage.interval: true
       bossmessage.show: true
+      bossmessage.see: true
   bossmessage.*:
     default: op
     children:
@@ -26,8 +27,11 @@ permissions:
       bossmessage.list: true
       bossmessage.interval: true
       bossmessage.show: true
+      bossmessage.see: true
   bossmessage.add:
     description: Permission to add messages
+  bossmessage.see:
+    description: Permission to see messages
   bossmessage.remove:
     description: Permission to remove messages
   bossmessage.list:

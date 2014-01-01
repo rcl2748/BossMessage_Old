@@ -38,13 +38,15 @@ public class Lib {
 	}
 	
 	public static void setPlayerMsg(Player p, List<String> msg) {
-		if (msg.size() == 2) {
-			if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
-				
-				String message = generateMsg(p.getName(), msg.get(0));
-				float percent = Float.parseFloat(msg.get(1));
-				
-				BarAPI.setMessage(p, message, percent);
+		if (p.hasPermission("bossmessage.see")) {
+			if (msg.size() == 2) {
+				if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
+					
+					String message = generateMsg(p.getName(), msg.get(0));
+					float percent = Float.parseFloat(msg.get(1));
+					
+					BarAPI.setMessage(p, message, percent);
+				}
 			}
 		}
 	}

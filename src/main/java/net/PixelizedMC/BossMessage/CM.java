@@ -50,11 +50,16 @@ public class CM {
         msg2.add("&aBossMessage - best BossBar plugin by &bplay.pixelizedmc.net");
         msg2.add("60");
         exampleList.add(msg2);
-        
+
         List<String> msg3 = new ArrayList<>();
         msg3.add("%rdm_color%Now %rdm_color%supports %rdm_color%custom %rdm_color%random %rdm_color%colors");
         msg3.add("30");
         exampleList.add(msg3);
+        
+        List<String> msg4 = new ArrayList<>();
+        msg4.add("&aRight now, there are &b%online_players%&c/&b%max_players% &aPlayers online");
+        msg4.add("30");
+        exampleList.add(msg4);
         
         config.addDefault("BossMessage.Messages", exampleList);
 
