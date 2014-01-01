@@ -2,7 +2,7 @@ package net.PixelizedMC.BossMessage;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import net.PixelizedMC.BossMessage.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,7 +26,7 @@ public class Commands {
     					return true;
     				}
     				if (args.length > 2) {
-    					if (isInteger(args[1])) {
+    					if (Utils.isInteger(args[1])) {
     						int percent = Integer.parseInt(args[1]);
     						if (percent < 101 && percent > 0) {
 	    						
@@ -72,7 +72,7 @@ public class Commands {
     					return true;
     				}
     				if (args.length == 2) {
-	    				if (isInteger(args[1])) {
+	    				if (Utils.isInteger(args[1])) {
 	    					int num = Integer.parseInt(args[1]);
 	    					if (CM.messages.size() >= num && num > 0) {
 	    						CM.messages.remove(num - 1);
@@ -133,7 +133,7 @@ public class Commands {
     					return true;
     				}
     				if (args.length == 2) {
-	    				if (isInteger(args[1])) {
+	    				if (Utils.isInteger(args[1])) {
 	    					int interval = Integer.parseInt(args[1]);
 	    					CM.config.set("BossMessage.Interval", interval);
 	    					CM.save();
@@ -156,7 +156,7 @@ public class Commands {
     					return true;
     				}
     				if (args.length == 2) {
-	    				if (isInteger(args[1])) {
+	    				if (Utils.isInteger(args[1])) {
 	    					int show = Integer.parseInt(args[1]);
 	    					CM.config.set("BossMessage.Show", show);
 	    					CM.save();
@@ -201,14 +201,5 @@ public class Commands {
 		if (sender.hasPermission("bossmessage.show")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm show <ticks> - sets the message broadcast length");
 		}
-    }
-    
-	public static boolean isInteger(String s) {
-    	try { 
-        	Integer.parseInt(s); 
-    	} catch(NumberFormatException e) { 
-    		return false; 
-    	}
-    	return true;
     }
 }

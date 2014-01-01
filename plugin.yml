@@ -7,3 +7,34 @@ commands:
   BossMessage:
     description: main command
     aliases: [bm, bmessage]
+permissions:
+  bossmessage.admin:
+    default: op
+    children:
+      bossmessage.reload: true
+      bossmessage.add: true
+      bossmessage.remove: true
+      bossmessage.list: true
+      bossmessage.interval: true
+      bossmessage.show: true
+  bossmessage.*:
+    default: op
+    children:
+      bossmessage.reload: true
+      bossmessage.add: true
+      bossmessage.remove: true
+      bossmessage.list: true
+      bossmessage.interval: true
+      bossmessage.show: true
+  bossmessage.add:
+    description: Permission to add messages
+  bossmessage.remove:
+    description: Permission to remove messages
+  bossmessage.list:
+    description: Permission to list messages
+  bossmessage.interval:
+    description: Permission to set interval
+  bossmessage.show:
+    description: Permission to set show time
+  bossmessage.reload:
+    description: Permission to reload the plugin

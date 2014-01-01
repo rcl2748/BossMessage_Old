@@ -29,7 +29,7 @@ public class Main extends JavaPlugin implements Listener {
     public static String PREFIX = "§f[§bBossMessage§f] ";
     RandomExt random = new RandomExt(new Random());
 	public static PluginManager plm = Bukkit.getPluginManager();
-	public static BukkitScheduler scr = Bukkit.getScheduler();;
+	public static BukkitScheduler scr = Bukkit.getScheduler();
     public static List<String> current = new ArrayList<>();
     public static boolean isset = false;
     

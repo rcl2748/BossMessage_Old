@@ -41,23 +41,34 @@ public class Lib {
 		if (msg.size() == 2) {
 			if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
 				
-				String message = msg.get(0);
+				String message = generateMsg(p.getName(), msg.get(0));
 				float percent = Float.parseFloat(msg.get(1));
-
-				if (message.toLowerCase().contains("%player%".toLowerCase())) {
-					message = message.replaceAll("(?i)%player%", p.getName());
-				}
-				if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-					String colorcode;
-					while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-						colorcode = ChatColor.COLOR_CHAR + "" + CM.colorcodes.charAt(random.randInt(CM.colorcodes.length()));
-						message = message.replaceFirst("(?i)%rdm_color%", colorcode);
-					}
-				}
 				
 				BarAPI.setMessage(p, message, percent);
 			}
 		}
+	}
+	
+	public static String generateMsg(String p, String msg) {
+		String message = msg;
+		
+		if (message.toLowerCase().contains("%player%".toLowerCase())) {
+			message = message.replaceAll("(?i)%player%", p);
+		}
+		if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
+			String colorcode;
+			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
+				colorcode = ChatColor.COLOR_CHAR + "" + CM.colorcodes.charAt(random.randInt(CM.colorcodes.length()));
+				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
+			}
+		}
+		if (message.toLowerCase().contains("%online_players%".toLowerCase())) {
+			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length));
+		}
+		if (message.toLowerCase().contains("%max_players%".toLowerCase())) {
+			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
+		}
+		return message;
 	}
 	
 	public static void setMsg(List<String> msg) {
