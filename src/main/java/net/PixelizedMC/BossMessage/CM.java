@@ -58,7 +58,7 @@ public class CM {
         
         List<String> msg4 = new ArrayList<>();
         msg4.add("&aRight now, there are &b%online_players%&c/&b%max_players% &aPlayers online");
-        msg4.add("30");
+        msg4.add("100");
         exampleList.add(msg4);
         
         config.addDefault("BossMessage.Messages", exampleList);

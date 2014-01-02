@@ -18,7 +18,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,7 +26,6 @@ public class Main extends JavaPlugin implements Listener {
 
     private static Main instance;
     public static String PREFIX = "§f[§bBossMessage§f] ";
-    RandomExt random = new RandomExt(new Random());
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
     public static List<String> current = new ArrayList<>();
@@ -65,7 +63,23 @@ public class Main extends JavaPlugin implements Listener {
                 getLogger().warning("disabled: to enable set 'enabled' in the BossMessage config to 'true'");
             return;
         }
-        
+/*        Runnable run = new Runnable() {
+    		@Override
+	        public void run() {
+	            current = Lib.getMessage();
+	            Lib.setMsg(current);
+	            isset = true;
+	            Timer timer = new Timer();
+	            timer.schedule(new TimerTask() {
+	            	public void run() {
+	            		for (Player p:Bukkit.getOnlinePlayers()) {
+	            			BarAPI.removeBar(p);
+	            		}
+	        			isset = false;
+	            	}
+	            }, CM.show*50);
+	        }
+        };*/
     	scr.scheduleSyncRepeatingTask(this, new Runnable() {
     		@Override
 	        public void run() {

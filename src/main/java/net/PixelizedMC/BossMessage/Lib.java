@@ -2,9 +2,6 @@ package net.PixelizedMC.BossMessage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -12,13 +9,12 @@ import me.confuser.barapi.BarAPI;
 
 public class Lib {
 	
-	static RandomExt random = new RandomExt(new Random());
 	static int count = 0;
 	
 	public static List<String> getMessage() {
 		if (CM.messages.size() > 0) {
 			if (CM.random) {
-				int r = random.randInt(0, CM.messages.size() - 1);
+				int r = Utils.randInt(0, CM.messages.size() - 1);
 				List<String> message = CM.messages.get(r);
 				return message;
 			} else {
@@ -40,19 +36,20 @@ public class Lib {
 	public static void setPlayerMsg(Player p, List<String> msg) {
 		if (p.hasPermission("bossmessage.see")) {
 			if (msg.size() == 2) {
-				if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
+				if (msg.get(0) != null && Utils.isInteger(msg.get(1))) {
 					
-					String message = generateMsg(p.getName(), msg.get(0));
-					float percent = Float.parseFloat(msg.get(1));
+					List<String> message = generateMsg(p.getName(), msg);
+					String testmsg = message.get(0);
+					float percent = Float.parseFloat(message.get(1));
 					
-					BarAPI.setMessage(p, message, percent);
+					BarAPI.setMessage(p, testmsg, percent);
 				}
 			}
 		}
 	}
 	
-	public static String generateMsg(String p, String msg) {
-		String message = msg;
+	public static List<String> generateMsg(String p, List<String> msg) {
+		String message = msg.get(0);
 		
 		if (message.toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", p);
@@ -60,7 +57,7 @@ public class Lib {
 		if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
 			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-				colorcode = ChatColor.COLOR_CHAR + "" + CM.colorcodes.charAt(random.randInt(CM.colorcodes.length()));
+				colorcode = ChatColor.COLOR_CHAR + "" + Character.toString(CM.colorcodes.charAt(Utils.randInt(1, CM.colorcodes.length()) - 1));
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 			}
 		}
@@ -70,7 +67,8 @@ public class Lib {
 		if (message.toLowerCase().contains("%max_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
 		}
-		return message;
+		msg.set(0, message);
+		return msg;
 	}
 	
 	public static void setMsg(List<String> msg) {
