@@ -113,9 +113,7 @@ public class Commands {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-
-    				Main.plm.disablePlugin(Main.plm.getPlugin("BossMessage"));
-    				Main.plm.enablePlugin(Main.plm.getPlugin("BossMessage"));
+    				Main.plm.getPlugin("BossMessage").reloadConfig();
     				sender.sendMessage(ChatColor.GREEN + "Plugin was successfully reloaded!");
     				
     			}

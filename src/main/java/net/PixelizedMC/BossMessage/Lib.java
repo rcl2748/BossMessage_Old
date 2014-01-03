@@ -19,6 +19,7 @@ public class Lib {
 				return message;
 			} else {
 				List<String> message = CM.messages.get(count);
+				Bukkit.broadcastMessage(message.get(0));
 				count++;
 				if (count >= CM.messages.size()) {
 					resetCount();
@@ -56,8 +57,15 @@ public class Lib {
 		}
 		if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
+			String colorcodes = CM.colorcodes;
 			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-				colorcode = ChatColor.COLOR_CHAR + "" + Character.toString(CM.colorcodes.charAt(Utils.randInt(1, CM.colorcodes.length()) - 1));
+				int randint = Utils.randInt(0, colorcodes.length()) - 1;
+				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
+/*				if (CM.repeatrdmcolors) {
+					StringBuilder sb = new StringBuilder(colorcodes);
+					sb.deleteCharAt(1);
+					colorcodes = sb.toString();
+				}*/
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 			}
 		}
@@ -68,6 +76,7 @@ public class Lib {
 			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
 		}
 		msg.set(0, message);
+		Bukkit.broadcastMessage("Used!");
 		return msg;
 	}
 	

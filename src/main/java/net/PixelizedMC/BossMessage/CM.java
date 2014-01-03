@@ -14,16 +14,17 @@ public class CM {
     static File file = new File(path);
     static FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-    public static boolean enabled = false;
-    public static boolean random = true;
-    public static int interval = 60;
-    public static int show = 20;
+    public static boolean enabled;
+    public static boolean random;
+    public static int interval;
+    public static int show;
+    public static boolean repeatrdmcolors;
     public static String colorcodes;
     public static List<List<String>> messages;
     public static List<List<String>> rawmessages;
     public static String noperm;
     public static List<String> players;
-    public static boolean whitelist = false;
+    public static boolean whitelist;
     public static List<String> worlds;
     //public String configVersion = Main.getInstance().getDescription().getVersion();
 
@@ -38,6 +39,7 @@ public class CM {
         config.addDefault("BossMessage.ColorCodes", "'0123456789abcdef'");
         config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
         config.addDefault("BossMessage.Whitelist", false);
+        config.addDefault("BossMessage.RepeatRandomColors", true);
 
         List<List<String>> exampleList = new ArrayList<List<String>>();
         
@@ -88,6 +90,7 @@ public class CM {
         random = config.getBoolean("BossMessage.Random");
         interval = config.getInt("BossMessage.Interval");
         show = config.getInt("BossMessage.Show");
+        repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
         colorcodes = config.getString("BossMessage.ColorCodes");
         rawmessages = (List<List<String>>) config.getList("BossMessage.Messages");
