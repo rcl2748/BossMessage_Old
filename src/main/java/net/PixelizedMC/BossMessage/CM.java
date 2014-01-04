@@ -116,6 +116,8 @@ public class CM {
     		List<String> a = new ArrayList<>();
     		a.add(ChatColor.translateAlternateColorCodes('&', msg.get(0)));
     		a.add(msg.get(1));
+    		a.add(msg.get(2));
+    		a.add(msg.get(3));
     		output.add(a);
     	}
 		return output;

@@ -1,5 +1,6 @@
 package net.PixelizedMC.BossMessage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import net.PixelizedMC.BossMessage.Utils;
@@ -112,7 +113,8 @@ public class Commands {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				Main.plm.getPlugin("BossMessage").reloadConfig();
+    				Main.plm.disablePlugin(Main.getInstance());
+    				Main.plm.enablePlugin(Main.getInstance());
     				sender.sendMessage(ChatColor.GREEN + "Plugin was successfully reloaded!");
     				
     			}

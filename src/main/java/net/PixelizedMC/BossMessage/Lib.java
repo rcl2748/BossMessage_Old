@@ -21,7 +21,6 @@ public class Lib {
 				return message;
 			} else {
 				List<String> message = CM.messages.get(count);
-				Bukkit.broadcastMessage(message.get(0));
 				count++;
 				if (count >= CM.messages.size()) {
 					resetCount();
@@ -32,16 +31,17 @@ public class Lib {
 			List<String> message = new ArrayList<>();
 			message.add("&cNo messages were found! Please check your &bconfig.yml&c!");
 			message.add("100");
+			message.add("100000");
+			message.add("0");
 			return message;
 		}
 	}
 	
 	public static void setPlayerMsg(Player p, List<String> msg) {
-		if (msg.size() == 2) {
+		if (msg.size() == 4) {
 			if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
 				
 				String message = generateMsg(p.getName(), msg);
-//				String textmsg = message.get(0);
 				float percent = Float.parseFloat(msg.get(1));
 				
 				BarAPI.setMessage(p, message, percent);
@@ -59,7 +59,7 @@ public class Lib {
 		if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
 			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-				colorcode = ChatColor.COLOR_CHAR + "" + CM.colorcodes.charAt(Utils.randInt(0, CM.colorcodes.length() - 1));
+				colorcode = ChatColor.COLOR_CHAR + Character.toString(CM.colorcodes.charAt(Utils.randInt(0, CM.colorcodes.length() - 1)));
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 			}
 		}

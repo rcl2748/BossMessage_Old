@@ -30,6 +30,8 @@ public class Main extends JavaPlugin implements Listener {
 	public static BukkitScheduler scr = Bukkit.getScheduler();
     public static List<String> current = new ArrayList<>();
     public static boolean isset = false;
+    public static int show;
+    public static int interval;
     
     public void onEnable() {
         instance = this;
@@ -63,40 +65,34 @@ public class Main extends JavaPlugin implements Listener {
                 getLogger().warning("disabled: to enable set 'enabled' in the BossMessage config to 'true'");
             return;
         }
-/*        Runnable run = new Runnable() {
+
+        current = Lib.getMessage();
+        show = Integer.parseInt(current.get(2));
+        interval = Integer.parseInt(current.get(3));
+        Runnable run = new Runnable() {
     		@Override
 	        public void run() {
-	            current = Lib.getMessage();
 	            Lib.setMsg(current);
 	            isset = true;
-	            Timer timer = new Timer();
+	            final Timer timer = new Timer();
 	            timer.schedule(new TimerTask() {
 	            	public void run() {
 	            		for (Player p:Bukkit.getOnlinePlayers()) {
 	            			BarAPI.removeBar(p);
 	            		}
 	        			isset = false;
+	            		timer.schedule(new TimerTask() {
+	            			public void run() {
+	    	        			scr.cancelAllTasks();
+	    	        			timer.cancel();
+	    	        			startProcess();
+	            			}
+	            		}, interval*50);
 	            	}
-	            }, CM.show*50);
+	            }, show*50);
 	        }
-        };*/
-    	scr.scheduleSyncRepeatingTask(this, new Runnable() {
-    		@Override
-	        public void run() {
-	            current = Lib.getMessage();
-	            Lib.setMsg(current);
-	            isset = true;
-	            Timer timer = new Timer();
-	            timer.schedule(new TimerTask() {
-	            	public void run() {
-	            		for (Player p:Bukkit.getOnlinePlayers()) {
-	            			BarAPI.removeBar(p);
-	            		}
-	        			isset = false;
-	            	}
-	            }, CM.show*50);
-	        }
-        }, 20L, CM.interval + CM.show + 2L);
+        };
+    	scr.scheduleSyncRepeatingTask(this, run, 0L, interval + show + 100L);
 
 
     }
