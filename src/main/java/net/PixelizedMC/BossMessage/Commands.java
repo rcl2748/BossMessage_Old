@@ -41,7 +41,6 @@ public class Commands {
 	    						rawmessage.add(textmsg);
 	    						rawmessage.add(args[1]);
 	    						
-	
 	    						List<String> message = new ArrayList<>();
 	    						message.add(textmsg);
 	    						message.add(args[1]);

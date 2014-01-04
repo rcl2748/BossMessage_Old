@@ -31,7 +31,7 @@ public class Main extends JavaPlugin implements Listener {
     public static List<String> current = new ArrayList<>();
     public static boolean isset = false;
     
-    public void onEnable(){
+    public void onEnable() {
         instance = this;
         if (plm.getPlugin("BarAPI") == null) {
         	System.out.println(ChatColor.DARK_RED + "THIS PLUGIN REQUIRES BARAPI TO BE INSTALLED!!!");

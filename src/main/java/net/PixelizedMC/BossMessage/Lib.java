@@ -2,6 +2,8 @@ package net.PixelizedMC.BossMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -35,21 +37,20 @@ public class Lib {
 	}
 	
 	public static void setPlayerMsg(Player p, List<String> msg) {
-		if (p.hasPermission("bossmessage.see")) {
-			if (msg.size() == 2) {
-				if (msg.get(0) != null && Utils.isInteger(msg.get(1))) {
-					
-					List<String> message = generateMsg(p.getName(), msg);
-					String testmsg = message.get(0);
-					float percent = Float.parseFloat(message.get(1));
-					
-					BarAPI.setMessage(p, testmsg, percent);
-				}
+		if (msg.size() == 2) {
+			if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
+				
+				String message = generateMsg(p.getName(), msg);
+//				String textmsg = message.get(0);
+				float percent = Float.parseFloat(msg.get(1));
+				
+				BarAPI.setMessage(p, message, percent);
 			}
 		}
 	}
 	
-	public static List<String> generateMsg(String p, List<String> msg) {
+	public static String generateMsg(String p, List<String> m) {
+		List<String> msg = m;
 		String message = msg.get(0);
 		
 		if (message.toLowerCase().contains("%player%".toLowerCase())) {
@@ -57,15 +58,8 @@ public class Lib {
 		}
 		if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
-			String colorcodes = CM.colorcodes;
 			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-				int randint = Utils.randInt(0, colorcodes.length()) - 1;
-				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
-/*				if (CM.repeatrdmcolors) {
-					StringBuilder sb = new StringBuilder(colorcodes);
-					sb.deleteCharAt(1);
-					colorcodes = sb.toString();
-				}*/
+				colorcode = ChatColor.COLOR_CHAR + "" + CM.colorcodes.charAt(Utils.randInt(0, CM.colorcodes.length() - 1));
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 			}
 		}
@@ -75,9 +69,7 @@ public class Lib {
 		if (message.toLowerCase().contains("%max_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
 		}
-		msg.set(0, message);
-		Bukkit.broadcastMessage("Used!");
-		return msg;
+		return message;
 	}
 	
 	public static void setMsg(List<String> msg) {
