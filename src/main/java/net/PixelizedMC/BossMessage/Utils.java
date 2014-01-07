@@ -11,6 +11,13 @@ public class Utils {
     	}
     	return true;
     }
+	public static boolean isBoolean(String s) {
+    	if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false")) {
+    		return true;
+    	} else {
+        	return false;
+    	}
+    }
 	
 	public static int randInt(int min, int max)
     {

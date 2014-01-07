@@ -18,13 +18,11 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class Main extends JavaPlugin implements Listener {
 
-    private static Main instance;
+    private static Main instance = null;
     public static String PREFIX = "§f[§bBossMessage§f] ";
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
@@ -39,6 +37,7 @@ public class Main extends JavaPlugin implements Listener {
         	System.out.println(ChatColor.DARK_RED + "THIS PLUGIN REQUIRES BARAPI TO BE INSTALLED!!!");
         	System.out.println(ChatColor.DARK_RED + "BOSSMESSAGE IS NOW BEING DISABLED!!!");
         	plm.disablePlugin(this);
+        	scr.cancelAllTasks();
         }
         
         //config
@@ -54,12 +53,7 @@ public class Main extends JavaPlugin implements Listener {
 
     }
     
-    public static void rsp() {
-    	scr.cancelAllTasks();
-    	instance.startProcess();
-    }
-    
-    private void startProcess() {
+    public void startProcess() {
         if (!CM.enabled) {
             for (int i = 0; 3 > i ;i++)
                 getLogger().warning("disabled: to enable set 'enabled' in the BossMessage config to 'true'");
@@ -74,27 +68,22 @@ public class Main extends JavaPlugin implements Listener {
 	        public void run() {
 	            Lib.setMsg(current);
 	            isset = true;
-	            final Timer timer = new Timer();
-	            timer.schedule(new TimerTask() {
+	            scr.scheduleSyncDelayedTask(instance, new Runnable() {
 	            	public void run() {
 	            		for (Player p:Bukkit.getOnlinePlayers()) {
 	            			BarAPI.removeBar(p);
 	            		}
 	        			isset = false;
-	            		timer.schedule(new TimerTask() {
+	        			scr.scheduleSyncDelayedTask(instance, new Runnable() {
 	            			public void run() {
-	    	        			scr.cancelAllTasks();
-	    	        			timer.cancel();
 	    	        			startProcess();
 	            			}
-	            		}, interval*50);
+	            		}, interval);
 	            	}
-	            }, show*50);
+	            }, show);
 	        }
         };
-    	scr.scheduleSyncRepeatingTask(this, run, 0L, interval + show + 100L);
-
-
+        scr.runTask(this, run);
     }
     public boolean onCommand(CommandSender a, Command b, String c, String[] d) {
     	return Commands.Command(a, b, c, d);

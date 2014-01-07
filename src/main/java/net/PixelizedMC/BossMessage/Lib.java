@@ -29,9 +29,9 @@ public class Lib {
 			}
 		} else {
 			List<String> message = new ArrayList<>();
-			message.add("&cNo messages were found! Please check your &bconfig.yml&c!");
+			message.add("§cNo messages were found! Please check your §bconfig.yml§c!");
 			message.add("100");
-			message.add("100000");
+			message.add("100");
 			message.add("0");
 			return message;
 		}
@@ -53,20 +53,32 @@ public class Lib {
 		List<String> msg = m;
 		String message = msg.get(0);
 		
-		if (message.toLowerCase().contains("%player%".toLowerCase())) {
+		if (msg.get(0).toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", p);
 		}
-		if (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
+		if (msg.get(0).toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
+			String colorcodes = CM.colorcodes;
 			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-				colorcode = ChatColor.COLOR_CHAR + Character.toString(CM.colorcodes.charAt(Utils.randInt(0, CM.colorcodes.length() - 1)));
+				int randint = Utils.randInt(0, colorcodes.length() - 1);
+				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
+				if (!CM.repeatrdmcolors) {
+					StringBuilder sb = new StringBuilder(colorcodes);
+					sb.deleteCharAt(randint);
+					colorcodes = sb.toString();
+				}
 			}
 		}
-		if (message.toLowerCase().contains("%online_players%".toLowerCase())) {
+		if (msg.get(0).toLowerCase().contains("%rdm_player%".toLowerCase())) {
+			Player[] players = Bukkit.getOnlinePlayers();
+			int randint = Utils.randInt(0, players.length - 1);
+			message = message.replaceAll("(?i)%rdm_player%", players[randint].getName());
+		}
+		if (msg.get(0).toLowerCase().contains("%online_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length));
 		}
-		if (message.toLowerCase().contains("%max_players%".toLowerCase())) {
+		if (msg.get(0).toLowerCase().contains("%max_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
 		}
 		return message;

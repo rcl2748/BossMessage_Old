@@ -16,14 +16,11 @@ public class CM {
 
     public static boolean enabled;
     public static boolean random;
-    public static int interval;
-    public static int show;
     public static boolean repeatrdmcolors;
     public static String colorcodes;
     public static List<List<String>> messages;
     public static List<List<String>> rawmessages;
     public static String noperm;
-    public static List<String> players;
     public static boolean whitelist;
     public static List<String> worlds;
     //public String configVersion = Main.getInstance().getDescription().getVersion();
@@ -34,51 +31,50 @@ public class CM {
 
         config.addDefault("BossMessage.Enabled", true);
         config.addDefault("BossMessage.Random", false);
-        config.addDefault("BossMessage.Interval", 250);
-        config.addDefault("BossMessage.Show", 100);
-        config.addDefault("BossMessage.ColorCodes", "'0123456789abcdef'");
+        config.addDefault("BossMessage.ColorCodes", "1234567890abcdef");
         config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
         config.addDefault("BossMessage.Whitelist", false);
         config.addDefault("BossMessage.RepeatRandomColors", true);
-
+        
         List<List<String>> exampleList = new ArrayList<List<String>>();
         
         List<String> msg1 = new ArrayList<>();
         msg1.add("&bYo &5%player%&b, wazzup?");
         msg1.add("100");
+        msg1.add("100");
+        msg1.add("0");
         exampleList.add(msg1);
-
+        
         List<String> msg2 = new ArrayList<>();
         msg2.add("&aBossMessage - best BossBar plugin by &bplay.pixelizedmc.net");
         msg2.add("60");
+        msg2.add("100");
+        msg2.add("0");
         exampleList.add(msg2);
-
+        
         List<String> msg3 = new ArrayList<>();
         msg3.add("%rdm_color%Now %rdm_color%supports %rdm_color%custom %rdm_color%random %rdm_color%colors");
         msg3.add("30");
+        msg3.add("100");
+        msg3.add("0");
         exampleList.add(msg3);
         
         List<String> msg4 = new ArrayList<>();
         msg4.add("&aRight now, there are &b%online_players%&c/&b%max_players% &aPlayers online");
         msg4.add("100");
+        msg4.add("100");
+        msg4.add("0");
         exampleList.add(msg4);
         
         config.addDefault("BossMessage.Messages", exampleList);
-
-        List<String> playersList = new ArrayList<>();
-        playersList.add("testPlayer");
-        playersList.add("examplePlayer");
-        playersList.add("your name");
-        config.addDefault("BossMessage.IgnorePlayers", playersList);
-
+        
         List<String> worldList = new ArrayList<>();
         worldList.add("world");
         worldList.add("world_nether");
         worldList.add("ExampleWorld");
         config.addDefault("BossMessage.WhitelistedWorlds", worldList);
-
-        //config.set("BossMessage.configVersion", Main.getInstance().getDescription().getVersion());
-
+        config.addDefault("BossMessage.ConfigVersion", 0);
+        
         config.options().copyDefaults(true);
 
         save();
@@ -86,16 +82,17 @@ public class CM {
     
 	@SuppressWarnings("unchecked")
 	public static void readConfig() {
+		if (config.getInt("BossMessage.ConfigVersion") != 0) {
+			Main.getInstance().saveDefaultConfig();
+			System.out.println(ChatColor.RED + "Your CONFIG.YML is outdated! Updating it...");
+		}
         enabled = config.getBoolean("BossMessage.Enabled");
         random = config.getBoolean("BossMessage.Random");
-        interval = config.getInt("BossMessage.Interval");
-        show = config.getInt("BossMessage.Show");
         repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
         colorcodes = config.getString("BossMessage.ColorCodes");
         rawmessages = (List<List<String>>) config.getList("BossMessage.Messages");
-        messages = getMsgs();
-        players = config.getStringList("BossMessage.IgnorePlayers");
+        messages = colorMsgs();
         whitelist = config.getBoolean("BossMessage.Whitelist");
         worlds = config.getStringList("BossMessage.WhitelistedWorlds");
     }
@@ -109,7 +106,7 @@ public class CM {
     }
     
     @SuppressWarnings("unchecked")
-	public static List<List<String>> getMsgs() {
+	public static List<List<String>> colorMsgs() {
     	List<List<String>> output = new ArrayList<List<String>>();
     	List<List<String>> msgs = (List<List<String>>) config.getList("BossMessage.Messages");
     	for (List<String> msg:msgs) {

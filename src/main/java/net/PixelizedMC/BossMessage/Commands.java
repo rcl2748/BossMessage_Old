@@ -1,11 +1,9 @@
 package net.PixelizedMC.BossMessage;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import net.PixelizedMC.BossMessage.Utils;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,41 +24,46 @@ public class Commands {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				if (args.length > 2) {
+    				if (args.length > 4) {
     					if (Utils.isInteger(args[1])) {
-    						int percent = Integer.parseInt(args[1]);
-    						if (percent < 101 && percent > 0) {
-	    						
-	    						List<String> listmsg = new ArrayList<>();
-	    						for (int i = 2;i <= (args.length-1);i++) {
-	    							listmsg.add(args[i]);
-	    						}
-	    						
-	    						String textmsg = StringUtils.join(listmsg, " ");
-	    						Bukkit.broadcastMessage(textmsg);
-	    						List<String> rawmessage = new ArrayList<>();
-	    						rawmessage.add(textmsg);
-	    						rawmessage.add(args[1]);
-	    						
-	    						List<String> message = new ArrayList<>();
-	    						message.add(textmsg);
-	    						message.add(args[1]);
-	    						message.set(0, ChatColor.translateAlternateColorCodes('&', message.get(0)));
-	    						
-	    						CM.messages.add(message);
-	    						CM.rawmessages.add(rawmessage);
-	    						CM.config.set("BossMessage.Messages", CM.rawmessages);
-	    						CM.save();
-	    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
-	    						
+    						if (Utils.isInteger(args[2])) {
+    							if (Utils.isInteger(args[3])) {
+		    						List<String> listmsg = new ArrayList<>();
+		    						for (int i = 4;i <= (args.length-1);i++) {
+		    							listmsg.add(args[i]);
+		    						}
+		    						
+		    						String textmsg = StringUtils.join(listmsg, " ");
+		    						List<String> rawmessage = new ArrayList<>();
+		    						rawmessage.add(textmsg);
+		    						rawmessage.add(args[1]);
+		    						rawmessage.add(args[2]);
+		    						rawmessage.add(args[3]);
+		    						
+		    						List<String> message = new ArrayList<>();
+		    						message.add(textmsg);
+		    						message.add(args[1]);
+		    						message.add(args[2]);
+		    						message.add(args[3]);
+		    						message.set(0, ChatColor.translateAlternateColorCodes('&', message.get(0)));
+		    						
+		    						CM.messages.add(message);
+		    						CM.rawmessages.add(rawmessage);
+		    						CM.config.set("BossMessage.Messages", CM.rawmessages);
+		    						CM.save();
+		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
+			    					
+    							} else {
+    								sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
+    							}
     						} else {
-    	    					sender.sendMessage(ChatColor.RED + "The percent must be 1~100!");
+    							sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
     						}
 	    				} else {
 	    					sender.sendMessage(ChatColor.RED + args[1] + ChatColor.DARK_RED + " is not a valid number!");
 	    				}
     				} else {
-    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <percent> <message>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <percent> <show> <interval> <message>");
     				}
     				
     			}
@@ -82,7 +85,7 @@ public class Commands {
 	    						Lib.resetCount();
 	    						sender.sendMessage(ChatColor.GREEN + "Message #" + num + " was successfully removed!");
 	    					} else {
-	    						sender.sendMessage(ChatColor.DARK_RED + "Message " + ChatColor.RED + args[1] + ChatColor.DARK_RED + "was not found!");
+	    						sender.sendMessage(ChatColor.DARK_RED + "Message " + ChatColor.RED + args[1] + ChatColor.DARK_RED + " was not found!");
 	    					}
 	    				}
     				} else {
@@ -118,56 +121,135 @@ public class Commands {
     				sender.sendMessage(ChatColor.GREEN + "Plugin was successfully reloaded!");
     				
     			}
+    			// Command WHITELIST
+    			else if (args[0].equalsIgnoreCase("whitelist")) {
+    				
+    				if (!sender.hasPermission("bossmessage.whitelist")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					if (Utils.isBoolean(args[1])) {
+    						boolean whitelist = Boolean.parseBoolean(args[1]);
+    						CM.whitelist = whitelist;
+    						CM.config.set("BossMessage.Whitelist", whitelist);
+    						CM.save();
+    						sender.sendMessage(ChatColor.DARK_GREEN + "Whitelist is set to " + ChatColor.GREEN + args[1]);
+    					} else {
+        					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm whitelist <true/false>");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm whitelist <true/false>");
+    				}
+    				
+    			}
+    			// Command: RRC
+    			else if (args[0].equalsIgnoreCase("rrc")) {
+    				
+    				if (!sender.hasPermission("bossmessage.rrc")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					if (Utils.isBoolean(args[1])) {
+    						boolean rrc = Boolean.parseBoolean(args[1]);
+    						CM.repeatrdmcolors = rrc;
+    						CM.config.set("BossMessage.RepeatRandomColors", rrc);
+    						CM.save();
+    						sender.sendMessage(ChatColor.DARK_GREEN + "RepeatRandomColors is set to " + ChatColor.GREEN + args[1]);
+    					} else {
+        					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm rrc <true/false>");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm rrc <true/false>");
+    				}
+    				
+    			}
+    			// Command: DELWORLD
+    			else if (args[0].equalsIgnoreCase("delworld")) {
+    				
+    				if (!sender.hasPermission("bossmessage.delworld")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					boolean contains = false;
+						List<String> worlds = CM.worlds;
+						String world = null;
+    					for (int i=0;i<worlds.size();i++) {
+    						if (worlds.get(i).toLowerCase().equalsIgnoreCase(args[1])) {
+    							world = worlds.remove(i);
+        						CM.worlds = worlds;
+        						CM.config.set("BossMessage.WhitelistedWorlds", worlds);
+        						CM.save();
+        						contains = true;
+    						}
+    					}
+    					if (contains) {
+    						sender.sendMessage(ChatColor.DARK_GREEN + "World " + ChatColor.GREEN + world + ChatColor.DARK_GREEN + " was removed from whitelist!");
+    					} else {
+        					sender.sendMessage(ChatColor.DARK_RED + "World " + ChatColor.RED + args[1] + ChatColor.DARK_RED + " is not whitelisted!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delworld <world>");
+    				}
+    				
+    			}
+    			// Command: ADDWORLD
+    			else if (args[0].equalsIgnoreCase("addworld")) {
+    				
+    				if (!sender.hasPermission("bossmessage.addworld")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					boolean contains = false;
+						List<String> worlds = CM.worlds;
+    					for (String world:worlds) {
+    						if (world.toLowerCase().equalsIgnoreCase(args[1])) {
+        						contains = true;
+    						}
+    					}
+    					if (contains) {
+    						worlds.add(args[1].toLowerCase());
+    						CM.worlds = worlds;
+    						CM.config.set("BossMessage.WhitelistedWorlds", worlds);
+    						CM.save();
+    						sender.sendMessage(ChatColor.DARK_GREEN + "World " + ChatColor.GREEN + args[1] + ChatColor.DARK_GREEN + " was added to whitelist!");
+    					} else {
+        					sender.sendMessage(ChatColor.DARK_RED + "World " + ChatColor.RED + args[1] + ChatColor.DARK_RED + " is already whitelisted!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addworld <world>");
+    				}
+    				
+    			}
+    			// Command: RANDOM
+    			else if (args[0].equalsIgnoreCase("random")) {
+    				
+    				if (!sender.hasPermission("bossmessage.rrc")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					if (Utils.isBoolean(args[1])) {
+    						boolean random = Boolean.parseBoolean(args[1]);
+    						CM.random = random;
+    						CM.config.set("BossMessage.Random", random);
+    						CM.save();
+    						sender.sendMessage(ChatColor.DARK_GREEN + "Random is set to " + ChatColor.GREEN + args[1]);
+    					} else {
+        					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm random <true/false>");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm random <true/false>");
+    				}
+    				
+    			}
     			// Command: HELP
     			else if (args[0].equalsIgnoreCase("help")) {
     				
     				printHelp(sender);
-    				
-    			}
-    			// Command: INTERVAL
-    			else if (args[0].equalsIgnoreCase("interval")) {
-    				
-    				if (!sender.hasPermission("bossmessage.interval")) {
-    					sender.sendMessage(CM.noperm);
-    					return true;
-    				}
-    				if (args.length == 2) {
-	    				if (Utils.isInteger(args[1])) {
-	    					int interval = Integer.parseInt(args[1]);
-	    					CM.config.set("BossMessage.Interval", interval);
-	    					CM.save();
-	    					CM.interval = interval;
-	    					Main.rsp();
-	    					sender.sendMessage(ChatColor.DARK_GREEN + "The Interval is now set to: " + ChatColor.GREEN + args[1]);
-	    				} else {
-	    					sender.sendMessage(ChatColor.RED + args[1] + ChatColor.DARK_RED + " is not a valid number!");
-	    				}
-    				} else {
-    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm interval <ticks>");
-    				}
-    				
-    			}
-    			// Command: SHOW
-    			else if (args[0].equalsIgnoreCase("show")) {
-    				
-    				if (!sender.hasPermission("bossmessage.show")) {
-    					sender.sendMessage(CM.noperm);
-    					return true;
-    				}
-    				if (args.length == 2) {
-	    				if (Utils.isInteger(args[1])) {
-	    					int show = Integer.parseInt(args[1]);
-	    					CM.config.set("BossMessage.Show", show);
-	    					CM.save();
-	    					CM.show = show;
-	    					Main.rsp();
-	    					sender.sendMessage(ChatColor.DARK_GREEN + "The Show is now set to: " + ChatColor.GREEN + args[1]);
-	    				} else {
-	    					sender.sendMessage(ChatColor.RED + args[1] + ChatColor.DARK_RED + " is not a valid number!");
-	    				}
-    				} else {
-    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm show <ticks>");
-    				}
     				
     			} else {
     				sender.sendMessage(ChatColor.DARK_RED + "Invalid command! Usage: " + ChatColor.RED + "/bm help");
@@ -194,11 +276,20 @@ public class Commands {
 		if (sender.hasPermission("bossmessage.reload")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm reload - reloads the plugin");
 		}
-		if (sender.hasPermission("bossmessage.interval")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm interval <ticks> - sets the interval between messages");
+		if (sender.hasPermission("bossmessage.whitelist")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm whitelist <true/false> - toggles the whitelist");
 		}
-		if (sender.hasPermission("bossmessage.show")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm show <ticks> - sets the message broadcast length");
+		if (sender.hasPermission("bossmessage.rrc")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm rrc <true/false> - toggles random color repeating");
+		}
+		if (sender.hasPermission("bossmessage.random")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm random <true/false> - toggles random message picking");
+		}
+		if (sender.hasPermission("bossmessage.addworld")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm addworld <world> - adds a world to the whitelist");
+		}
+		if (sender.hasPermission("bossmessage.delworld")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm delworld <world> - removes a world from the whitelist");
 		}
     }
 }
