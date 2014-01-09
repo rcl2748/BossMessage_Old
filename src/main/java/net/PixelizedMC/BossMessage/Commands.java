@@ -29,7 +29,7 @@ public class Commands {
     						if (Utils.isInteger(args[2])) {
     							if (Utils.isInteger(args[3])) {
 		    						List<String> listmsg = new ArrayList<>();
-		    						for (int i = 4;i <= (args.length-1);i++) {
+		    						for (int i = 4;i < args.length;i++) {
 		    							listmsg.add(args[i]);
 		    						}
 		    						
@@ -165,6 +165,47 @@ public class Commands {
     				}
     				
     			}
+    			// Command: SETCOLORS
+    			else if (args[0].equalsIgnoreCase("setcolors")) {
+    				
+    				if (!sender.hasPermission("bossmessage.setcolors")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    						CM.colorcodes = args[1];
+    						CM.config.set("BossMessage.ColorCodes", args[1]);
+    						CM.save();
+    						sender.sendMessage(ChatColor.DARK_GREEN + "Colorcodes are now: " + ChatColor.GREEN + args[1]);
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm setcolors <colorcodes>");
+    				}
+    				
+    			}
+    			// Command: NOPERM
+    			else if (args[0].equalsIgnoreCase("noperm")) {
+    				
+    				if (!sender.hasPermission("bossmessage.noperm")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length > 1) {
+
+						List<String> listmsg = new ArrayList<>();
+						for (int i = 1;i < args.length;i++) {
+							listmsg.add(args[i]);
+						}
+						String msg = StringUtils.join(listmsg, " ");
+						
+						CM.noperm = msg;
+						CM.config.set("BossMessage.NoPermission", ChatColor.translateAlternateColorCodes('&', msg));
+						CM.save();
+    						sender.sendMessage(ChatColor.DARK_GREEN + "NoPermission message is now: " + ChatColor.RESET + msg);
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm noperm <msg>");
+    				}
+    				
+    			}
     			// Command: DELWORLD
     			else if (args[0].equalsIgnoreCase("delworld")) {
     				
@@ -210,7 +251,7 @@ public class Commands {
         						contains = true;
     						}
     					}
-    					if (contains) {
+    					if (!contains) {
     						worlds.add(args[1].toLowerCase());
     						CM.worlds = worlds;
     						CM.config.set("BossMessage.WhitelistedWorlds", worlds);
@@ -227,11 +268,11 @@ public class Commands {
     			// Command: RANDOM
     			else if (args[0].equalsIgnoreCase("random")) {
     				
-    				if (!sender.hasPermission("bossmessage.rrc")) {
+    				if (!sender.hasPermission("bossmessage.r")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				if (args.length == 2) {
+    				if (args.length > 1) {
     					if (Utils.isBoolean(args[1])) {
     						boolean random = Boolean.parseBoolean(args[1]);
     						CM.random = random;
@@ -290,6 +331,12 @@ public class Commands {
 		}
 		if (sender.hasPermission("bossmessage.delworld")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm delworld <world> - removes a world from the whitelist");
+		}
+		if (sender.hasPermission("bossmessage.noperm")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm noperm <msg> - sets the NoPermission message");
+		}
+		if (sender.hasPermission("bossmessage.setcolors")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm setcolors <colorcodes> - sets the random color list");
 		}
     }
 }

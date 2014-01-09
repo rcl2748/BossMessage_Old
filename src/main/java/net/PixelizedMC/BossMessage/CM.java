@@ -108,8 +108,7 @@ public class CM {
     @SuppressWarnings("unchecked")
 	public static List<List<String>> colorMsgs() {
     	List<List<String>> output = new ArrayList<List<String>>();
-    	List<List<String>> msgs = (List<List<String>>) config.getList("BossMessage.Messages");
-    	for (List<String> msg:msgs) {
+    	for (List<String> msg:(List<List<String>>) config.getList("BossMessage.Messages")) {
     		List<String> a = new ArrayList<>();
     		a.add(ChatColor.translateAlternateColorCodes('&', msg.get(0)));
     		a.add(msg.get(1));

@@ -21,6 +21,8 @@ permissions:
       bossmessage.random: true
       bossmessage.addworld: true
       bossmessage.delworld: true
+      bossmessage.setcolors: true
+      bossmessage.noperm: true
   bossmessage.*:
     default: op
     children:
@@ -35,10 +37,16 @@ permissions:
       bossmessage.random: true
       bossmessage.addworld: true
       bossmessage.delworld: true
+      bossmessage.setcolors: true
+      bossmessage.noperm: true
   bossmessage.add:
     description: Permission to add messages
   bossmessage.addworld:
     description: Permission to add worlds to whitelist
+  bossmessage.noperm:
+    description: Permission to set the NoPermission message
+  bossmessage.setcolors:
+    description: Permission to set the random color list
   bossmessage.delworld:
     description: Permission to remove worlds from whitelist
   bossmessage.random:
