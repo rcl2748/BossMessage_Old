@@ -71,9 +71,9 @@ public class Lib {
 			}
 		}
 		if (msg.get(0).toLowerCase().contains("%rdm_player%".toLowerCase())) {
-			Player[] players = Bukkit.getOnlinePlayers();
-			int randint = Utils.randInt(0, players.length - 1);
-			message = message.replaceAll("(?i)%rdm_player%", players[randint].getName());
+			List<String> players = getRdmPlayers();
+			int randint = Utils.randInt(0, players.size() - 1);
+			message = message.replaceAll("(?i)%rdm_player%", players.get(randint));
 		}
 		if (msg.get(0).toLowerCase().contains("%online_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length));
@@ -82,6 +82,19 @@ public class Lib {
 			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
 		}
 		return message;
+	}
+	
+	public static List<String> getRdmPlayers() {
+		List<String> players = new ArrayList<>();
+		for (Player p:Bukkit.getOnlinePlayers()) {
+			if (!p.hasPermission("bossmessage.exemptrdm")) {
+				players.add(p.getName());
+			}
+		}
+		if (players.size() < 1) {
+			players.add("NullPlayer");
+		}
+		return players;
 	}
 	
 	public static void setMsg(List<String> msg) {

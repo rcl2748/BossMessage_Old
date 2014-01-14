@@ -23,6 +23,7 @@ permissions:
       bossmessage.delworld: true
       bossmessage.setcolors: true
       bossmessage.noperm: true
+      bossmessage.exemptrdm: true
   bossmessage.*:
     default: op
     children:
@@ -39,10 +40,13 @@ permissions:
       bossmessage.delworld: true
       bossmessage.setcolors: true
       bossmessage.noperm: true
+      bossmessage.exemptrdm: true
   bossmessage.add:
     description: Permission to add messages
   bossmessage.addworld:
     description: Permission to add worlds to whitelist
+  bossmessage.exemptrdm:
+    description: Permission to be exempted from %rdm_player% tag
   bossmessage.noperm:
     description: Permission to set the NoPermission message
   bossmessage.setcolors:

@@ -73,7 +73,6 @@ public class CM {
         worldList.add("world_nether");
         worldList.add("ExampleWorld");
         config.addDefault("BossMessage.WhitelistedWorlds", worldList);
-        config.addDefault("BossMessage.ConfigVersion", 0);
         
         config.options().copyDefaults(true);
 
@@ -82,10 +81,6 @@ public class CM {
     
 	@SuppressWarnings("unchecked")
 	public static void readConfig() {
-		if (config.getInt("BossMessage.ConfigVersion") != 0) {
-			Main.getInstance().saveDefaultConfig();
-			System.out.println(ChatColor.RED + "Your CONFIG.YML is outdated! Updating it...");
-		}
         enabled = config.getBoolean("BossMessage.Enabled");
         random = config.getBoolean("BossMessage.Random");
         repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
