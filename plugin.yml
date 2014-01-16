@@ -5,7 +5,7 @@ main: net.PixelizedMC.BossMessage.Main
 depend: [BarAPI]
 commands:
   BossMessage:
-    description: main command
+    description: Main BossMessage Command
     aliases: [bm, bmessage]
 permissions:
   bossmessage.admin:

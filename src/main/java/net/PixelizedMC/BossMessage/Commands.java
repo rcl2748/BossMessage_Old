@@ -218,7 +218,7 @@ public class Commands {
 						List<String> worlds = CM.worlds;
 						String world = null;
     					for (int i=0;i<worlds.size();i++) {
-    						if (worlds.get(i).toLowerCase().equalsIgnoreCase(args[1])) {
+    						if (worlds.get(i).equalsIgnoreCase(args[1])) {
     							world = worlds.remove(i);
         						CM.worlds = worlds;
         						CM.config.set("BossMessage.WhitelistedWorlds", worlds);
@@ -247,7 +247,7 @@ public class Commands {
     					boolean contains = false;
 						List<String> worlds = CM.worlds;
     					for (String world:worlds) {
-    						if (world.toLowerCase().equalsIgnoreCase(args[1])) {
+    						if (world.equalsIgnoreCase(args[1])) {
         						contains = true;
     						}
     					}
