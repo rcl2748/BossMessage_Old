@@ -28,8 +28,7 @@ public class CM {
     public static void createConfig() {
         //if (newConfig() == false)
         //    return;
-
-        config.addDefault("BossMessage.Enabled", true);
+    	
         config.addDefault("BossMessage.Random", false);
         config.addDefault("BossMessage.ColorCodes", "1234567890abcdef");
         config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
@@ -81,7 +80,6 @@ public class CM {
     
 	@SuppressWarnings("unchecked")
 	public static void readConfig() {
-        enabled = config.getBoolean("BossMessage.Enabled");
         random = config.getBoolean("BossMessage.Random");
         repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));

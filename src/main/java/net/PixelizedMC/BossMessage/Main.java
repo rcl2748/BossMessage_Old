@@ -54,12 +54,6 @@ public class Main extends JavaPlugin implements Listener {
     }
     
     public void startProcess() {
-        if (!CM.enabled) {
-            for (int i = 0; 3 > i ;i++)
-                getLogger().warning("disabled: to enable set 'enabled' in the BossMessage config to 'true'");
-            return;
-        }
-
         current = Lib.getMessage();
         show = Integer.parseInt(current.get(2));
         interval = Integer.parseInt(current.get(3));
@@ -94,14 +88,15 @@ public class Main extends JavaPlugin implements Listener {
         if (!CM.enabled) {
             return;
         }
-        
-        if (CM.whitelist) {
-        	List<String> worlds = CM.worlds;
-        	if (worlds.contains(e.getTo().getWorld().getName())) {
-        		Lib.setPlayerMsg(p, current);
-        	} else {
-        		BarAPI.removeBar(p);
-        	}
+        if (p.hasPermission("bossmessage.see")) {
+	        if (CM.whitelist) {
+	        	List<String> worlds = CM.worlds;
+	        	if (worlds.contains(e.getTo().getWorld().getName())) {
+	        		Lib.setPlayerMsg(p, current);
+	        	} else {
+	        		BarAPI.removeBar(p);
+	        	}
+	        }
         }
     }
     
@@ -111,14 +106,15 @@ public class Main extends JavaPlugin implements Listener {
         if (!CM.enabled) {
             return;
         }
-        
-        if (CM.whitelist) {
-        	List<String> worlds = CM.worlds;
-        	if (worlds.contains(e.getTo().getWorld().getName())) {
-        		Lib.setPlayerMsg(p, current);
-        	} else {
-        		BarAPI.removeBar(p);
-        	}
+        if (p.hasPermission("bossmessage.see")) {
+	        if (CM.whitelist) {
+	        	List<String> worlds = CM.worlds;
+	        	if (worlds.contains(e.getTo().getWorld().getName())) {
+	        		Lib.setPlayerMsg(p, current);
+	        	} else {
+	        		BarAPI.removeBar(p);
+	        	}
+	        }
         }
     }
     
@@ -126,16 +122,15 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (!CM.enabled) {
-            return;
-        }
-        if (isset) {
-	        if (CM.whitelist) {
-	        	if (CM.worlds.contains(p.getWorld().getName())) {
-	        		Lib.setPlayerMsg(p, current);
-	        	}
-	        } else {
-	        	Lib.setPlayerMsg(p, current);
+        if (p.hasPermission("bossmessage.see")) {
+	        if (isset) {
+		        if (CM.whitelist) {
+		        	if (CM.worlds.contains(p.getWorld().getName())) {
+		        		Lib.setPlayerMsg(p, current);
+		        	}
+		        } else {
+		        	Lib.setPlayerMsg(p, current);
+		        }
 	        }
         }
     }
