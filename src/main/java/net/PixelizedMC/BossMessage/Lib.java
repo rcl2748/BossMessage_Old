@@ -22,6 +22,7 @@ public class Lib {
 				return message;
 			} else {
 				List<String> message = CM.messages.get(count);
+				Bukkit.broadcastMessage(message.get(0));
 				message.set(0, preGenMsg(message.get(0)));
 				count++;
 				if (count >= CM.messages.size()) {
@@ -42,7 +43,6 @@ public class Lib {
 	public static String preGenMsg(String m) {
 		String rawmsg = m;
 		String message = m;
-		Bukkit.broadcastMessage(rawmsg);
 		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
 			String colorcodes = CM.colorcodes;
@@ -50,7 +50,6 @@ public class Lib {
 				int randint = Utils.randInt(0, colorcodes.length() - 1);
 				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
-				Bukkit.broadcastMessage(message);
 				if (!CM.repeatrdmcolors) {
 					StringBuilder sb = new StringBuilder(colorcodes);
 					sb.deleteCharAt(randint);

