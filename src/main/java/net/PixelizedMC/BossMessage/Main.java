@@ -38,6 +38,7 @@ public class Main extends JavaPlugin implements Listener {
         	System.out.println(ChatColor.DARK_RED + "BOSSMESSAGE IS NOW BEING DISABLED!!!");
         	plm.disablePlugin(this);
         	scr.cancelAllTasks();
+        	return;
         }
         
         //config

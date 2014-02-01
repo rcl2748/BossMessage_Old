@@ -42,21 +42,22 @@ public class Lib {
 	public static String preGenMsg(String m) {
 		String rawmsg = m;
 		String message = m;
-		
-/*		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
+		Bukkit.broadcastMessage(rawmsg);
+		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
 			String colorcodes = CM.colorcodes;
 			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 				int randint = Utils.randInt(0, colorcodes.length() - 1);
 				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
+				Bukkit.broadcastMessage(message);
 				if (!CM.repeatrdmcolors) {
 					StringBuilder sb = new StringBuilder(colorcodes);
 					sb.deleteCharAt(randint);
 					colorcodes = sb.toString();
 				}
 			}
-		}*/
+		}
 		if (rawmsg.toLowerCase().contains("%rdm_player%".toLowerCase())) {
 			List<String> players = getRdmPlayers();
 			int randint = Utils.randInt(0, players.size() - 1);
@@ -65,9 +66,11 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%online_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length));
 		}
-
 		if (rawmsg.toLowerCase().contains("%max_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
+		}
+		if (rawmsg.toLowerCase().contains("%server_name%".toLowerCase())) {
+			message = message.replaceAll("(?i)%server_name%", Bukkit.getServerName());
 		}
 		
 		return message;
@@ -94,10 +97,10 @@ public class Lib {
 		if (msg.get(0).toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", p);
 		}
-		if (msg.get(0).toLowerCase().contains("%rdm_color%".toLowerCase())) {
+		if (msg.get(0).toLowerCase().contains("%rdms_color%".toLowerCase())) {
 			String colorcode;
 			String colorcodes = CM.colorcodes;
-			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
+			while (message.toLowerCase().contains("%rdms_color%".toLowerCase())) {
 				int randint = Utils.randInt(0, colorcodes.length() - 1);
 				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
