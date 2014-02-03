@@ -17,6 +17,7 @@ public class CM {
     public static boolean enabled;
     public static boolean random;
     public static boolean repeatrdmcolors;
+    public static boolean repeatrdmplayers;
     public static String colorcodes;
     public static List<List<String>> messages;
     public static List<List<String>> rawmessages;
@@ -34,6 +35,7 @@ public class CM {
         config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
         config.addDefault("BossMessage.Whitelist", false);
         config.addDefault("BossMessage.RepeatRandomColors", true);
+        config.addDefault("BossMessage.RepeatRandomPlayers", true);
         
         List<List<String>> exampleList = new ArrayList<List<String>>();
         
@@ -82,6 +84,7 @@ public class CM {
 	public static void readConfig() {
         random = config.getBoolean("BossMessage.Random");
         repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
+        repeatrdmplayers = config.getBoolean("BossMessage.RepeatRandomPlayers");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
         colorcodes = config.getString("BossMessage.ColorCodes");
         rawmessages = (List<List<String>>) config.getList("BossMessage.Messages");
