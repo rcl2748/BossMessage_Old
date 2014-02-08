@@ -213,7 +213,9 @@ public class Commands {
 	    						CM.ignoreplayers.remove(sendername);
 	    						CM.config.set("BossMessage.IgnoredPlayers", CM.ignoreplayers);
 	    						CM.save();
-	    						BarAPI.setMessage(p, Main.current.get(0), Float.parseFloat(Main.current.get(1)));
+	    						if (Main.isset) {
+	    							BarAPI.setMessage(p, Main.current.get(0), Float.parseFloat(Main.current.get(1)));
+	    						}
 	        					sender.sendMessage(ChatColor.GREEN + "BossMessages were successfully enabled");
 	    					} else {
 	    						CM.ignoreplayers.add(sendername);

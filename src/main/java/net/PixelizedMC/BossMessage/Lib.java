@@ -17,13 +17,11 @@ public class Lib {
 		if (CM.messages.size() > 0) {
 			if (CM.random) {
 				int r = Utils.randInt(0, CM.messages.size() - 1);
-				List<String> message = CM.messages.get(r);
-				message.set(0, preGenMsg(message.get(0)));
+				List<String> message = preGenMsg(CM.colorMsg(CM.messages.get(r)));
 				return message;
 			} else {
 				List<String> message;
-				message = CM.colorMsg(CM.messages.get(count));
-				message.set(0, preGenMsg(message.get(0)));
+				message = preGenMsg(CM.colorMsg(CM.messages.get(count)));
 				count++;
 				if (count >= CM.messages.size()) {
 					resetCount();
@@ -40,9 +38,10 @@ public class Lib {
 		}
 	}
 	
-	public static String preGenMsg(String m) {
-		String rawmsg = m;
-		String message = m;
+	public static List<String> preGenMsg(List<String> m) {
+		//Generate string output message
+		String rawmsg = m.get(0);
+		String message = m.get(0);
 		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
 			String colorcodes = CM.colorcodes;
@@ -83,8 +82,18 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%server_name%".toLowerCase())) {
 			message = message.replaceAll("(?i)%server_name%", Bukkit.getServerName());
 		}
-		
-		return message;
+		m.set(0, message);
+		//Generate precentage
+		String rawpst = m.get(1);
+		String percentage = m.get(1);
+		if (rawpst.toLowerCase().contains("%fullness%".toLowerCase())) {
+			double onlineplayers = Bukkit.getOnlinePlayers().length;
+			double maxplayers = Bukkit.getMaxPlayers();
+			byte ratio = (byte) Math.round(onlineplayers/maxplayers*100);
+			percentage = percentage.replaceAll("(?i)%fullness%", Byte.toString(ratio));
+		}
+		m.set(1, percentage);
+		return m;
 	}
 
 	public static void setPlayerMsg(Player p, List<String> msg) {
@@ -104,9 +113,12 @@ public class Lib {
 	public static String generateMsg(String p, List<String> m) {
 		List<String> msg = m;
 		String message = msg.get(0);
-		
+
 		if (msg.get(0).toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", p);
+		}
+		if (msg.get(0).toLowerCase().contains("%world%".toLowerCase())) {
+			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(p).getWorld().getName());
 		}
 		
 		return message;
