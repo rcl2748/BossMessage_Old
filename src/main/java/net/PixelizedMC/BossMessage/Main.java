@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +39,12 @@ public class Main extends JavaPlugin implements Listener {
         	plm.disablePlugin(this);
         	scr.cancelAllTasks();
         	return;
+        }
+        try {
+        	Metrics metrics = new Metrics(this);
+        	metrics.start();
+        } catch (IOException e) {
+            System.out.println(ChatColor.RED + "BossMessage couldn't connect to Metrics :(");
         }
         
         //config

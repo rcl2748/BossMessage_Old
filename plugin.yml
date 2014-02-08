@@ -24,6 +24,7 @@ permissions:
       bossmessage.setcolors: true
       bossmessage.noperm: true
       bossmessage.exemptrdm: true
+      bossmessage.toggle: true
   bossmessage.*:
     default: op
     children:
@@ -41,6 +42,7 @@ permissions:
       bossmessage.setcolors: true
       bossmessage.noperm: true
       bossmessage.exemptrdm: true
+      bossmessage.toggle: true
   bossmessage.add:
     description: Permission to add messages
   bossmessage.addworld:
@@ -61,6 +63,9 @@ permissions:
     description: Permission to toggle the whitelist
   bossmessage.see:
     description: Permission to see messages
+    default: true
+  bossmessage.toggle:
+    description: Permission to toggle your message view
     default: true
   bossmessage.remove:
     description: Permission to remove messages

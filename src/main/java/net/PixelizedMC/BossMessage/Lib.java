@@ -21,8 +21,8 @@ public class Lib {
 				message.set(0, preGenMsg(message.get(0)));
 				return message;
 			} else {
-				List<String> message = CM.messages.get(count);
-				Bukkit.broadcastMessage(message.get(0));
+				List<String> message;
+				message = CM.colorMsg(CM.messages.get(count));
 				message.set(0, preGenMsg(message.get(0)));
 				count++;
 				if (count >= CM.messages.size()) {
@@ -58,6 +58,18 @@ public class Lib {
 			}
 		}
 		if (rawmsg.toLowerCase().contains("%rdm_player%".toLowerCase())) {
+			String playername;
+			List<String> playernames = getRdmPlayers();
+			while (message.toLowerCase().contains("%rdm_player%".toLowerCase())) {
+				int randint = Utils.randInt(0, playernames.size() - 1);
+				playername = playernames.get(randint);
+				message = message.replaceFirst("(?i)%rdm_player%", playername);
+				if (!CM.repeatrdmcolors) {
+					playernames.remove(randint);
+				}
+			}
+		}
+		if (rawmsg.toLowerCase().contains("%rdm_player%".toLowerCase())) {
 			List<String> players = getRdmPlayers();
 			int randint = Utils.randInt(0, players.size() - 1);
 			message = message.replaceAll("(?i)%rdm_player%", players.get(randint));
@@ -76,7 +88,7 @@ public class Lib {
 	}
 
 	public static void setPlayerMsg(Player p, List<String> msg) {
-		if (p.hasPermission("bossmessage.see")) {
+		if (p.hasPermission("bossmessage.see")&&!CM.ignoreplayers.contains(p.getName())) {
 			if (msg.size() == 4) {
 				if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
 					
@@ -95,20 +107,6 @@ public class Lib {
 		
 		if (msg.get(0).toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", p);
-		}
-		if (msg.get(0).toLowerCase().contains("%rdms_color%".toLowerCase())) {
-			String colorcode;
-			String colorcodes = CM.colorcodes;
-			while (message.toLowerCase().contains("%rdms_color%".toLowerCase())) {
-				int randint = Utils.randInt(0, colorcodes.length() - 1);
-				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
-				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
-				if (!CM.repeatrdmcolors) {
-					StringBuilder sb = new StringBuilder(colorcodes);
-					sb.deleteCharAt(randint);
-					colorcodes = sb.toString();
-				}
-			}
 		}
 		
 		return message;

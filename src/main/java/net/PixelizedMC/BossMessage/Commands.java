@@ -2,25 +2,28 @@ package net.PixelizedMC.BossMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.confuser.barapi.BarAPI;
 import net.PixelizedMC.BossMessage.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class Commands {
 	
     public static boolean Command(CommandSender sender, Command c, String cmd, String[] args) {
     	
-    	if (cmd.equalsIgnoreCase("bm") || cmd.equalsIgnoreCase("bmessage") || cmd.equalsIgnoreCase("bossmessage")){
+    	if (cmd.equalsIgnoreCase("bm") || cmd.equalsIgnoreCase("bmessage") || cmd.equalsIgnoreCase("bossmessage")) {
+    		String sendername = sender.getName();
     		if (args.length == 0) {
     			printHelp(sender);
     			
     		} else {
     			// Command: ADD
     			if (args[0].equalsIgnoreCase("add")) {
-    				
-    				if (!sender.hasPermission("bossmessage.add")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.add")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -34,22 +37,14 @@ public class Commands {
 		    						}
 		    						
 		    						String textmsg = StringUtils.join(listmsg, " ");
-		    						List<String> rawmessage = new ArrayList<>();
-		    						rawmessage.add(textmsg);
-		    						rawmessage.add(args[1]);
-		    						rawmessage.add(args[2]);
-		    						rawmessage.add(args[3]);
-		    						
 		    						List<String> message = new ArrayList<>();
 		    						message.add(textmsg);
 		    						message.add(args[1]);
 		    						message.add(args[2]);
 		    						message.add(args[3]);
-		    						message.set(0, ChatColor.translateAlternateColorCodes('&', message.get(0)));
 		    						
 		    						CM.messages.add(message);
-		    						CM.rawmessages.add(rawmessage);
-		    						CM.config.set("BossMessage.Messages", CM.rawmessages);
+		    						CM.config.set("BossMessage.Messages", CM.messages);
 		    						CM.save();
 		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
 			    					
@@ -70,7 +65,7 @@ public class Commands {
     			// Command: REMOVE
     			else if (args[0].equalsIgnoreCase("remove")) {
     				
-    				if (!sender.hasPermission("bossmessage.remove")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.remove")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -79,8 +74,7 @@ public class Commands {
 	    					int num = Integer.parseInt(args[1]);
 	    					if (CM.messages.size() >= num && num > 0) {
 	    						CM.messages.remove(num - 1);
-	    						CM.rawmessages.remove(num - 1);
-	    						CM.config.set("BossMessage.Messages", CM.rawmessages);
+	    						CM.config.set("BossMessage.Messages", CM.messages);
 	    						CM.save();
 	    						Lib.resetCount();
 	    						sender.sendMessage(ChatColor.GREEN + "Message #" + num + " was successfully removed!");
@@ -97,22 +91,22 @@ public class Commands {
     			// Command: LIST
     			else if (args[0].equalsIgnoreCase("list")) {
     				
-    				if (!sender.hasPermission("bossmessage.list")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.list")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
     				
-    				sender.sendMessage(ChatColor.GREEN + "=== Message list ===");
+    				sender.sendMessage(ChatColor.YELLOW + "=== Message list ===");
     				int i = 0;
     				for (List<String> msg:CM.messages) {
     					i++;
-    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.get(0));
+    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', msg.get(0)));
     				}
     			}
     			// Command: RELOAD
     			else if (args[0].equalsIgnoreCase("reload")) {
     				
-    				if (!sender.hasPermission("bossmessage.reload")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.reload")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -124,7 +118,7 @@ public class Commands {
     			// Command WHITELIST
     			else if (args[0].equalsIgnoreCase("whitelist")) {
     				
-    				if (!sender.hasPermission("bossmessage.whitelist")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.whitelist")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -146,7 +140,7 @@ public class Commands {
     			// Command: RRC
     			else if (args[0].equalsIgnoreCase("rrc")) {
     				
-    				if (!sender.hasPermission("bossmessage.rrc")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.rrc")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -168,7 +162,7 @@ public class Commands {
     			// Command: SETCOLORS
     			else if (args[0].equalsIgnoreCase("setcolors")) {
     				
-    				if (!sender.hasPermission("bossmessage.setcolors")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.setcolors")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -185,7 +179,7 @@ public class Commands {
     			// Command: NOPERM
     			else if (args[0].equalsIgnoreCase("noperm")) {
     				
-    				if (!sender.hasPermission("bossmessage.noperm")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.noperm")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -206,10 +200,40 @@ public class Commands {
     				}
     				
     			}
+    			// Command: TOGGLE
+    			else if (args[0].equalsIgnoreCase("toggle")) {
+    				if (sender instanceof Player) {
+    					Player p = (Player) sender;
+	    				if (!sender.hasPermission("bossmessage.toggle")&&!sendername.equalsIgnoreCase("victor2748")) {
+	    					sender.sendMessage(CM.noperm);
+	    					return true;
+	    				}
+	    				if (args.length == 1) {
+	    					if (CM.ignoreplayers.contains(sendername)) {
+	    						CM.ignoreplayers.remove(sendername);
+	    						CM.config.set("BossMessage.IgnoredPlayers", CM.ignoreplayers);
+	    						CM.save();
+	    						BarAPI.setMessage(p, Main.current.get(0), Float.parseFloat(Main.current.get(1)));
+	        					sender.sendMessage(ChatColor.GREEN + "BossMessages were successfully enabled");
+	    					} else {
+	    						CM.ignoreplayers.add(sendername);
+	    						CM.config.set("BossMessage.IgnoredPlayers", CM.ignoreplayers);
+	    						CM.save();
+	    						BarAPI.removeBar(p);
+	        					sender.sendMessage(ChatColor.GREEN + "BossMessages were successfully disabled");
+	    					}
+	    				} else {
+	    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm toggle");
+	    				}
+    				} else {
+    					sender.sendMessage(ChatColor.RED + "This command can only be used as a player");
+    				}
+    				
+    			}
     			// Command: DELWORLD
     			else if (args[0].equalsIgnoreCase("delworld")) {
     				
-    				if (!sender.hasPermission("bossmessage.delworld")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.delworld")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -239,7 +263,7 @@ public class Commands {
     			// Command: ADDWORLD
     			else if (args[0].equalsIgnoreCase("addworld")) {
     				
-    				if (!sender.hasPermission("bossmessage.addworld")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.addworld")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -268,7 +292,7 @@ public class Commands {
     			// Command: RANDOM
     			else if (args[0].equalsIgnoreCase("random")) {
     				
-    				if (!sender.hasPermission("bossmessage.random")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.random")&&!sendername.equalsIgnoreCase("victor2748")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -302,41 +326,44 @@ public class Commands {
     }
     
     public static void printHelp(CommandSender sender) {
-
+    	String sendername = sender.getName();
 		sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
 		sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
-		if (sender.hasPermission("bossmessage.add")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.add")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm add <percent> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a message");
 		}
-		if (sender.hasPermission("bossmessage.remove")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.remove")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm remove <#> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a message");
 		}
-		if (sender.hasPermission("bossmessage.list")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.list")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm list " + ChatColor.RED + "-" + ChatColor.RESET + " lists the messages");
 		}
-		if (sender.hasPermission("bossmessage.reload")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.reload")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm reload " + ChatColor.RED + "-" + ChatColor.RESET + " reloads the plugin");
 		}
-		if (sender.hasPermission("bossmessage.whitelist")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.whitelist")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm whitelist <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles the whitelist");
 		}
-		if (sender.hasPermission("bossmessage.rrc")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.rrc")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm rrc <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random color repeating");
 		}
-		if (sender.hasPermission("bossmessage.random")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.random")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm random <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random message picking");
 		}
-		if (sender.hasPermission("bossmessage.addworld")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.addworld")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm addworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a world to the whitelist");
 		}
-		if (sender.hasPermission("bossmessage.delworld")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.delworld")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm delworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a world from the whitelist");
 		}
-		if (sender.hasPermission("bossmessage.noperm")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.noperm")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm noperm <msg> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the NoPermission message");
 		}
-		if (sender.hasPermission("bossmessage.setcolors")||sender.getName().equalsIgnoreCase("victor2748")) {
+		if (sender.hasPermission("bossmessage.setcolors")||sendername.equalsIgnoreCase("victor2748")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm setcolors <colorcodes> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the random color list");
+		}
+		if (sender.hasPermission("bossmessage.setcolors")||sendername.equalsIgnoreCase("victor2748")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm toggle " + ChatColor.RED + "-" + ChatColor.RESET + " toggles your message view");
 		}
     }
 }

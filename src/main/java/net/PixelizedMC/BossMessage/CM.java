@@ -20,10 +20,10 @@ public class CM {
     public static boolean repeatrdmplayers;
     public static String colorcodes;
     public static List<List<String>> messages;
-    public static List<List<String>> rawmessages;
     public static String noperm;
     public static boolean whitelist;
     public static List<String> worlds;
+    public static List<String> ignoreplayers;
     //public String configVersion = Main.getInstance().getDescription().getVersion();
 
     public static void createConfig() {
@@ -75,6 +75,8 @@ public class CM {
         worldList.add("ExampleWorld");
         config.addDefault("BossMessage.WhitelistedWorlds", worldList);
         
+        config.addDefault("BossMessage.IgnoredPlayers", new ArrayList<>());
+        
         config.options().copyDefaults(true);
 
         save();
@@ -87,10 +89,10 @@ public class CM {
         repeatrdmplayers = config.getBoolean("BossMessage.RepeatRandomPlayers");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
         colorcodes = config.getString("BossMessage.ColorCodes");
-        rawmessages = (List<List<String>>) config.getList("BossMessage.Messages");
-        messages = colorMsgs();
+        messages = (List<List<String>>) config.getList("BossMessage.Messages");
         whitelist = config.getBoolean("BossMessage.Whitelist");
         worlds = config.getStringList("BossMessage.WhitelistedWorlds");
+        ignoreplayers = config.getStringList("BossMessage.IgnoredPlayers");
     }
 
     public static void save() {
@@ -101,17 +103,17 @@ public class CM {
         }
     }
     
-    @SuppressWarnings("unchecked")
-	public static List<List<String>> colorMsgs() {
-    	List<List<String>> output = new ArrayList<List<String>>();
-    	for (List<String> msg:(List<List<String>>) config.getList("BossMessage.Messages")) {
-    		List<String> a = new ArrayList<>();
-    		a.add(ChatColor.translateAlternateColorCodes('&', msg.get(0)));
-    		a.add(msg.get(1));
-    		a.add(msg.get(2));
-    		a.add(msg.get(3));
-    		output.add(a);
-    	}
+	public static List<String> colorMsg(List<String> msg) {
+    	List<String> output = new ArrayList<>();
+    	output.add(ChatColor.translateAlternateColorCodes('&', msg.get(0)));
+    	output.add(msg.get(1));
+    	output.add(msg.get(2));
+    	output.add(msg.get(3));
 		return output;
     }
+	
+	public static List<String> getMsg(int id) {
+		List<String> msg = messages.get(id);
+		return msg;
+	}
 }
