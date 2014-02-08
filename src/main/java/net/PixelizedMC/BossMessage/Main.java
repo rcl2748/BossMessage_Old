@@ -23,7 +23,7 @@ import java.util.List;
 public class Main extends JavaPlugin implements Listener {
 
     private static Main instance = null;
-    public static String PREFIX = "§f[§bBossMessage§f] ";
+    public static String prefix = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "]" + ChatColor.YELLOW + " ";
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
     public static List<String> current = new ArrayList<>();

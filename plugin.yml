@@ -25,6 +25,7 @@ permissions:
       bossmessage.noperm: true
       bossmessage.exemptrdm: true
       bossmessage.toggle: true
+      bossmessage.seeerrors: true
   bossmessage.*:
     default: op
     children:
@@ -43,8 +44,11 @@ permissions:
       bossmessage.noperm: true
       bossmessage.exemptrdm: true
       bossmessage.toggle: true
+      bossmessage.seeerrors: true
   bossmessage.add:
     description: Permission to add messages
+  bossmessage.seeerrors:
+    description: Permission to see broadcasted errors in chat
   bossmessage.addworld:
     description: Permission to add worlds to whitelist
   bossmessage.exemptrdm:

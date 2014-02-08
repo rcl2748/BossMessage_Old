@@ -3,7 +3,6 @@ package net.PixelizedMC.BossMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -99,29 +98,39 @@ public class Lib {
 	public static void setPlayerMsg(Player p, List<String> msg) {
 		if (p.hasPermission("bossmessage.see")&&!CM.ignoreplayers.contains(p.getName())) {
 			if (msg.size() == 4) {
-				if (msg.get(0) != null && NumberUtils.isNumber(msg.get(1))) {
-					
-					String message = generateMsg(p.getName(), msg);
+				List<String> message = generateMsg(p, msg);
+				try {
 					float percent = Float.parseFloat(msg.get(1));
-					
-					BarAPI.setMessage(p, message, percent);
-				}
+					BarAPI.setMessage(p, message.get(0), percent);
+		    	} catch(NumberFormatException e) { 
+		    		broadcastError("FAILED to parse message: output bossbar percent must be a number!");
+		    	}
 			}
 		}
 	}
 	
-	public static String generateMsg(String p, List<String> m) {
+	public static List<String> generateMsg(Player p, List<String> m) {
+		String playername = p.getName();
 		List<String> msg = m;
+		//Generate msg
 		String message = msg.get(0);
-
-		if (msg.get(0).toLowerCase().contains("%player%".toLowerCase())) {
-			message = message.replaceAll("(?i)%player%", p);
+		String rawmsg = msg.get(0);
+		if (rawmsg.toLowerCase().contains("%player%".toLowerCase())) {
+			message = message.replaceAll("(?i)%player%", playername);
 		}
-		if (msg.get(0).toLowerCase().contains("%world%".toLowerCase())) {
-			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(p).getWorld().getName());
+		if (rawmsg.toLowerCase().contains("%world%".toLowerCase())) {
+			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
 		}
+		msg.set(0, message);
+		//Generate pst
+		String percentage = msg.get(1);
+		String rawpst = msg.get(1);
+		if (rawpst.toLowerCase().contains("%health%".toLowerCase())) {
+			percentage = percentage.replaceAll("(?i)%health%", Double.toString(Math.round(p.getHealth()/p.getMaxHealth()*100)));
+		}
+		m.set(1, percentage);
 		
-		return message;
+		return msg;
 	}
 	
 	public static List<String> getRdmPlayers() {
@@ -159,5 +168,9 @@ public class Lib {
 	
 	public static void resetCount() {
 		count = 0;
+	}
+	
+	public static void broadcastError(String msg) {
+		Bukkit.broadcast(Main.prefix + msg, "bossmessage.seeerrors");
 	}
 }

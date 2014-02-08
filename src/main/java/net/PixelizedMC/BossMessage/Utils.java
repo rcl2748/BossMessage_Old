@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Utils {
 	public static boolean isInteger(String s) {
-    	try { 
+    	try {
         	Integer.parseInt(s); 
     	} catch(NumberFormatException e) { 
     		return false; 
