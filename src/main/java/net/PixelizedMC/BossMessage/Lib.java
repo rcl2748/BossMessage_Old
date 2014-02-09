@@ -83,15 +83,14 @@ public class Lib {
 		}
 		m.set(0, message);
 		//Generate precentage
-		String rawpst = m.get(1);
-		String percentage = m.get(1);
-		if (rawpst.toLowerCase().contains("%fullness%".toLowerCase())) {
+		String percent = m.get(1);
+		if (percent.equalsIgnoreCase("online")) {
 			double onlineplayers = Bukkit.getOnlinePlayers().length;
 			double maxplayers = Bukkit.getMaxPlayers();
 			byte ratio = (byte) Math.round(onlineplayers/maxplayers*100);
-			percentage = percentage.replaceAll("(?i)%fullness%", Byte.toString(ratio));
+			percent = percent.replaceAll("(?i)online", Byte.toString(ratio));
 		}
-		m.set(1, percentage);
+		m.set(1, percent);
 		return m;
 	}
 
@@ -123,12 +122,11 @@ public class Lib {
 		}
 		msg.set(0, message);
 		//Generate pst
-		String percentage = msg.get(1);
-		String rawpst = msg.get(1);
-		if (rawpst.toLowerCase().contains("%health%".toLowerCase())) {
-			percentage = percentage.replaceAll("(?i)%health%", Double.toString(Math.round(p.getHealth()/p.getMaxHealth()*100)));
+		String percent = msg.get(1);
+		if (percent.equalsIgnoreCase("health")) {
+			percent = percent.replaceAll("(?i)health", Double.toString(Math.round(p.getHealth()/p.getMaxHealth()*100)));
 		}
-		m.set(1, percentage);
+		m.set(1, percent);
 		
 		return msg;
 	}

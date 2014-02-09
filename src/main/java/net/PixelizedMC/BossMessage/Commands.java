@@ -28,30 +28,34 @@ public class Commands {
     					return true;
     				}
     				if (args.length > 4) {
-						if (Utils.isInteger(args[2])) {
-							if (Utils.isInteger(args[3])) {
-	    						List<String> listmsg = new ArrayList<>();
-	    						for (int i = 4;i < args.length;i++) {
-	    							listmsg.add(args[i]);
-	    						}
-	    						
-	    						String textmsg = StringUtils.join(listmsg, " ");
-	    						List<String> message = new ArrayList<>();
-	    						message.add(textmsg);
-	    						message.add(args[1]);
-	    						message.add(args[2]);
-	    						message.add(args[3]);
-	    						
-	    						CM.messages.add(message);
-	    						CM.config.set("BossMessage.Messages", CM.messages);
-	    						CM.save();
-	    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
-		    					
+						if (Utils.isInteger(args[1])||args[1].equalsIgnoreCase("health")||args[1].equalsIgnoreCase("online")) {
+							if (Utils.isInteger(args[2])) {
+								if (Utils.isInteger(args[3])) {
+		    						List<String> listmsg = new ArrayList<>();
+		    						for (int i = 4;i < args.length;i++) {
+		    							listmsg.add(args[i]);
+		    						}
+		    						
+		    						String textmsg = StringUtils.join(listmsg, " ");
+		    						List<String> message = new ArrayList<>();
+		    						message.add(textmsg);
+		    						message.add(args[1]);
+		    						message.add(args[2]);
+		    						message.add(args[3]);
+		    						
+		    						CM.messages.add(message);
+		    						CM.config.set("BossMessage.Messages", CM.messages);
+		    						CM.save();
+		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
+			    					
+								} else {
+									sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
+								}
 							} else {
-								sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
+								sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
 							}
 						} else {
-							sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
+							sender.sendMessage(ChatColor.RED + args[1] + ChatColor.DARK_RED + " is not a valid number or a correct tag!");
 						}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <percent> <show> <interval> <message>");
