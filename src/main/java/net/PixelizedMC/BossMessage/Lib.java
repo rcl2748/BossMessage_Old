@@ -95,15 +95,26 @@ public class Lib {
 	}
 
 	public static void setPlayerMsg(Player p, List<String> msg) {
+		//Do a check
+		if (Utils.isInteger(msg.get(1))) {
+			float pst = Float.parseFloat(msg.get(1));
+			if (pst>100||pst<0) {
+				broadcastError("FAILED to parse message: output bossbar percent is OUT OF RANGE!");
+				return;
+			}
+		}
 		if (p.hasPermission("bossmessage.see")&&!CM.ignoreplayers.contains(p.getName())) {
 			if (msg.size() == 4) {
 				List<String> message = generateMsg(p, msg);
-				try {
-					float percent = Float.parseFloat(msg.get(1));
-					BarAPI.setMessage(p, message.get(0), percent);
-		    	} catch(NumberFormatException e) { 
-		    		broadcastError("FAILED to parse message: output bossbar percent must be a number!");
-		    	}
+				if (!Utils.isInteger(msg.get(1))) {
+		    		broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
+		    		return;
+				}
+				if (msg.get(0).length() > 64) {
+		    		broadcastError("FAILED to parse message: output bossbar message length is OUT OF RANGE!");
+				}
+				float percent = Float.parseFloat(msg.get(1));
+				BarAPI.setMessage(p, message.get(0), percent);
 			}
 		}
 	}

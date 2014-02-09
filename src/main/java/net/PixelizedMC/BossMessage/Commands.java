@@ -31,12 +31,22 @@ public class Commands {
 						if (Utils.isInteger(args[1])||args[1].equalsIgnoreCase("health")||args[1].equalsIgnoreCase("online")) {
 							if (Utils.isInteger(args[2])) {
 								if (Utils.isInteger(args[3])) {
+									if (Utils.isInteger(args[1])) {
+										float pst = Float.parseFloat(args[1]);
+										if (pst>100||pst<0) {
+											sender.sendMessage(ChatColor.RED + "Percentage must be from 0 to 100!");
+										}
+									}
 		    						List<String> listmsg = new ArrayList<>();
 		    						for (int i = 4;i < args.length;i++) {
 		    							listmsg.add(args[i]);
 		    						}
 		    						
 		    						String textmsg = StringUtils.join(listmsg, " ");
+		    						if (textmsg.length() > 64) {
+		    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
+		    	    					return true;
+		    						}
 		    						List<String> message = new ArrayList<>();
 		    						message.add(textmsg);
 		    						message.add(args[1]);
@@ -47,7 +57,7 @@ public class Commands {
 		    						CM.config.set("BossMessage.Messages", CM.messages);
 		    						CM.save();
 		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
-			    					
+			    				
 								} else {
 									sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
 								}
