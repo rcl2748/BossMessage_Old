@@ -20,6 +20,7 @@ public class CM {
     public static boolean repeatrdmplayers;
     public static String colorcodes;
     public static List<List<String>> messages;
+    public static List<List<String>> rawmessages;
     public static String noperm;
     public static boolean whitelist;
     public static List<String> worlds;
@@ -111,9 +112,4 @@ public class CM {
     	output.add(msg.get(3));
 		return output;
     }
-	
-	public static List<String> getMsg(int id) {
-		List<String> msg = messages.get(id);
-		return msg;
-	}
 }

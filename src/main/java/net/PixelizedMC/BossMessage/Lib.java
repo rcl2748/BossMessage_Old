@@ -67,11 +67,6 @@ public class Lib {
 				}
 			}
 		}
-		if (rawmsg.toLowerCase().contains("%rdm_player%".toLowerCase())) {
-			List<String> players = getRdmPlayers();
-			int randint = Utils.randInt(0, players.size() - 1);
-			message = message.replaceAll("(?i)%rdm_player%", players.get(randint));
-		}
 		if (rawmsg.toLowerCase().contains("%online_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length));
 		}
@@ -87,8 +82,8 @@ public class Lib {
 		if (percent.equalsIgnoreCase("online")) {
 			double onlineplayers = Bukkit.getOnlinePlayers().length;
 			double maxplayers = Bukkit.getMaxPlayers();
-			byte ratio = (byte) Math.round(onlineplayers/maxplayers*100);
-			percent = percent.replaceAll("(?i)online", Byte.toString(ratio));
+			int ratio = (int) Math.round(onlineplayers/maxplayers*100);
+			percent = percent.replaceAll("(?i)online", Integer.toString(ratio));
 		}
 		m.set(1, percent);
 		return m;
@@ -106,15 +101,21 @@ public class Lib {
 		if (p.hasPermission("bossmessage.see")&&!CM.ignoreplayers.contains(p.getName())) {
 			if (msg.size() == 4) {
 				List<String> message = generateMsg(p, msg);
-				if (!Utils.isInteger(msg.get(1))) {
+				if (!Utils.isInteger(msg.get(1))&&!msg.get(1).equalsIgnoreCase("auto")) {
 		    		broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
 		    		return;
 				}
 				if (msg.get(0).length() > 64) {
 		    		broadcastError("FAILED to parse message: output bossbar message length is OUT OF RANGE!");
+		    		return;
 				}
-				float percent = Float.parseFloat(msg.get(1));
-				BarAPI.setMessage(p, message.get(0), percent);
+				if (msg.get(1).equalsIgnoreCase("auto")) {
+					int time = Integer.parseInt(msg.get(2));
+					BarAPI.setMessage(p, message.get(0), time/20);
+				} else {
+					float percent = Float.parseFloat(msg.get(1));
+					BarAPI.setMessage(p, message.get(0), percent);
+				}
 			}
 		}
 	}
@@ -134,10 +135,10 @@ public class Lib {
 		msg.set(0, message);
 		//Generate pst
 		String percent = msg.get(1);
-		if (percent.equalsIgnoreCase("health")) {
-			percent = percent.replaceAll("(?i)health", Double.toString(Math.round(p.getHealth()/p.getMaxHealth()*100)));
+		if (rawmsg.toLowerCase().contains("health".toLowerCase())) {
+			percent = percent.replaceAll("(?i)health", Integer.toString((int) Math.round(p.getHealth()/p.getMaxHealth()*100)));
 		}
-		m.set(1, percent);
+		msg.set(1, percent);
 		
 		return msg;
 	}
@@ -163,14 +164,14 @@ public class Lib {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
 					for (Player p:players) {
-						setPlayerMsg(p, msg);
+						setPlayerMsg(p, cloneMsg(msg));
 					}
 					players.clear();
 				}
 			}
 		} else {
 			for (Player p:Bukkit.getOnlinePlayers()) {
-				setPlayerMsg(p, msg);
+				setPlayerMsg(p, cloneMsg(msg));
 			}
 		}
 	}
@@ -181,5 +182,8 @@ public class Lib {
 	
 	public static void broadcastError(String msg) {
 		Bukkit.broadcast(Main.prefix + msg, "bossmessage.seeerrors");
+	}
+	public static List<String> cloneMsg(List<String> msg) {
+		return new ArrayList<String>(msg);
 	}
 }
