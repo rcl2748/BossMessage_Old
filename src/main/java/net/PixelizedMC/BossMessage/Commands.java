@@ -311,6 +311,24 @@ public class Commands {
     				}
     				
     			}
+    			else if (args[0].equalsIgnoreCase("reload")) {
+    				
+    				if (!sender.hasPermission("bossmessage.reload")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length > 1) {
+    					Main.scr.cancelAllTasks();
+    					CM.createConfig();
+    					CM.readConfig();
+    					Lib.resetCount();
+    					Main.getInstance().startProcess();
+    					sender.sendMessage(ChatColor.GREEN + "BossMessage was successfully reloaded");
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm reload");
+    				}
+    				
+    			}
     			// Command: HELP
     			else if (args[0].equalsIgnoreCase("help")) {
     				
@@ -329,7 +347,7 @@ public class Commands {
     	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
 		sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
 		if (sender.hasPermission("bossmessage.add")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm add <percent> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a message");
+			sender.sendMessage(ChatColor.YELLOW + "/bm add <percent> <show> <interval> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a message");
 		}
 		if (sender.hasPermission("bossmessage.remove")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm remove <#> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a message");

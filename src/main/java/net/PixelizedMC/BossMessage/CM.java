@@ -25,12 +25,8 @@ public class CM {
     public static boolean whitelist;
     public static List<String> worlds;
     public static List<String> ignoreplayers;
-    //public String configVersion = Main.getInstance().getDescription().getVersion();
-
+    
     public static void createConfig() {
-        //if (newConfig() == false)
-        //    return;
-    	
         config.addDefault("BossMessage.Random", false);
         config.addDefault("BossMessage.ColorCodes", "1234567890abcdef");
         config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
@@ -79,7 +75,7 @@ public class CM {
         config.addDefault("BossMessage.IgnoredPlayers", new ArrayList<>());
         
         config.options().copyDefaults(true);
-
+        
         save();
     }
     
@@ -95,7 +91,7 @@ public class CM {
         worlds = config.getStringList("BossMessage.WhitelistedWorlds");
         ignoreplayers = config.getStringList("BossMessage.IgnoredPlayers");
     }
-
+	
     public static void save() {
         try {
             config.save(path);
