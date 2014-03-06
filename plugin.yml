@@ -1,7 +1,7 @@
 name: BossMessage
 version: 1.6
 authors: [victor2748, michidk]
-main: net.PixelizedMC.BossMessage.Main
+main: net.pixelizedmc.bossmessage.Main
 depend: [BarAPI]
 commands:
   BossMessage:
@@ -26,6 +26,9 @@ permissions:
       bossmessage.exemptrdm: true
       bossmessage.toggle: true
       bossmessage.seeerrors: true
+      bossmessage.update.perform: true
+      bossmessage.update.check: true
+      bossmessage.update.notify: true
   bossmessage.*:
     default: op
     children:
@@ -45,6 +48,9 @@ permissions:
       bossmessage.exemptrdm: true
       bossmessage.toggle: true
       bossmessage.seeerrors: true
+      bossmessage.update.perform: true
+      bossmessage.update.check: true
+      bossmessage.update.notify: true
   bossmessage.add:
     description: Permission to add messages
   bossmessage.seeerrors:
@@ -77,3 +83,9 @@ permissions:
     description: Permission to list messages
   bossmessage.reload:
     description: Permission to reload the plugin
+  bossmessage.update.check:
+    description: Permission to check for updates
+  bossmessage.update.perform:
+    description: Permission to update the plugin
+  bossmessage.update.notify:
+    description: Permission to see available updates

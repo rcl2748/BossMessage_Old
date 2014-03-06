@@ -1,10 +1,11 @@
-package net.PixelizedMC.BossMessage;
+package net.pixelizedmc.bossmessage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import me.confuser.barapi.BarAPI;
 
@@ -79,7 +80,7 @@ public class Lib {
 		m.set(0, message);
 		//Generate precentage
 		String percent = m.get(1);
-		if (percent.equalsIgnoreCase("online")) {
+		if (rawmsg.toLowerCase().contains("online_pct".toLowerCase())) {
 			double onlineplayers = Bukkit.getOnlinePlayers().length;
 			double maxplayers = Bukkit.getMaxPlayers();
 			int ratio = (int) Math.round(onlineplayers/maxplayers*100);
@@ -132,6 +133,13 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%world%".toLowerCase())) {
 			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
 		}
+		if (rawmsg.toLowerCase().contains("%money%".toLowerCase())) {
+			if (Main.useEconomy) {
+				message = message.replaceAll("(?i)%money%", Double.toString(Main.econ.getBalance(p.getName())));
+			} else {
+				message = "§cVault economy is not enabled!";
+			}
+		}
 		msg.set(0, message);
 		//Generate pst
 		String percent = msg.get(1);
@@ -179,9 +187,15 @@ public class Lib {
 	public static void resetCount() {
 		count = 0;
 	}
-	
+
 	public static void broadcastError(String msg) {
-		Bukkit.broadcast(Main.prefix + msg, "bossmessage.seeerrors");
+		Bukkit.broadcast(Main.prefix_error + msg, "bossmessage.seeerrors");
+	}
+	public static void sendError(CommandSender p, String msg) {
+		p.sendMessage(Main.prefix_error + msg);
+	}
+	public static void sendMessage(CommandSender p, String msg) {
+		p.sendMessage(Main.prefix_normal + msg);
 	}
 	public static List<String> cloneMsg(List<String> msg) {
 		return new ArrayList<String>(msg);

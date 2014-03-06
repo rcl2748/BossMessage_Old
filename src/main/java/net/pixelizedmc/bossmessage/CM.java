@@ -1,4 +1,4 @@
-package net.PixelizedMC.BossMessage;
+package net.pixelizedmc.bossmessage;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CM {
-
+	
     final static String path = "plugins/BossMessage/config.yml";
     static File file = new File(path);
     static FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-
+    
     public static boolean enabled;
     public static boolean random;
     public static boolean repeatrdmcolors;

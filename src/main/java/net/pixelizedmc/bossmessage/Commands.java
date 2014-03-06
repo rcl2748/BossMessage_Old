@@ -1,10 +1,8 @@
-package net.PixelizedMC.BossMessage;
+package net.pixelizedmc.bossmessage;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import me.confuser.barapi.BarAPI;
-import net.PixelizedMC.BossMessage.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -311,21 +309,66 @@ public class Commands {
     				}
     				
     			}
+    			//Reload
     			else if (args[0].equalsIgnoreCase("reload")) {
     				
     				if (!sender.hasPermission("bossmessage.reload")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				if (args.length > 1) {
+    				if (args.length <= 1) {
     					Main.scr.cancelAllTasks();
-    					CM.createConfig();
     					CM.readConfig();
     					Lib.resetCount();
     					Main.getInstance().startProcess();
     					sender.sendMessage(ChatColor.GREEN + "BossMessage was successfully reloaded");
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm reload");
+    				}
+    				
+    			}
+    			//Update
+    			else if (args[0].equalsIgnoreCase("update")) {
+    				
+    				if (!sender.hasPermission("bossmessage.update.perform")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length <= 1) {
+    					if (Main.updater_available) {
+    						new Updater(Main.getInstance(), 64888, Main.file, Updater.UpdateType.NO_VERSION_CHECK, true);
+    						Lib.sendMessage(sender, "BossMessage is updated! It will be working upon restart!");
+    					} else {
+    						Lib.sendError(sender, "No update currently available!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm update");
+    				}
+    				
+    			}
+    			//Check
+    			else if (args[0].equalsIgnoreCase("check")) {
+    				
+    				if (!sender.hasPermission("bossmessage.update.check")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length <= 1) {
+    					if (Main.updater_available) {
+    						Main.checkUpdate();
+    						if (Main.updater_available) {
+    				        	Lib.sendMessage(sender, "A new update (" + Main.updater_name + ") is available!");
+    				        	Lib.sendMessage(sender, "Please type /bm update to update it automatically, or click the link below do download it manually:");
+    				        	Lib.sendMessage(sender, Main.updater_link);
+    						} else {
+    				        	Lib.sendMessage(sender, "Your BossMessage is up to date!");
+    						}
+    					} else {
+    						Lib.sendError(sender, "No update currently available!");
+    					}
+    					sender.sendMessage(ChatColor.GREEN + "BossMessage was successfully reloaded");
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm check");
     				}
     				
     			}
@@ -378,6 +421,12 @@ public class Commands {
 		}
 		if (sender.hasPermission("bossmessage.setcolors")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm toggle " + ChatColor.RED + "-" + ChatColor.RESET + " toggles your message view");
+		}
+		if (sender.hasPermission("bossmessage.update.perform")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm update " + ChatColor.RED + "-" + ChatColor.RESET + " updates BossMessage to the latest version");
+		}
+		if (sender.hasPermission("bossmessage.update.check")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm check " + ChatColor.RED + "-" + ChatColor.RESET + " checks for updates");
 		}
     }
 }
