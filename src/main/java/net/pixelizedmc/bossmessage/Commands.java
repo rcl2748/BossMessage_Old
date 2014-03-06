@@ -372,6 +372,25 @@ public class Commands {
     				}
     				
     			}
+    			//Info
+    			else if (args[0].equalsIgnoreCase("info")) {
+    				
+    				if (!sender.hasPermission("bossmessage.info")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length <= 1) {
+				    	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessafe by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
+				    	sender.sendMessage(ChatColor.YELLOW + "Website: " + ChatColor.GREEN + "http://pixelizedmc.net");
+				    	sender.sendMessage(ChatColor.YELLOW + "Official server: " + ChatColor.GREEN + "play.pixelizedmc.net");
+				    	sender.sendMessage(ChatColor.YELLOW + "Author: " + ChatColor.GREEN + "Victor2748");
+				    	sender.sendMessage(ChatColor.YELLOW + "Version: " + ChatColor.GREEN + Main.version);
+				    	sender.sendMessage(ChatColor.YELLOW + "BukkitDev page: " + ChatColor.GREEN + "http://dev.bukkit.org/bukkit-plugins/bossmessage/");
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm info");
+    				}
+    				
+    			}
     			// Command: HELP
     			else if (args[0].equalsIgnoreCase("help")) {
     				

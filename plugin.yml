@@ -29,6 +29,7 @@ permissions:
       bossmessage.update.perform: true
       bossmessage.update.check: true
       bossmessage.update.notify: true
+      bossmessage.info: true
   bossmessage.*:
     default: op
     children:
@@ -51,6 +52,7 @@ permissions:
       bossmessage.update.perform: true
       bossmessage.update.check: true
       bossmessage.update.notify: true
+      bossmessage.info: true
   bossmessage.add:
     description: Permission to add messages
   bossmessage.seeerrors:
@@ -71,6 +73,9 @@ permissions:
     description: Permission to toggle random color repeating
   bossmessage.whitelist:
     description: Permission to toggle the whitelist
+  bossmessage.info:
+    description: Permission to see the info
+    default: true
   bossmessage.see:
     description: Permission to see messages
     default: true
