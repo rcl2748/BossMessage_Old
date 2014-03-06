@@ -318,7 +318,7 @@ public class Commands {
     				}
     				if (args.length <= 1) {
     					Main.scr.cancelAllTasks();
-    					CM.readConfig();
+    					CM.reloadConfig();
     					Lib.resetCount();
     					Main.getInstance().startProcess();
     					sender.sendMessage(ChatColor.GREEN + "BossMessage was successfully reloaded");
@@ -446,6 +446,9 @@ public class Commands {
 		}
 		if (sender.hasPermission("bossmessage.update.check")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm check " + ChatColor.RED + "-" + ChatColor.RESET + " checks for updates");
+		}
+		if (sender.hasPermission("bossmessage.info")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");
 		}
     }
 }

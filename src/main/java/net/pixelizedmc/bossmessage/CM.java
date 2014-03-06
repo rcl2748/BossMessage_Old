@@ -108,4 +108,9 @@ public class CM {
     	output.add(msg.get(3));
 		return output;
     }
+	
+	public static void reloadConfig() {
+	    config = YamlConfiguration.loadConfiguration(file);
+	    readConfig();
+	}
 }
