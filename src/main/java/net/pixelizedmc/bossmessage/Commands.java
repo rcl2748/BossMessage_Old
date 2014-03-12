@@ -3,15 +3,18 @@ package net.pixelizedmc.bossmessage;
 import java.util.ArrayList;
 import java.util.List;
 import me.confuser.barapi.BarAPI;
+import net.pixelizedmc.bossmessage.utils.Message;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class Commands {
+public class Commands implements CommandExecutor {
 	
-    public static boolean Command(CommandSender sender, Command c, String cmd, String[] args) {
+    public boolean onCommand(CommandSender sender, Command c, String cmd, String[] args) {
     	
     	if (cmd.equalsIgnoreCase("bm") || cmd.equalsIgnoreCase("bmessage") || cmd.equalsIgnoreCase("bossmessage")) {
     		String sendername = sender.getName();
@@ -26,49 +29,40 @@ public class Commands {
     					return true;
     				}
     				if (args.length > 4) {
-						if (Utils.isInteger(args[1])||args[1].equalsIgnoreCase("health")||args[1].equalsIgnoreCase("online")||args[1].equalsIgnoreCase("auto")) {
-							if (Utils.isInteger(args[2])) {
-								if (Utils.isInteger(args[3])) {
-									if (Utils.isInteger(args[1])) {
-										float pst = Float.parseFloat(args[1]);
-										if (pst>100||pst<0) {
-											sender.sendMessage(ChatColor.RED + "Percentage must be from 0 to 100!");
-										}
-									}
-		    						List<String> listmsg = new ArrayList<>();
-		    						for (int i = 4;i < args.length;i++) {
-		    							listmsg.add(args[i]);
-		    						}
-		    						
-		    						String textmsg = StringUtils.join(listmsg, " ");
-		    						if (textmsg.length() > 64) {
-		    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
-		    	    					return true;
-		    						}
-		    						List<String> message = new ArrayList<>();
-		    						message.add(textmsg);
-		    						message.add(args[1]);
-		    						message.add(args[2]);
-		    						message.add(args[3]);
-		    						
-		    						CM.messages.add(message);
-		    						CM.config.set("BossMessage.Messages", CM.messages);
-		    						CM.save();
-		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
-			    				
-								} else {
-									sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
-								}
+						if (Utils.isInteger(args[2])) {
+							if (Utils.isInteger(args[3])) {
+	    						List<String> listmsg = new ArrayList<>();
+	    						for (int i = 4;i < args.length;i++) {
+	    							listmsg.add(args[i]);
+	    						}
+	    						
+	    						String textmsg = StringUtils.join(listmsg, " ");
+	    						if (textmsg.length() > 64) {
+	    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
+	    	    					return true;
+	    						}
+	    						boolean calcpct = false;
+	    						if (args[1].contains("+")||args[1].contains("-")||args[1].contains("*")||args[1].contains("/")||args[1].contains("(")||args[1].contains(")")) {
+	    							calcpct = true;
+	    						}
+	    						Message message = new Message(textmsg, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), calcpct);
+
+	    						CM.rawmessages.add(message);
+	    						CM.messages.add(CM.colorMsg(message));
+	    						CM.writeMessages(CM.rawmessages);
+	    						CM.save();
+	    						Main.numberOfMessages++;
+	    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
+		    				
 							} else {
-								sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
+								sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
 							}
 						} else {
-							sender.sendMessage(ChatColor.RED + args[1] + ChatColor.DARK_RED + " is not a valid number or a correct tag!");
+							sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
 						}
-    				} else {
-    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <percent> <show> <interval> <message>");
-    				}
-    				
+					} else {
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <precent> <show> <interval> <message>");
+					}
     			}
     			// Command: REMOVE
     			else if (args[0].equalsIgnoreCase("remove")) {
@@ -81,8 +75,9 @@ public class Commands {
 	    				if (Utils.isInteger(args[1])) {
 	    					int num = Integer.parseInt(args[1]);
 	    					if (CM.messages.size() >= num && num > 0) {
+	    						CM.rawmessages.remove(num - 1);
 	    						CM.messages.remove(num - 1);
-	    						CM.config.set("BossMessage.Messages", CM.messages);
+	    						CM.writeMessages(CM.rawmessages);
 	    						CM.save();
 	    						Lib.resetCount();
 	    						sender.sendMessage(ChatColor.GREEN + "Message #" + num + " was successfully removed!");
@@ -106,9 +101,9 @@ public class Commands {
     				
     				sender.sendMessage(ChatColor.YELLOW + "=== Message list ===");
     				int i = 0;
-    				for (List<String> msg:CM.messages) {
+    				for (Message msg:CM.messages) {
     					i++;
-    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', msg.get(0)));
+    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.msg);
     				}
     			}
     			// Command WHITELIST

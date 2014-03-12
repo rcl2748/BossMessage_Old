@@ -2,10 +2,9 @@ package net.pixelizedmc.bossmessage;
 
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
+import net.pixelizedmc.bossmessage.utils.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,12 +15,15 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.kitteh.vanish.VanishManager;
+import org.kitteh.vanish.VanishPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 
 public class Main extends JavaPlugin implements Listener {
@@ -29,10 +31,13 @@ public class Main extends JavaPlugin implements Listener {
     private static Main instance = null;
     public static String prefix_error = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "]" + ChatColor.GOLD + " ";
     public static String prefix_normal = ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "BossMessage" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " ";
+    public static String prefix_console = "[BossMessage] ";
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
-    public static List<String> current = new ArrayList<>();
+    public static Message current;
     public static Economy econ;
+    public static VanishManager vm;
+    public static VanishPlugin vp = (VanishPlugin) Bukkit.getPluginManager().getPlugin("VanishNoPacket");
     public static boolean useEconomy = false;
     public static boolean isset = false;
     public static boolean updater_available;
@@ -43,20 +48,29 @@ public class Main extends JavaPlugin implements Listener {
     public static String updater_link;
     public static int show;
     public static int interval;
+    public static int numberOfMessages;
     public static Logger logger = Bukkit.getLogger();
+    public static ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
     
     public void onEnable() {
         instance = this;
         version = getDescription().getVersion();
         file = getFile();
+        
         //Hook in BarAPI
         if (plm.getPlugin("BarAPI") == null) {
         	logger.severe("THIS PLUGIN REQUIRES BARAPI TO BE INSTALLED!!!");
         	logger.severe("BOSSMESSAGE IS NOW BEING DISABLED!!!");
         	plm.disablePlugin(this);
-        	scr.cancelAllTasks();
         	return;
         }
+        
+        //config
+        CM.createConfig();
+        CM.readConfig();
+        
+        //Register commands
+        getCommand("bm").setExecutor(new Commands());
         
         //Hook in Metrics
         try {
@@ -74,12 +88,19 @@ public class Main extends JavaPlugin implements Listener {
         	logger.warning("Failed to hook in Vault's Economy! Is vault even installed?");
         }
         
+        //Hoock in VNP
+        if (CM.useVNP) {
+	        if (Bukkit.getPluginManager().getPlugin("VanishNoPacket") != null) {
+	        	 vm = new VanishManager((VanishPlugin) Bukkit.getPluginManager().getPlugin("VanishNoPacket"));
+	         	logger.info("Successfully hooked in to VanishNoPacket!");
+	        } else {
+	        	CM.useVNP = false;
+	        	logger.warning("ATTENTION!!! VanishNoPacket is NOT installed!");
+	        }
+        }
+        
         //Updater
         checkUpdate();
-        
-        //config
-        CM.createConfig();
-        CM.readConfig();
         
         Bukkit.getPluginManager().registerEvents(this, this);
         //enabled
@@ -87,13 +108,13 @@ public class Main extends JavaPlugin implements Listener {
     }
     
     public void onDisable() {
-
+    	
     }
     
     public void startProcess() {
         current = Lib.getMessage();
-        show = Integer.parseInt(current.get(2));
-        interval = Integer.parseInt(current.get(3));
+        show = current.show;
+        interval = current.interval;
         Runnable run = new Runnable() {
     		@Override
 	        public void run() {
@@ -116,9 +137,9 @@ public class Main extends JavaPlugin implements Listener {
         };
         scr.runTask(this, run);
     }
-    public boolean onCommand(CommandSender a, Command b, String c, String[] d) {
+/*    public boolean onCommand(CommandSender a, Command b, String c, String[] d) {
     	return Commands.Command(a, b, c, d);
-    }
+    }*/
     
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent e) {

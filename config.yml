@@ -1,0 +1,15 @@
+BossMessage:
+  Mode: automessage
+  Random: false
+  ColorCodes: 1234567890abcdef
+  NoPermission: '&cNo Permission!'
+  Whitelist: false
+  RepeatRandomColors: true
+  RepeatRandomPlayers: true
+  VanishNoPacketSupport: false
+  Messages: []
+  WhitelistedWorlds:
+  - world
+  - world_nether
+  - ExampleWorld
+  IgnoredPlayers: []

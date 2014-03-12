@@ -2,25 +2,28 @@ package net.pixelizedmc.bossmessage;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.script.ScriptException;
+import net.pixelizedmc.bossmessage.utils.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.kitteh.vanish.VanishManager;
+
 import me.confuser.barapi.BarAPI;
 
 public class Lib {
 	
 	static int count = 0;
 	
-	public static List<String> getMessage() {
+	public static Message getMessage() {
 		if (CM.messages.size() > 0) {
 			if (CM.random) {
 				int r = Utils.randInt(0, CM.messages.size() - 1);
-				List<String> message = preGenMsg(CM.colorMsg(CM.messages.get(r)));
+				Message message = preGenMsg(CM.messages.get(r));
 				return message;
 			} else {
-				List<String> message;
+				Message message;
 				message = preGenMsg(CM.colorMsg(CM.messages.get(count)));
 				count++;
 				if (count >= CM.messages.size()) {
@@ -29,19 +32,14 @@ public class Lib {
 				return message;
 			}
 		} else {
-			List<String> message = new ArrayList<>();
-			message.add("§cNo messages were found! Please check your §bconfig.yml§c!");
-			message.add("100");
-			message.add("100");
-			message.add("0");
-			return message;
+			return new Message("§cNo messages were found! Please check your §bconfig.yml§c!", "100", 100, 0, false);
 		}
 	}
 	
-	public static List<String> preGenMsg(List<String> m) {
+	public static Message preGenMsg(Message m) {
 		//Generate string output message
-		String rawmsg = m.get(0);
-		String message = m.get(0);
+		String rawmsg = m.msg;
+		String message = m.msg;
 		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
 			String colorcodes = CM.colorcodes;
@@ -69,7 +67,11 @@ public class Lib {
 			}
 		}
 		if (rawmsg.toLowerCase().contains("%online_players%".toLowerCase())) {
-			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length));
+			int vplayers = CM.useVNP ? new VanishManager(Main.vp).getVanishedPlayers().size() : 0;
+			for (String s : new VanishManager(Main.vp).getVanishedPlayers()) {
+				Bukkit.broadcastMessage(s);
+			}
+			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length - vplayers));
 		}
 		if (rawmsg.toLowerCase().contains("%max_players%".toLowerCase())) {
 			message = message.replaceAll("(?i)%max_players%", Integer.toString(Bukkit.getMaxPlayers()));
@@ -77,84 +79,120 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%server_name%".toLowerCase())) {
 			message = message.replaceAll("(?i)%server_name%", Bukkit.getServerName());
 		}
-		m.set(0, message);
+		m.setMessage(message);
 		//Generate precentage
-		String percent = m.get(1);
-		if (rawmsg.toLowerCase().contains("online_pct".toLowerCase())) {
-			double onlineplayers = Bukkit.getOnlinePlayers().length;
-			double maxplayers = Bukkit.getMaxPlayers();
-			int ratio = (int) Math.round(onlineplayers/maxplayers*100);
-			percent = percent.replaceAll("(?i)online", Integer.toString(ratio));
+		String percent = m.percent;
+		if (percent.toLowerCase().contains("online_players".toLowerCase())) {
+			int vplayers = CM.useVNP ? Main.vm.getVanishedPlayers().size() : 0;
+			percent = percent.replaceAll("(?i)online_players", Integer.toString(Bukkit.getOnlinePlayers().length - vplayers));
 		}
-		m.set(1, percent);
+		if (rawmsg.toLowerCase().contains("max_players".toLowerCase())) {
+			percent = percent.replaceAll("(?i)max_players", Integer.toString(Bukkit.getMaxPlayers()));
+		}
+		m.setPercent(percent);
 		return m;
 	}
 
-	public static void setPlayerMsg(Player p, List<String> msg) {
-		//Do a check
-		if (Utils.isInteger(msg.get(1))) {
-			float pst = Float.parseFloat(msg.get(1));
-			if (pst>100||pst<0) {
-				broadcastError("FAILED to parse message: output bossbar percent is OUT OF RANGE!");
-				return;
-			}
-		}
+	public static void setPlayerMsg(Player p, Message msg) {
 		if (p.hasPermission("bossmessage.see")&&!CM.ignoreplayers.contains(p.getName())) {
-			if (msg.size() == 4) {
-				List<String> message = generateMsg(p, msg);
-				if (!Utils.isInteger(msg.get(1))&&!msg.get(1).equalsIgnoreCase("auto")) {
-		    		broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
-		    		return;
+			if (Utils.isInteger(msg.percent)) {
+				float pst = Float.parseFloat(msg.percent);
+				if (pst>100) {
+					msg.setPercent("100");
+				} else if (pst < 0) {
+					msg.setPercent("0");
 				}
-				if (msg.get(0).length() > 64) {
-		    		broadcastError("FAILED to parse message: output bossbar message length is OUT OF RANGE!");
-		    		return;
-				}
-				if (msg.get(1).equalsIgnoreCase("auto")) {
-					int time = Integer.parseInt(msg.get(2));
-					BarAPI.setMessage(p, message.get(0), time/20);
-				} else {
-					float percent = Float.parseFloat(msg.get(1));
-					BarAPI.setMessage(p, message.get(0), percent);
-				}
+			}
+			Message message = generateMsg(p, msg);
+			String percent = msg.percent;
+			if (msg.calcpct) {
+				percent = calculatePct(percent);
+			}
+			int time = msg.show;
+			if (!Utils.isInteger(percent)&&!msg.percent.equalsIgnoreCase("auto")) {
+	    		broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
+	    		percent = "100";
+			}
+			if (msg.percent.equalsIgnoreCase("auto")) {
+				BarAPI.setMessage(p, message.msg, time/20);
+			} else {
+				BarAPI.setMessage(p, message.msg, Float.parseFloat(percent));
 			}
 		}
 	}
 	
-	public static List<String> generateMsg(Player p, List<String> m) {
+	public static Message generateMsg(Player p, Message current) {
 		String playername = p.getName();
-		List<String> msg = m;
+		Message msg = current;
 		//Generate msg
-		String message = msg.get(0);
-		String rawmsg = msg.get(0);
+		String message = msg.msg;
+		String rawmsg = msg.msg;
 		if (rawmsg.toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", playername);
 		}
 		if (rawmsg.toLowerCase().contains("%world%".toLowerCase())) {
 			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
 		}
-		if (rawmsg.toLowerCase().contains("%money%".toLowerCase())) {
+		if (rawmsg.toLowerCase().contains("%econ_dollars%".toLowerCase())) {
 			if (Main.useEconomy) {
-				message = message.replaceAll("(?i)%money%", Double.toString(Main.econ.getBalance(p.getName())));
+				String money = Double.toString(Main.econ.getBalance(p.getName()));
+				String dollars = money.split("\\.")[0];
+				message = message.replaceAll("(?i)%econ_dollars%", dollars);
 			} else {
 				message = "§cVault economy is not enabled!";
 			}
 		}
-		msg.set(0, message);
-		//Generate pst
-		String percent = msg.get(1);
-		if (rawmsg.toLowerCase().contains("health".toLowerCase())) {
-			percent = percent.replaceAll("(?i)health", Integer.toString((int) Math.round(p.getHealth()/p.getMaxHealth()*100)));
+		if (rawmsg.toLowerCase().contains("%econ_cents%".toLowerCase())) {
+			if (Main.useEconomy) {
+				String money = Double.toString(Main.econ.getBalance(p.getName()));
+				String cents = money.split("\\.")[0];
+				message = message.replaceAll("(?i)%econ_cents%", cents.length() > 1 ? cents : cents + "0");
+			} else {
+				message = "§cVault economy is not enabled!";
+			}
 		}
-		msg.set(1, percent);
+		//Generate pst
+		String percent = msg.percent;
+		if (percent.toLowerCase().contains("health".toLowerCase())) {
+			percent = percent.replaceAll("(?i)health", Double.toString(p.getHealth()));
+		}
+		if (percent.toLowerCase().contains("max_health".toLowerCase())) {
+			percent = percent.replaceAll("(?i)health", Double.toString(p.getMaxHealth()));
+		}
+		if (percent.toLowerCase().contains("econ_dollars".toLowerCase())) {
+			if (Main.useEconomy) {
+				String money = Double.toString(Main.econ.getBalance(p.getName()));
+				String dollars = money.split("\\.")[0];
+				percent = percent.replaceAll("(?i)%econ_dollars%", dollars);
+			} else {
+				message = "§cVault economy is not enabled!";
+				percent = "100";
+			}
+		}
+		if (percent.toLowerCase().contains("econ_cents".toLowerCase())) {
+			if (Main.useEconomy) {
+				String money = Double.toString(Main.econ.getBalance(p.getName()));
+				String cents = money.split("\\.")[0];
+				percent = percent.replaceAll("(?i)econ_cents", cents.length() > 1 ? cents : cents + "0");
+			} else {
+				message = "§cVault economy is not enabled!";
+				percent = "100";
+			}
+		}
+		msg.setMessage(message);
+		msg.setPercent(percent);
 		
 		return msg;
 	}
 	
 	public static List<String> getRdmPlayers() {
 		List<String> players = new ArrayList<>();
+		List<String> vplayers = null;
+		if (CM.useVNP) {
+			vplayers = new ArrayList<>(Main.vm.getVanishedPlayers());
+		}
 		for (Player p:Bukkit.getOnlinePlayers()) {
-			if (!p.hasPermission("bossmessage.exemptrdm")) {
+			if (!p.hasPermission("bossmessage.exemptrdm")&&!vplayers.contains(p.getName())) {
 				players.add(p.getName());
 			}
 		}
@@ -164,7 +202,7 @@ public class Lib {
 		return players;
 	}
 	
-	public static void setMsg(List<String> msg) {
+	public static void setMsg(Message msg) {
 		if (CM.whitelist) {
 			List<String> worlds = CM.worlds;
 			List<Player> players;
@@ -172,14 +210,14 @@ public class Lib {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
 					for (Player p:players) {
-						setPlayerMsg(p, cloneMsg(msg));
+						setPlayerMsg(p, msg.clone());
 					}
 					players.clear();
 				}
 			}
 		} else {
 			for (Player p:Bukkit.getOnlinePlayers()) {
-				setPlayerMsg(p, cloneMsg(msg));
+				setPlayerMsg(p, msg.clone());
 			}
 		}
 	}
@@ -199,5 +237,18 @@ public class Lib {
 	}
 	public static List<String> cloneMsg(List<String> msg) {
 		return new ArrayList<String>(msg);
+	}
+	public static String calculatePct(String percent) {
+        try {
+			String output = Double.toString((double) Main.engine.eval(percent)).split("\\.")[0];
+			if (!Utils.isInteger(output)) {
+	    		broadcastError("FAILED to parse message: output bossbar percent script returned NOT A NUMBER!");
+				return "100";
+			}
+			return output;
+		} catch (ScriptException e) {
+    		broadcastError("FAILED to parse message: output bossbar script is INVALID!");
+			return "100";
+		}
 	}
 }
