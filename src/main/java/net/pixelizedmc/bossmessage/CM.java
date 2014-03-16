@@ -32,16 +32,8 @@ public class CM {
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
-/*        config.addDefault("BossMessage.Random", false);
-        config.addDefault("BossMessage.ColorCodes", "1234567890abcdef");
-        config.addDefault("BossMessage.NoPermission", "&cNo Permission!");
-        config.addDefault("BossMessage.Whitelist", false);
-        config.addDefault("BossMessage.RepeatRandomColors", true);
-        config.addDefault("BossMessage.RepeatRandomPlayers", true);
-        config.addDefault("BossMessage.VanishNoPacketSupport", false);
-        
     	config.addDefault("BossMessage.Messages", null);
-*/        if (!config.contains("BossMessage.Messages.0")) {
+        if (!config.contains("BossMessage.Messages.0")) {
         	config.set("BossMessage.Messages.0.Message", "&bYo &5%player%&b, wazzup?");
         	config.set("BossMessage.Messages.0.Percentage", "100");
         	config.set("BossMessage.Messages.0.Show", 100);
@@ -67,15 +59,7 @@ public class CM {
         	config.set("BossMessage.Messages.4.Show", 100);
         	config.set("BossMessage.Messages.4.Interval", 0);
         	config.set("BossMessage.Messages.4.CalculatePercentage", true);
-        }/*
-        List<String> worldList = new ArrayList<>();
-        worldList.add("world");
-        worldList.add("world_nether");
-        worldList.add("ExampleWorld");
-        config.addDefault("BossMessage.WhitelistedWorlds", worldList);
-        
-        config.addDefault("BossMessage.IgnoredPlayers", new ArrayList<>());*/
-        
+        }
         save();
     }
     
@@ -101,7 +85,6 @@ public class CM {
         } catch (IOException e) {
             System.out.println("[BossMessage] Error 'createConfig' on " + path);
         }
-//    	Main.getInstance().saveConfig();
     }
     
 	public static Message colorMsg(Message m) {

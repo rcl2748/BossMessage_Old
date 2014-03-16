@@ -190,6 +190,7 @@ public class Lib {
 		List<String> vplayers = null;
 		if (CM.useVNP) {
 			vplayers = new ArrayList<>(Main.vm.getVanishedPlayers());
+			Bukkit.broadcastMessage(Integer.toString(vplayers.size()));
 		}
 		for (Player p:Bukkit.getOnlinePlayers()) {
 			if (!p.hasPermission("bossmessage.exemptrdm")&&!vplayers.contains(p.getName())) {

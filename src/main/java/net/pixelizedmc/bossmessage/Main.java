@@ -40,8 +40,8 @@ public class Main extends JavaPlugin implements Listener {
     public static VanishPlugin vp = (VanishPlugin) Bukkit.getPluginManager().getPlugin("VanishNoPacket");
     public static boolean useEconomy = false;
     public static boolean isset = false;
-    public static boolean updater_available;
     public static File file;
+    public static boolean updater_available;
     public static String version;
     public static String updater_name;
     public static String updater_version;
@@ -111,31 +111,33 @@ public class Main extends JavaPlugin implements Listener {
     	
     }
     
-    public void startProcess() {
-        current = Lib.getMessage();
-        show = current.show;
-        interval = current.interval;
-        Runnable run = new Runnable() {
-    		@Override
-	        public void run() {
-	            Lib.setMsg(current);
-	            isset = true;
-	            scr.scheduleSyncDelayedTask(instance, new Runnable() {
-	            	public void run() {
-	            		for (Player p:Bukkit.getOnlinePlayers()) {
-	            			BarAPI.removeBar(p);
-	            		}
-	        			isset = false;
-	        			scr.scheduleSyncDelayedTask(instance, new Runnable() {
-	            			public void run() {
-	    	        			startProcess();
-	            			}
-	            		}, interval);
-	            	}
-	            }, show);
-	        }
-        };
-        scr.runTask(this, run);
+    public static void startProcess() {
+    	if (CM.mode.equalsIgnoreCase("AutoMessage")) {
+	        current = Lib.getMessage();
+	        show = current.show;
+	        interval = current.interval;
+	        Runnable run = new Runnable() {
+	    		@Override
+		        public void run() {
+		            Lib.setMsg(current);
+		            isset = true;
+		            scr.scheduleSyncDelayedTask(instance, new Runnable() {
+		            	public void run() {
+		            		for (Player p:Bukkit.getOnlinePlayers()) {
+		            			BarAPI.removeBar(p);
+		            		}
+		        			isset = false;
+		        			scr.scheduleSyncDelayedTask(instance, new Runnable() {
+		            			public void run() {
+		    	        			startProcess();
+		            			}
+		            		}, interval);
+		            	}
+		            }, show);
+		        }
+	        };
+	        scr.runTask(getInstance(), run);
+    	}
     }
 /*    public boolean onCommand(CommandSender a, Command b, String c, String[] d) {
     	return Commands.Command(a, b, c, d);

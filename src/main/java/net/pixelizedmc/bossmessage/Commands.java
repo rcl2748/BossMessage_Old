@@ -315,7 +315,7 @@ public class Commands implements CommandExecutor {
     					Main.scr.cancelAllTasks();
     					CM.reloadConfig();
     					Lib.resetCount();
-    					Main.getInstance().startProcess();
+    					Main.startProcess();
     					sender.sendMessage(ChatColor.GREEN + "BossMessage was successfully reloaded");
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm reload");
