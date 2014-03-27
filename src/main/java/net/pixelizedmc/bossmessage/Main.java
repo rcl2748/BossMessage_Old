@@ -15,9 +15,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.kitteh.vanish.VanishManager;
-import org.kitteh.vanish.VanishPlugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -29,15 +26,13 @@ import javax.script.ScriptEngineManager;
 public class Main extends JavaPlugin implements Listener {
 
     private static Main instance = null;
-    public static String prefix_error = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "]" + ChatColor.GOLD + " ";
-    public static String prefix_normal = ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "BossMessage" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " ";
-    public static String prefix_console = "[BossMessage] ";
+    public static String PREFIX_ERROR = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "]" + ChatColor.GOLD + " ";
+    public static String PREFIX_NORMAL = ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "BossMessage" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " ";
+    public static String PREFIX_CONSOLE = "[BossMessage] ";
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
     public static Message current;
     public static Economy econ;
-    public static VanishManager vm;
-    public static VanishPlugin vp = (VanishPlugin) Bukkit.getPluginManager().getPlugin("VanishNoPacket");
     public static boolean useEconomy = false;
     public static boolean isset = false;
     public static File file;
@@ -85,13 +80,12 @@ public class Main extends JavaPlugin implements Listener {
         	useEconomy = true;
         	logger.info("Successfully hooked in to Vault Economy");
         } else {
-        	logger.warning("Failed to hook in Vault's Economy! Is vault even installed?");
+        	logger.warning(PREFIX_CONSOLE + "Failed to hook in Vault's Economy! Is vault even installed?");
         }
         
-        //Hoock in VNP
+        //Hook in VNP
         if (CM.useVNP) {
-	        if (Bukkit.getPluginManager().getPlugin("VanishNoPacket") != null) {
-	        	 vm = new VanishManager((VanishPlugin) Bukkit.getPluginManager().getPlugin("VanishNoPacket"));
+	        if (plm.getPlugin("VanishNoPacket") != null) {
 	         	logger.info("Successfully hooked in to VanishNoPacket!");
 	        } else {
 	        	CM.useVNP = false;
@@ -139,9 +133,6 @@ public class Main extends JavaPlugin implements Listener {
 	        scr.runTask(getInstance(), run);
     	}
     }
-/*    public boolean onCommand(CommandSender a, Command b, String c, String[] d) {
-    	return Commands.Command(a, b, c, d);
-    }*/
     
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent e) {

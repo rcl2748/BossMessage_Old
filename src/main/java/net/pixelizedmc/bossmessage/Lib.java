@@ -8,10 +8,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.kitteh.vanish.VanishManager;
-
+import org.kitteh.vanish.staticaccess.VanishNoPacket;
 import me.confuser.barapi.BarAPI;
 
+@SuppressWarnings("deprecation")
 public class Lib {
 	
 	static int count = 0;
@@ -67,9 +67,13 @@ public class Lib {
 			}
 		}
 		if (rawmsg.toLowerCase().contains("%online_players%".toLowerCase())) {
-			int vplayers = CM.useVNP ? new VanishManager(Main.vp).getVanishedPlayers().size() : 0;
-			for (String s : new VanishManager(Main.vp).getVanishedPlayers()) {
-				Bukkit.broadcastMessage(s);
+			int vplayers = 0;
+			if (CM.useVNP) {
+				try {
+					vplayers = VanishNoPacket.numVanished();
+				} catch (Exception e) {
+					Main.logger.warning(Main.PREFIX_CONSOLE + "VanishNotLoadedException occured while trying to filter vanished players from %online_players%");
+				}
 			}
 			message = message.replaceAll("(?i)%online_players%", Integer.toString(Bukkit.getOnlinePlayers().length - vplayers));
 		}
@@ -83,7 +87,14 @@ public class Lib {
 		//Generate precentage
 		String percent = m.percent;
 		if (percent.toLowerCase().contains("online_players".toLowerCase())) {
-			int vplayers = CM.useVNP ? Main.vm.getVanishedPlayers().size() : 0;
+			int vplayers = 0;
+			if (CM.useVNP) {
+				try {
+					vplayers = VanishNoPacket.numVanished();
+				} catch (Exception e) {
+					Main.logger.warning(Main.PREFIX_CONSOLE + "VanishNotLoadedException occured while trying to filter vanished players from ONLINE_PLAYERS in bossbar percentage");
+				}
+			}
 			percent = percent.replaceAll("(?i)online_players", Integer.toString(Bukkit.getOnlinePlayers().length - vplayers));
 		}
 		if (rawmsg.toLowerCase().contains("max_players".toLowerCase())) {
@@ -187,10 +198,13 @@ public class Lib {
 	
 	public static List<String> getRdmPlayers() {
 		List<String> players = new ArrayList<>();
-		List<String> vplayers = null;
+		List<String> vplayers = new ArrayList<>();
 		if (CM.useVNP) {
-			vplayers = new ArrayList<>(Main.vm.getVanishedPlayers());
-			Bukkit.broadcastMessage(Integer.toString(vplayers.size()));
+			try {
+				vplayers = new ArrayList<>(VanishNoPacket.getManager().getVanishedPlayers());
+			} catch (Exception e) {
+				Main.logger.warning(Main.PREFIX_CONSOLE + "VanishNotLoadedException occured while trying to filter vanished players from %rdm_player% possibilities");
+			}
 		}
 		for (Player p:Bukkit.getOnlinePlayers()) {
 			if (!p.hasPermission("bossmessage.exemptrdm")&&!vplayers.contains(p.getName())) {
@@ -228,13 +242,13 @@ public class Lib {
 	}
 
 	public static void broadcastError(String msg) {
-		Bukkit.broadcast(Main.prefix_error + msg, "bossmessage.seeerrors");
+		Bukkit.broadcast(Main.PREFIX_ERROR + msg, "bossmessage.seeerrors");
 	}
 	public static void sendError(CommandSender p, String msg) {
-		p.sendMessage(Main.prefix_error + msg);
+		p.sendMessage(Main.PREFIX_ERROR + msg);
 	}
 	public static void sendMessage(CommandSender p, String msg) {
-		p.sendMessage(Main.prefix_normal + msg);
+		p.sendMessage(Main.PREFIX_NORMAL + msg);
 	}
 	public static List<String> cloneMsg(List<String> msg) {
 		return new ArrayList<String>(msg);

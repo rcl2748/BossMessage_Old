@@ -361,7 +361,6 @@ public class Commands implements CommandExecutor {
     					} else {
     						Lib.sendError(sender, "No update currently available!");
     					}
-    					sender.sendMessage(ChatColor.GREEN + "BossMessage was successfully reloaded");
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm check");
     				}
@@ -408,6 +407,9 @@ public class Commands implements CommandExecutor {
 		}
 		if (sender.hasPermission("bossmessage.remove")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm remove <#> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a message");
+		}
+		if (sender.hasPermission("bossmessage.reload")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm reload " + ChatColor.RED + "-" + ChatColor.RESET + " reloads the config");
 		}
 		if (sender.hasPermission("bossmessage.list")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm list " + ChatColor.RED + "-" + ChatColor.RESET + " lists the messages");

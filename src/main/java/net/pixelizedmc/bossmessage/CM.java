@@ -14,7 +14,7 @@ public class CM {
 	
     final static String path = "plugins/BossMessage/config.yml";
     static File file = new File(path);
-    static FileConfiguration config = Main.getInstance().getConfig(); //YamlConfiguration.loadConfiguration(file);
+    public static FileConfiguration config = Main.getInstance().getConfig();
     
     public static boolean enabled;
     public static boolean random;
@@ -32,7 +32,7 @@ public class CM {
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
-    	config.addDefault("BossMessage.Messages", null);
+    	config.addDefault("BossMessage.Messages", new ArrayList<>());
         if (!config.contains("BossMessage.Messages.0")) {
         	config.set("BossMessage.Messages.0.Message", "&bYo &5%player%&b, wazzup?");
         	config.set("BossMessage.Messages.0.Percentage", "100");

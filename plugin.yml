@@ -2,7 +2,8 @@ name: BossMessage
 version: 1.6
 authors: [victor2748, michidk]
 main: net.pixelizedmc.bossmessage.Main
-softdepend: [BarAPI, Vault, VanishNoPacket]
+depend: [BarAPI]
+softdepend: [Vault, VanishNoPacket]
 commands:
   BossMessage:
     description: Main BossMessage Command
