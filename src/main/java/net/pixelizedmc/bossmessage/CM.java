@@ -29,6 +29,7 @@ public class CM {
     public static List<String> worlds;
     public static List<String> ignoreplayers;
     public static String mode;
+    public static boolean checkUpdates;
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
@@ -77,6 +78,7 @@ public class CM {
         worlds = config.getStringList("BossMessage.WhitelistedWorlds");
         ignoreplayers = config.getStringList("BossMessage.IgnoredPlayers");
         useVNP = config.getBoolean("BossMessage.VanishNoPacketSupport");
+        checkUpdates = config.getBoolean("BossMessage.CheckUpdates");
     }
 	
     public static void save() {

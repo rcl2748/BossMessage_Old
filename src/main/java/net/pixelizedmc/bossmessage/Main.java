@@ -94,7 +94,9 @@ public class Main extends JavaPlugin implements Listener {
         }
         
         //Updater
-        checkUpdate();
+        if (CM.checkUpdates) {
+        	checkUpdate();
+        }
         
         Bukkit.getPluginManager().registerEvents(this, this);
         //enabled
