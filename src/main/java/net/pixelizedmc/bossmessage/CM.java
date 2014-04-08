@@ -16,7 +16,6 @@ public class CM {
     static File file = new File(path);
     public static FileConfiguration config = Main.getInstance().getConfig();
     
-    public static boolean enabled;
     public static boolean random;
     public static boolean repeatrdmcolors;
     public static boolean repeatrdmplayers;

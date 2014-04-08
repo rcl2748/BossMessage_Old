@@ -1,53 +1,23 @@
-##########################################################################
-#            BossMessage by Victor2748 (play.pixelizedmc.net)            #
-##########################################################################
+#     =====================================================================
+#     |       BossMessage - by Victor2748 (Pixelized Network)             |
+#     |       IP: play.pixelizedmc.net                                    |
+#     |       Website: Pixelizedmc.net                                    |
+#     |       http://dev.bukkit.org/bukkit-plugins/bossmessage/           |
+#     =====================================================================
 
 BossMessage:
-  #The messaging mode
-  #AutoMessage will automatically broadcast messages
   Mode: AutoMessage
-  
-  #Whether messages should be picked randomly, or in order
   Random: false
-  
-  #List of colorcodes that can appear as %rdm_color%
-  #Setting it to 'ab12' will make %rdm_color% randomly choose a color:
-  #either &a, &b, &1, or &2
   ColorCodes: 1234567890abcdef
-  
-  #Message that will player will see in chat, while trying
-  #to use a command without permission
   NoPermission: '&cNo Permission!'
-  
-  #Whether BossMessage should automatically check for updates
-  #on server start up (Recommended to leave at 'true')
   CheckUpdates: true
-  
-  #Whether messages should appear in all worlds, or only in
-  #whitelisted worlds
   Whitelist: false
-  
-  #Whether same colors can repeat when using %rdm_color% more than
-  #once in a message
   RepeatRandomColors: true
-  
-  #Whether same player name can repeat when using %rdm_player% more
-  #than once in a message
   RepeatRandomPlayers: true
-  
-  #Whether BossMessage should hook in VanishNoPacket (when its hooked,
-  #vanished players will be exempted from appearing in %rdm_player%
-  #and %online_players%)
   VanishNoPacketSupport: false
-  
-  #These r yo m3ssag3s :P
   Messages: []
-  
-  #If you set 'Whitelist: true', messages will only appear in these worlds
   WhitelistedWorlds:
   - world
   - world_nether
   - ExampleWorld
-  
-  #This is a list of players that will not see the messages
   IgnoredPlayers: []

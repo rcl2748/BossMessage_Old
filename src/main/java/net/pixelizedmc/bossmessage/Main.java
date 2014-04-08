@@ -17,7 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -41,11 +40,16 @@ public class Main extends JavaPlugin implements Listener {
     public static String updater_name;
     public static String updater_version;
     public static String updater_link;
+    public static boolean isBroadcasting;
+    public static Message broadcasting;
     public static int show;
     public static int interval;
     public static int numberOfMessages;
     public static Logger logger = Bukkit.getLogger();
     public static ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
+    public static int showingTaskId;
+    public static int delayTaskId;
+    public static int broadcastTaskId = -1;
     
     public void onEnable() {
         instance = this;
@@ -115,15 +119,19 @@ public class Main extends JavaPlugin implements Listener {
 	        Runnable run = new Runnable() {
 	    		@Override
 		        public void run() {
-		            Lib.setMsg(current);
+	    			if (!isBroadcasting) {
+	    				Lib.setMsg(current);
+	    			}
 		            isset = true;
-		            scr.scheduleSyncDelayedTask(instance, new Runnable() {
+		            showingTaskId = scr.scheduleSyncDelayedTask(instance, new Runnable() {
 		            	public void run() {
 		            		for (Player p:Bukkit.getOnlinePlayers()) {
-		            			BarAPI.removeBar(p);
+		            			if (!isBroadcasting) {
+		            				BarAPI.removeBar(p);
+		            			}
 		            		}
 		        			isset = false;
-		        			scr.scheduleSyncDelayedTask(instance, new Runnable() {
+		        			delayTaskId = scr.scheduleSyncDelayedTask(instance, new Runnable() {
 		            			public void run() {
 		    	        			startProcess();
 		            			}
@@ -139,37 +147,41 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent e) {
         Player p = e.getPlayer();
-        if (!CM.enabled) {
-            return;
-        }
         if (p.hasPermission("bossmessage.see")) {
 	        if (CM.whitelist) {
-	        	List<String> worlds = CM.worlds;
-	        	if (worlds.contains(e.getTo().getWorld().getName())) {
-	        		Lib.setPlayerMsg(p, current);
+	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
+	        		if (Main.isBroadcasting) {
+	        			Lib.setPlayerMsg(p, broadcasting);
+	        		} else if (Main.isset) {
+	        			Lib.setPlayerMsg(p, current);
+	        		}
 	        	} else {
 	        		BarAPI.removeBar(p);
 	        	}
 	        }
-        }
+        } else {
+    		BarAPI.removeBar(p);
+    	}
     }
     
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
-        if (!CM.enabled) {
-            return;
-        }
         if (p.hasPermission("bossmessage.see")) {
 	        if (CM.whitelist) {
-	        	List<String> worlds = CM.worlds;
-	        	if (worlds.contains(e.getTo().getWorld().getName())) {
-	        		Lib.setPlayerMsg(p, current);
+	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
+	        		if (Main.isBroadcasting) {
+	        			Lib.setPlayerMsg(p, broadcasting);
+	        		} else if (Main.isset) {
+	        			Lib.setPlayerMsg(p, current);
+	        		}
 	        	} else {
 	        		BarAPI.removeBar(p);
 	        	}
 	        }
-        }
+        } else {
+    		BarAPI.removeBar(p);
+    	}
     }
     
     @EventHandler
@@ -179,7 +191,11 @@ public class Main extends JavaPlugin implements Listener {
 	        if (isset) {
 		        if (CM.whitelist) {
 		        	if (CM.worlds.contains(p.getWorld().getName())) {
-		        		Lib.setPlayerMsg(p, current);
+		        		if (Main.isBroadcasting) {
+		        			Lib.setPlayerMsg(p, broadcasting);
+		        		} else if (Main.isset) {
+		        			Lib.setPlayerMsg(p, current);
+		        		}
 		        	}
 		        } else {
 		        	Lib.setPlayerMsg(p, current);

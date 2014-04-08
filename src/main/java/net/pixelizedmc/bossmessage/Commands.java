@@ -35,7 +35,6 @@ public class Commands implements CommandExecutor {
 	    						for (int i = 4;i < args.length;i++) {
 	    							listmsg.add(args[i]);
 	    						}
-	    						
 	    						String textmsg = StringUtils.join(listmsg, " ");
 	    						if (textmsg.length() > 64) {
 	    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
@@ -46,7 +45,6 @@ public class Commands implements CommandExecutor {
 	    							calcpct = true;
 	    						}
 	    						Message message = new Message(textmsg, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), calcpct);
-
 	    						CM.rawmessages.add(message);
 	    						CM.messages.add(CM.colorMsg(message));
 	    						CM.writeMessages(CM.rawmessages);
@@ -295,7 +293,7 @@ public class Commands implements CommandExecutor {
     						CM.random = random;
     						CM.config.set("BossMessage.Random", random);
     						CM.save();
-    						sender.sendMessage(ChatColor.DARK_GREEN + "Random is set to " + ChatColor.GREEN + args[1]);
+    						Lib.sendMessage(sender, ChatColor.DARK_GREEN + "Random is set to " + ChatColor.GREEN + args[1]);
     					} else {
         					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm random <true/false>");
     					}
@@ -316,7 +314,7 @@ public class Commands implements CommandExecutor {
     					CM.reloadConfig();
     					Lib.resetCount();
     					Main.startProcess();
-    					sender.sendMessage(ChatColor.GREEN + "BossMessage was successfully reloaded");
+    					Lib.sendMessage(sender, ChatColor.GREEN + "BossMessage was successfully reloaded");
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm reload");
     				}
@@ -348,7 +346,7 @@ public class Commands implements CommandExecutor {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				if (args.length <= 1) {
+    				if (args.length == 1) {
     					if (Main.updater_available) {
     						Main.checkUpdate();
     						if (Main.updater_available) {
@@ -356,25 +354,54 @@ public class Commands implements CommandExecutor {
     				        	Lib.sendMessage(sender, "Please type /bm update to update it automatically, or click the link below do download it manually:");
     				        	Lib.sendMessage(sender, Main.updater_link);
     						} else {
-    				        	Lib.sendMessage(sender, "Your BossMessage is up to date!");
+    				        	Lib.sendMessage(sender, "Your BossMessage is up to date.");
     						}
     					} else {
-    						Lib.sendError(sender, "No update currently available!");
+    						Lib.sendMessage(sender, "Your BossMessage is up to date.");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm check");
     				}
     				
     			}
+    			//Broadcast
+    			else if (args[0].equalsIgnoreCase("broadcast")) {
+    				
+    				if (!sender.hasPermission("bossmessage.broadcast")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length > 2) {
+    					if (Utils.isInteger(args[1])) {
+    						int show = Integer.parseInt(args[1]);
+    						if (show > 0) {
+	    						List<String> listmsg = new ArrayList<>();
+	    						for (int i = 2;i < args.length;i++) {
+	    							listmsg.add(args[i]);
+	    						}
+	    						String textmsg = StringUtils.join(listmsg, " ");
+    							Lib.broadcast(new Message(textmsg, "auto", show*20, 0, false));
+    							Lib.sendMessage(sender, "Broadcasting your message for " + show + " seconds.");
+    						} else {
+    							Lib.sendError(sender, "Show time must be more than 0!");
+    						}
+    					} else {
+    						Lib.sendError(sender, args[1] + " is not a valid show time!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm broadcast <sec> <message>");
+    				}
+    				
+    			}
     			//Info
     			else if (args[0].equalsIgnoreCase("info")) {
     				
-    				if (!sender.hasPermission("bossmessage.info")&&!sender.getName().equalsIgnoreCase("victor2748")) {
+    				if (!sender.hasPermission("bossmessage.info")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
     				if (args.length <= 1) {
-				    	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessafe by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
+				    	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
 				    	sender.sendMessage(ChatColor.YELLOW + "Website: " + ChatColor.GREEN + "http://pixelizedmc.net");
 				    	sender.sendMessage(ChatColor.YELLOW + "Official server: " + ChatColor.GREEN + "play.pixelizedmc.net");
 				    	sender.sendMessage(ChatColor.YELLOW + "Author: " + ChatColor.GREEN + "Victor2748");
@@ -443,6 +470,9 @@ public class Commands implements CommandExecutor {
 		}
 		if (sender.hasPermission("bossmessage.update.check")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm check " + ChatColor.RED + "-" + ChatColor.RESET + " checks for updates");
+		}
+		if (sender.hasPermission("bossmessage.broadcast")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm broadcast <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message");
 		}
 		if (sender.hasPermission("bossmessage.info")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");

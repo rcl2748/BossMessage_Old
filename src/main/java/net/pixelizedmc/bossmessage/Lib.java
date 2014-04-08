@@ -24,7 +24,7 @@ public class Lib {
 				return message;
 			} else {
 				Message message;
-				message = preGenMsg(CM.colorMsg(CM.messages.get(count)));
+				message = CM.colorMsg(CM.messages.get(count));
 				count++;
 				if (count >= CM.messages.size()) {
 					resetCount();
@@ -132,6 +132,35 @@ public class Lib {
 		}
 	}
 	
+	public static void broadcast(final Message current) {
+        final int show = current.show;
+        Runnable run = new Runnable() {
+    		@Override
+	        public void run() {
+	            setMsg(current);
+	            Main.broadcasting = current;
+	            Main.isBroadcasting = true;
+	            if (Main.broadcastTaskId != -1) {
+	            	Main.scr.cancelTask(Main.broadcastTaskId);
+	            }
+	            Main.broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+	            	public void run() {
+	            		if (Main.isset) {
+	            			setMsg(Main.current);
+	            		} else {
+		            		for (Player p:Bukkit.getOnlinePlayers()) {
+		            			BarAPI.removeBar(p);
+		            		}
+	            		}
+	        			Main.isBroadcasting = false;
+	        			setMsg(Main.current);
+	            	}
+	            }, show);
+	        }
+        };
+        Main.scr.runTask(Main.getInstance(), run);
+	}
+	
 	public static Message generateMsg(Player p, Message current) {
 		String playername = p.getName();
 		Message msg = current;
@@ -174,7 +203,7 @@ public class Lib {
 			if (Main.useEconomy) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));
 				String dollars = money.split("\\.")[0];
-				percent = percent.replaceAll("(?i)%econ_dollars%", dollars);
+				percent = percent.replaceAll("(?i)econ_dollars", dollars);
 			} else {
 				message = "§cVault economy is not enabled!";
 				percent = "100";
@@ -225,14 +254,14 @@ public class Lib {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
 					for (Player p:players) {
-						setPlayerMsg(p, msg.clone());
+						setPlayerMsg(p, preGenMsg(msg.clone()));
 					}
 					players.clear();
 				}
 			}
 		} else {
 			for (Player p:Bukkit.getOnlinePlayers()) {
-				setPlayerMsg(p, msg.clone());
+				setPlayerMsg(p, preGenMsg(msg.clone()));
 			}
 		}
 	}
