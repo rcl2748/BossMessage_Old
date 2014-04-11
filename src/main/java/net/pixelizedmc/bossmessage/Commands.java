@@ -3,7 +3,8 @@ package net.pixelizedmc.bossmessage;
 import java.util.ArrayList;
 import java.util.List;
 import me.confuser.barapi.BarAPI;
-import net.pixelizedmc.bossmessage.utils.Message;
+import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.configuration.Message;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -40,11 +41,7 @@ public class Commands implements CommandExecutor {
 	    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
 	    	    					return true;
 	    						}
-	    						boolean calcpct = false;
-	    						if (args[1].contains("+")||args[1].contains("-")||args[1].contains("*")||args[1].contains("/")||args[1].contains("(")||args[1].contains(")")) {
-	    							calcpct = true;
-	    						}
-	    						Message message = new Message(textmsg, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), calcpct);
+	    						Message message = new Message(textmsg, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
 	    						CM.rawmessages.add(message);
 	    						CM.messages.add(CM.colorMsg(message));
 	    						CM.writeMessages(CM.rawmessages);
@@ -101,7 +98,7 @@ public class Commands implements CommandExecutor {
     				int i = 0;
     				for (Message msg:CM.messages) {
     					i++;
-    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.msg);
+    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.Message);
     				}
     			}
     			// Command WHITELIST
@@ -380,7 +377,7 @@ public class Commands implements CommandExecutor {
 	    							listmsg.add(args[i]);
 	    						}
 	    						String textmsg = StringUtils.join(listmsg, " ");
-    							Lib.broadcast(new Message(textmsg, "auto", show*20, 0, false));
+    							Lib.broadcast(new Message(textmsg, "auto", show*20, 0));
     							Lib.sendMessage(sender, "Broadcasting your message for " + show + " seconds.");
     						} else {
     							Lib.sendError(sender, "Show time must be more than 0!");

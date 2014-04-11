@@ -1,6 +1,7 @@
-package net.pixelizedmc.bossmessage;
+package net.pixelizedmc.bossmessage.configuration;
 
-import net.pixelizedmc.bossmessage.utils.Message;
+import net.pixelizedmc.bossmessage.Main;
+import net.pixelizedmc.bossmessage.configuration.Message;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -8,7 +9,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CM {
 	
@@ -20,8 +23,8 @@ public class CM {
     public static boolean repeatrdmcolors;
     public static boolean repeatrdmplayers;
     public static String colorcodes;
-    public static List<Message> messages;
-    public static List<Message> rawmessages;
+    public static Map<String, List<Message>> messages = new HashMap<String, List<Message>>();
+    public static Map<String, List<Message>> rawmessages = new HashMap<String, List<Message>>();
     public static boolean useVNP;
     public static String noperm;
     public static boolean whitelist;
@@ -29,6 +32,7 @@ public class CM {
     public static List<String> ignoreplayers;
     public static String mode;
     public static boolean checkUpdates;
+    public static List<String> groups;
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
@@ -64,7 +68,7 @@ public class CM {
     }
     
 	public static void readConfig() {
-		Main.numberOfMessages = config.getConfigurationSection("BossMessage.Messages").getKeys(false).size();
+		groups = new ArrayList<String>(config.getConfigurationSection("BossMessage.Messages").getKeys(false));
 		mode = config.getString("BossMessage.Mode");
         random = config.getBoolean("BossMessage.Random");
         repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
@@ -80,7 +84,18 @@ public class CM {
         checkUpdates = config.getBoolean("BossMessage.CheckUpdates");
     }
 	
-    public static void save() {
+    @SuppressWarnings("unchecked")
+	public static Map<String, List<Message>> readMessages() {
+    	List<String> groups = new ArrayList<>(config.getConfigurationSection("BossMessage.Messages").getKeys(false));
+    	Map<String, List<Message>> output = new HashMap<String, List<Message>>();
+    	for (String group:groups) {
+    		List<Message> msgs = (List<Message>) config.getList("BossMessage.Messages." + group);
+    		output.put(group, msgs);
+    	}
+		return output;
+	}
+
+	public static void save() {
         try {
             config.save(path);
         } catch (IOException e) {
@@ -89,7 +104,7 @@ public class CM {
     }
     
 	public static Message colorMsg(Message m) {
-		return new Message(ChatColor.translateAlternateColorCodes('&', m.msg), m.percent, m.show, m.interval, m.calcpct);
+		return new Message(ChatColor.translateAlternateColorCodes('&', m.Message), m.Percent, m.Show, m.Interval);
     }
 	
 	public static void reloadConfig() {
@@ -97,35 +112,16 @@ public class CM {
 	    readConfig();
 	}
 	
-	public static List<Message> readMessages() {
-		List<Message> output = new ArrayList<Message>();
-		for (int msgid = 0;msgid < Main.numberOfMessages;msgid++) {
-			String message = config.getString("BossMessage.Messages." + msgid + ".Message");
-			String percent = config.getString("BossMessage.Messages." + msgid + ".Percentage");
-			int show = config.getInt("BossMessage.Messages." + msgid + ".Show");
-			int interval = config.getInt("BossMessage.Messages." + msgid + ".Interval");
-			boolean calcpct = config.getBoolean("BossMessage.Messages." + msgid + ".CalculatePercentage");
-			output.add(new Message(message, percent, show, interval, calcpct));
+	public static Map<String, List<Message>> colorMsgs(Map<String, List<Message>> rawmessages2) {
+		Map<String, List<Message>> output = new HashMap<String, List<Message>>();
+		List<String> groups = new ArrayList<>(rawmessages2.keySet());
+		for (String group:groups) {
+			List<Message> output2 = new ArrayList<Message>();
+			for (Message msg:rawmessages2.get(group)) {
+				output2.add(colorMsg(msg));
+			}
+			output.put(group, output2);
 		}
 		return output;
-	}
-	
-	public static List<Message> colorMsgs(List<Message> msgs) {
-		List<Message> output = new ArrayList<Message>();
-		for (Message msg:msgs) {
-			output.add(colorMsg(msg));
-		}
-		return output;
-	}
-	
-	public static void writeMessages(List<Message> msgs) {
-		config.set("BossMessage.Messages", null);
-		for (int msgid = 0;msgid < msgs.size();msgid++) {
-			config.set("BossMessage.Messages." + msgid + ".Message", msgs.get(msgid).msg);
-			config.set("BossMessage.Messages." + msgid + ".Percentage", msgs.get(msgid).percent);
-			config.set("BossMessage.Messages." + msgid + ".Show", msgs.get(msgid).show);
-			config.set("BossMessage.Messages." + msgid + ".Interval", msgs.get(msgid).interval);
-			config.set("BossMessage.Messages." + msgid + ".CalculatePercentage", msgs.get(msgid).calcpct);
-		}
 	}
 }

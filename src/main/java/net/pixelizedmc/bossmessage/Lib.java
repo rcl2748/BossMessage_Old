@@ -1,9 +1,15 @@
 package net.pixelizedmc.bossmessage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.script.ScriptException;
-import net.pixelizedmc.bossmessage.utils.Message;
+
+import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.configuration.Message;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,32 +20,32 @@ import me.confuser.barapi.BarAPI;
 @SuppressWarnings("deprecation")
 public class Lib {
 	
-	static int count = 0;
+	static Map<String, Integer> count = new HashMap<String, Integer>();
 	
-	public static Message getMessage() {
+	public static Message getMessage(String group) {
 		if (CM.messages.size() > 0) {
 			if (CM.random) {
 				int r = Utils.randInt(0, CM.messages.size() - 1);
-				Message message = preGenMsg(CM.messages.get(r));
+				Message message = preGenMsg(CM.messages.get(group).get(r));
 				return message;
 			} else {
-				Message message;
-				message = CM.colorMsg(CM.messages.get(count));
-				count++;
-				if (count >= CM.messages.size()) {
-					resetCount();
+				Message message = preGenMsg(CM.messages.get(group).get(count.get(group)));
+				int c = count.get(group) != null ? count.get(group) : 0;
+				c = count.put(group, c + 1);
+				if (c >= CM.messages.size()) {
+					resetCount(group);
 				}
 				return message;
 			}
 		} else {
-			return new Message("§cNo messages were found! Please check your §bconfig.yml§c!", "100", 100, 0, false);
+			return new Message("§cNo messages were found! Please check your §bconfig.yml§c!", "100", 100, 0);
 		}
 	}
 	
 	public static Message preGenMsg(Message m) {
 		//Generate string output message
-		String rawmsg = m.msg;
-		String message = m.msg;
+		String rawmsg = m.Message;
+		String message = m.Message;
 		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode;
 			String colorcodes = CM.colorcodes;
@@ -85,7 +91,7 @@ public class Lib {
 		}
 		m.setMessage(message);
 		//Generate precentage
-		String percent = m.percent;
+		String percent = m.Percent;
 		if (percent.toLowerCase().contains("online_players".toLowerCase())) {
 			int vplayers = 0;
 			if (CM.useVNP) {
@@ -106,8 +112,8 @@ public class Lib {
 
 	public static void setPlayerMsg(Player p, Message msg) {
 		if (p.hasPermission("bossmessage.see")&&!CM.ignoreplayers.contains(p.getName())) {
-			if (Utils.isInteger(msg.percent)) {
-				float pst = Float.parseFloat(msg.percent);
+			if (Utils.isInteger(msg.Percent)) {
+				float pst = Float.parseFloat(msg.Percent);
 				if (pst>100) {
 					msg.setPercent("100");
 				} else if (pst < 0) {
@@ -115,25 +121,25 @@ public class Lib {
 				}
 			}
 			Message message = generateMsg(p, msg);
-			String percent = msg.percent;
-			if (msg.calcpct) {
+			String percent = msg.Percent;
+			if (msg.Message.contains(".")||msg.Message.contains("/")||msg.Message.contains("*")||msg.Message.contains("+")||msg.Message.contains("-")||msg.Message.contains("(")||msg.Message.contains(")")) {
 				percent = calculatePct(percent);
 			}
-			int time = msg.show;
-			if (!Utils.isInteger(percent)&&!msg.percent.equalsIgnoreCase("auto")) {
+			int time = msg.Show;
+			if (!Utils.isInteger(percent)&&!msg.Percent.equalsIgnoreCase("auto")) {
 	    		broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
 	    		percent = "100";
 			}
-			if (msg.percent.equalsIgnoreCase("auto")) {
-				BarAPI.setMessage(p, message.msg, time/20);
+			if (msg.Percent.equalsIgnoreCase("auto")) {
+				BarAPI.setMessage(p, message.Message, time/20);
 			} else {
-				BarAPI.setMessage(p, message.msg, Float.parseFloat(percent));
+				BarAPI.setMessage(p, message.Message, Float.parseFloat(percent));
 			}
 		}
 	}
 	
-	public static void broadcast(final Message current) {
-        final int show = current.show;
+	public static void broadcast(final Message current, String group) {
+        final int show = current.Show;
         Runnable run = new Runnable() {
     		@Override
 	        public void run() {
@@ -165,8 +171,8 @@ public class Lib {
 		String playername = p.getName();
 		Message msg = current;
 		//Generate msg
-		String message = msg.msg;
-		String rawmsg = msg.msg;
+		String message = msg.Message;
+		String rawmsg = msg.Message;
 		if (rawmsg.toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", playername);
 		}
@@ -185,14 +191,14 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%econ_cents%".toLowerCase())) {
 			if (Main.useEconomy) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));
-				String cents = money.split("\\.")[0];
+				String cents = money.split("\\.")[1];
 				message = message.replaceAll("(?i)%econ_cents%", cents.length() > 1 ? cents : cents + "0");
 			} else {
 				message = "§cVault economy is not enabled!";
 			}
 		}
 		//Generate pst
-		String percent = msg.percent;
+		String percent = msg.Percent;
 		if (percent.toLowerCase().contains("health".toLowerCase())) {
 			percent = percent.replaceAll("(?i)health", Double.toString(p.getHealth()));
 		}
@@ -266,8 +272,8 @@ public class Lib {
 		}
 	}
 	
-	public static void resetCount() {
-		count = 0;
+	public static void resetCount(String group) {
+		count.remove(group);
 	}
 
 	public static void broadcastError(String msg) {

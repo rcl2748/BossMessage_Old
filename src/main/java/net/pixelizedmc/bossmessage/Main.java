@@ -2,7 +2,9 @@ package net.pixelizedmc.bossmessage;
 
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
-import net.pixelizedmc.bossmessage.utils.Message;
+import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.configuration.Message;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -17,6 +19,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -30,7 +34,7 @@ public class Main extends JavaPlugin implements Listener {
     public static String PREFIX_CONSOLE = "[BossMessage] ";
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
-    public static Message current;
+    public static Map<String, Message> current;
     public static Economy econ;
     public static boolean useEconomy = false;
     public static boolean isset = false;
@@ -44,12 +48,12 @@ public class Main extends JavaPlugin implements Listener {
     public static Message broadcasting;
     public static int show;
     public static int interval;
-    public static int numberOfMessages;
     public static Logger logger = Bukkit.getLogger();
     public static ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
     public static int showingTaskId;
     public static int delayTaskId;
     public static int broadcastTaskId = -1;
+    public static Map<String, Broadcaster> broadcaster
     
     public void onEnable() {
         instance = this;
@@ -114,8 +118,8 @@ public class Main extends JavaPlugin implements Listener {
     public static void startProcess() {
     	if (CM.mode.equalsIgnoreCase("AutoMessage")) {
 	        current = Lib.getMessage();
-	        show = current.show;
-	        interval = current.interval;
+	        show = current.Show;
+	        interval = current.Interval;
 	        Runnable run = new Runnable() {
 	    		@Override
 		        public void run() {
