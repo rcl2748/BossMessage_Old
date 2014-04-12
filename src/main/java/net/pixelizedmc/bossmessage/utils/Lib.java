@@ -1,4 +1,4 @@
-package net.pixelizedmc.bossmessage;
+package net.pixelizedmc.bossmessage.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 
+import net.pixelizedmc.bossmessage.Main;
+import net.pixelizedmc.bossmessage.Utils;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.configuration.Message;
 
@@ -111,7 +113,7 @@ public class Lib {
 	}
 
 	public static void setPlayerMsg(Player p, Message msg) {
-		if (p.hasPermission("bossmessage.see")&&!CM.ignoreplayers.contains(p.getName())) {
+		if (!CM.ignoreplayers.contains(p.getName())) {
 			if (Utils.isInteger(msg.Percent)) {
 				float pst = Float.parseFloat(msg.Percent);
 				if (pst>100) {
@@ -143,7 +145,9 @@ public class Lib {
         Runnable run = new Runnable() {
     		@Override
 	        public void run() {
-	            setMsg(current);
+    			for (String group:CM.groups) {
+    				setMsg(current, group);
+    			}
 	            Main.broadcasting = current;
 	            Main.isBroadcasting = true;
 	            if (Main.broadcastTaskId != -1) {
@@ -151,20 +155,35 @@ public class Lib {
 	            }
 	            Main.broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 	            	public void run() {
-	            		if (Main.isset) {
-	            			setMsg(Main.current);
-	            		} else {
-		            		for (Player p:Bukkit.getOnlinePlayers()) {
-		            			BarAPI.removeBar(p);
-		            		}
-	            		}
 	        			Main.isBroadcasting = false;
-	        			setMsg(Main.current);
+	        			setMsgs();
 	            	}
 	            }, show);
 	        }
         };
         Main.scr.runTask(Main.getInstance(), run);
+	}
+	
+	public static void setMsgs() {
+		for (String group:CM.groups) {
+			if (Main.messagers.get(group).isset) {
+				setMsg(Main.messagers.get(group).current, group);
+			} else {
+				for (Player p:getPlayersWithPerm("bossmessage.see." + group)) {
+					BarAPI.removeBar(p);
+				}
+			}
+		}
+	}
+	
+	public static List<Player> getPlayersWithPerm(String perm) {
+		List<Player> output = new ArrayList<Player>();
+		for (Player player:Bukkit.getOnlinePlayers()) {
+			if (player.hasPermission(perm)) {
+				output.add(player);
+			}
+		}
+		return output;
 	}
 	
 	public static Message generateMsg(Player p, Message current) {
@@ -252,7 +271,7 @@ public class Lib {
 		return players;
 	}
 	
-	public static void setMsg(Message msg) {
+	public static void setMsg(Message msg, String group) {
 		if (CM.whitelist) {
 			List<String> worlds = CM.worlds;
 			List<Player> players;
@@ -260,7 +279,9 @@ public class Lib {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
 					for (Player p:players) {
-						setPlayerMsg(p, preGenMsg(msg.clone()));
+						if (p.hasPermission("bossmessage.see." + group)) {
+							setPlayerMsg(p, preGenMsg(msg.clone()));
+						}
 					}
 					players.clear();
 				}
@@ -271,9 +292,24 @@ public class Lib {
 			}
 		}
 	}
-	
+
 	public static void resetCount(String group) {
 		count.remove(group);
+	}
+	
+	public static void resetCount() {
+		for (String group:CM.groups) {
+			count.remove(group);
+		}
+	}
+	
+	public static String getPlayerGroup(CommandSender p) {
+		for (String group:CM.groups) {
+			if (p.hasPermission("bossmessage.see." + group)) {
+				return group;
+			}
+		}
+		return null;
 	}
 
 	public static void broadcastError(String msg) {
@@ -284,9 +320,6 @@ public class Lib {
 	}
 	public static void sendMessage(CommandSender p, String msg) {
 		p.sendMessage(Main.PREFIX_NORMAL + msg);
-	}
-	public static List<String> cloneMsg(List<String> msg) {
-		return new ArrayList<String>(msg);
 	}
 	public static String calculatePct(String percent) {
         try {

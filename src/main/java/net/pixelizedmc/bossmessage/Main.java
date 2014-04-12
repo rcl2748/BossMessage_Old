@@ -4,7 +4,8 @@ import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.configuration.Message;
-
+import net.pixelizedmc.bossmessage.utils.Lib;
+import net.pixelizedmc.bossmessage.utils.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.script.ScriptEngine;
@@ -37,7 +38,6 @@ public class Main extends JavaPlugin implements Listener {
     public static Map<String, Message> current;
     public static Economy econ;
     public static boolean useEconomy = false;
-    public static boolean isset = false;
     public static File file;
     public static boolean updater_available;
     public static String version;
@@ -46,14 +46,10 @@ public class Main extends JavaPlugin implements Listener {
     public static String updater_link;
     public static boolean isBroadcasting;
     public static Message broadcasting;
-    public static int show;
-    public static int interval;
     public static Logger logger = Bukkit.getLogger();
     public static ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
-    public static int showingTaskId;
-    public static int delayTaskId;
     public static int broadcastTaskId = -1;
-    public static Map<String, Broadcaster> broadcaster
+    public static Map<String, Messager> messagers = new HashMap<String, Messager>();
     
     public void onEnable() {
         instance = this;
@@ -111,53 +107,35 @@ public class Main extends JavaPlugin implements Listener {
         startProcess();
     }
     
-    public void onDisable() {
-    	
+    public static void stopProcess() {
+    	for (String group:CM.groups) {
+    		messagers.get(group).stop();
+    	}
+    	messagers.clear();
     }
     
     public static void startProcess() {
-    	if (CM.mode.equalsIgnoreCase("AutoMessage")) {
-	        current = Lib.getMessage();
-	        show = current.Show;
-	        interval = current.Interval;
-	        Runnable run = new Runnable() {
-	    		@Override
-		        public void run() {
-	    			if (!isBroadcasting) {
-	    				Lib.setMsg(current);
-	    			}
-		            isset = true;
-		            showingTaskId = scr.scheduleSyncDelayedTask(instance, new Runnable() {
-		            	public void run() {
-		            		for (Player p:Bukkit.getOnlinePlayers()) {
-		            			if (!isBroadcasting) {
-		            				BarAPI.removeBar(p);
-		            			}
-		            		}
-		        			isset = false;
-		        			delayTaskId = scr.scheduleSyncDelayedTask(instance, new Runnable() {
-		            			public void run() {
-		    	        			startProcess();
-		            			}
-		            		}, interval);
-		            	}
-		            }, show);
-		        }
-	        };
-	        scr.runTask(getInstance(), run);
-    	}
+        for (String group:CM.groups) {
+        	messagers.put(group, new Messager(group));
+        }
     }
     
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent e) {
         Player p = e.getPlayer();
-        if (p.hasPermission("bossmessage.see")) {
+        String msgGroup = null;
+        for (String group:CM.groups) {
+        	if (p.hasPermission("bossmessage.see." + group.toLowerCase())) {
+        		msgGroup = group;
+        	}
+        }
+        if (msgGroup != null) {
 	        if (CM.whitelist) {
 	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
 	        		if (Main.isBroadcasting) {
 	        			Lib.setPlayerMsg(p, broadcasting);
-	        		} else if (Main.isset) {
-	        			Lib.setPlayerMsg(p, current);
+	        		} else if (messagers.get(msgGroup).isset) {
+	        			Lib.setPlayerMsg(p, current.get(msgGroup));
 	        		}
 	        	} else {
 	        		BarAPI.removeBar(p);
@@ -171,13 +149,19 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
-        if (p.hasPermission("bossmessage.see")) {
+        String msgGroup = null;
+        for (String group:CM.groups) {
+        	if (p.hasPermission("bossmessage.see." + group.toLowerCase())) {
+        		msgGroup = group;
+        	}
+        }
+        if (msgGroup != null) {
 	        if (CM.whitelist) {
 	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
 	        		if (Main.isBroadcasting) {
 	        			Lib.setPlayerMsg(p, broadcasting);
-	        		} else if (Main.isset) {
-	        			Lib.setPlayerMsg(p, current);
+	        		} else if (messagers.get(msgGroup).isset) {
+	        			Lib.setPlayerMsg(p, current.get(msgGroup));
 	        		}
 	        	} else {
 	        		BarAPI.removeBar(p);
@@ -191,18 +175,24 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (p.hasPermission("bossmessage.see")) {
-	        if (isset) {
+        String msgGroup = null;
+        for (String group:CM.groups) {
+        	if (p.hasPermission("bossmessage.see." + group.toLowerCase())) {
+        		msgGroup = group;
+        	}
+        }
+        if (msgGroup != null) {
+	        if (messagers.get(msgGroup).isset) {
 		        if (CM.whitelist) {
 		        	if (CM.worlds.contains(p.getWorld().getName())) {
 		        		if (Main.isBroadcasting) {
 		        			Lib.setPlayerMsg(p, broadcasting);
-		        		} else if (Main.isset) {
-		        			Lib.setPlayerMsg(p, current);
+		        		} else if (messagers.get(msgGroup).isset) {
+		        			Lib.setPlayerMsg(p, current.get(msgGroup));
 		        		}
 		        	}
 		        } else {
-		        	Lib.setPlayerMsg(p, current);
+		        	Lib.setPlayerMsg(p, current.get(msgGroup));
 		        }
 	        }
         }

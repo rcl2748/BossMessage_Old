@@ -5,6 +5,7 @@ import java.util.List;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.configuration.Message;
+import net.pixelizedmc.bossmessage.utils.Lib;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -29,11 +30,11 @@ public class Commands implements CommandExecutor {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				if (args.length > 4) {
-						if (Utils.isInteger(args[2])) {
-							if (Utils.isInteger(args[3])) {
+    				if (args.length > 5) {
+						if (Utils.isInteger(args[3])) {
+							if (Utils.isInteger(args[4])) {
 	    						List<String> listmsg = new ArrayList<>();
-	    						for (int i = 4;i < args.length;i++) {
+	    						for (int i = 5;i < args.length;i++) {
 	    							listmsg.add(args[i]);
 	    						}
 	    						String textmsg = StringUtils.join(listmsg, " ");
@@ -42,11 +43,12 @@ public class Commands implements CommandExecutor {
 	    	    					return true;
 	    						}
 	    						Message message = new Message(textmsg, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-	    						CM.rawmessages.add(message);
-	    						CM.messages.add(CM.colorMsg(message));
-	    						CM.writeMessages(CM.rawmessages);
-	    						CM.save();
-	    						Main.numberOfMessages++;
+	    						if (CM.messages.containsKey(args[1])) {
+		    						CM.rawmessages.get(args[1]).add(message);
+		    						CM.messages.get(args[1]).add(CM.colorMsg(message));
+		    						CM.config.set("BossMessage.Messages." + args[1].toLowerCase(), CM.rawmessages);
+		    						CM.save();
+	    						}
 	    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
 		    				
 							} else {
@@ -56,7 +58,7 @@ public class Commands implements CommandExecutor {
 							sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
 						}
 					} else {
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <precent> <show> <interval> <message>");
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <group> <precent> <show> <interval> <message>");
 					}
     			}
     			// Command: REMOVE
@@ -66,22 +68,30 @@ public class Commands implements CommandExecutor {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				if (args.length == 2) {
-	    				if (Utils.isInteger(args[1])) {
-	    					int num = Integer.parseInt(args[1]);
-	    					if (CM.messages.size() >= num && num > 0) {
-	    						CM.rawmessages.remove(num - 1);
-	    						CM.messages.remove(num - 1);
-	    						CM.writeMessages(CM.rawmessages);
-	    						CM.save();
-	    						Lib.resetCount();
-	    						sender.sendMessage(ChatColor.GREEN + "Message #" + num + " was successfully removed!");
-	    					} else {
-	    						sender.sendMessage(ChatColor.DARK_RED + "Message " + ChatColor.RED + args[1] + ChatColor.DARK_RED + " was not found!");
-	    					}
-	    				}
+    				if (args.length == 3) {
+    					boolean contains = false;
+    					for (String group:CM.groups) {
+    						if (group.equalsIgnoreCase(args[1])) {
+    							contains = true;
+    							break;
+    						}
+    					}
+    					if (contains) {
+		    				if (Utils.isInteger(args[2])) {
+		    					int num = Integer.parseInt(args[2]);
+		    					if (CM.messages.size() >= num && num > 0) {
+		    						CM.rawmessages.get(args[1].toLowerCase()).remove(num - 1);
+		    						CM.messages.get(args[1].toLowerCase()).remove(num - 1);
+		    						CM.save();
+		    						Lib.resetCount();
+		    						sender.sendMessage(ChatColor.GREEN + "Message #" + num + " was successfully removed!");
+		    					} else {
+		    						sender.sendMessage(ChatColor.DARK_RED + "Message " + ChatColor.RED + args[1] + ChatColor.DARK_RED + " was not found!");
+		    					}
+		    				}
+    					}
     				} else {
-    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm remove <#>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm remove <group> <#>");
     				}
     				
     				
@@ -94,11 +104,31 @@ public class Commands implements CommandExecutor {
     					return true;
     				}
     				
-    				sender.sendMessage(ChatColor.YELLOW + "=== Message list ===");
-    				int i = 0;
-    				for (Message msg:CM.messages) {
-    					i++;
-    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.Message);
+    				if (args.length == 1) {
+    					Lib.sendError(sender, "/bm list <group>");
+	    				sender.sendMessage(ChatColor.YELLOW + "=== Group list ===");
+	    				int i = 0;
+	    				for (String group:CM.groups) {
+	    					i++;
+	    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + group);
+	    				}
+    				}
+    				else if (args.length == 2) {
+    					boolean contains = false;
+    					for (String group:CM.groups) {
+    						if (group.equalsIgnoreCase(args[1])) {
+    							contains = true;
+    							break;
+    						}
+    					}
+    					if (contains) {
+		    				sender.sendMessage(ChatColor.YELLOW + "=== Message list ===");
+		    				int i = 0;
+		    				for (Message msg:CM.messages.get(args[1].toLowerCase())) {
+		    					i++;
+		    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.Message);
+		    				}
+    					}
     				}
     			}
     			// Command WHITELIST
@@ -199,8 +229,9 @@ public class Commands implements CommandExecutor {
 	    						CM.ignoreplayers.remove(sendername);
 	    						CM.config.set("BossMessage.IgnoredPlayers", CM.ignoreplayers);
 	    						CM.save();
-	    						if (Main.isset) {
-	    							Lib.setPlayerMsg(p, Main.current);
+	    						String group = Lib.getPlayerGroup(p);
+	    						if (Main.messagers.get(group).isset) {
+	    							Lib.setPlayerMsg(p, Main.messagers.get(group).current);
 	    						}
 	        					sender.sendMessage(ChatColor.GREEN + "BossMessages were successfully enabled");
 	    					} else {
@@ -309,6 +340,7 @@ public class Commands implements CommandExecutor {
     				if (args.length <= 1) {
     					Main.scr.cancelAllTasks();
     					CM.reloadConfig();
+    					Main.stopProcess();
     					Lib.resetCount();
     					Main.startProcess();
     					Lib.sendMessage(sender, ChatColor.GREEN + "BossMessage was successfully reloaded");
@@ -377,7 +409,10 @@ public class Commands implements CommandExecutor {
 	    							listmsg.add(args[i]);
 	    						}
 	    						String textmsg = StringUtils.join(listmsg, " ");
-    							Lib.broadcast(new Message(textmsg, "auto", show*20, 0));
+	    						Message msg = new Message(textmsg, "auto", show*20, 0);
+	    						for (String group:CM.groups) {
+	    							Lib.broadcast(msg, group);
+	    						}
     							Lib.sendMessage(sender, "Broadcasting your message for " + show + " seconds.");
     						} else {
     							Lib.sendError(sender, "Show time must be more than 0!");
