@@ -31,10 +31,11 @@ public class Lib {
 				Message message = preGenMsg(CM.messages.get(group).get(r));
 				return message;
 			} else {
-				Message message = preGenMsg(CM.messages.get(group).get(count.get(group)));
 				int c = count.get(group) != null ? count.get(group) : 0;
-				c = count.put(group, c + 1);
-				if (c >= CM.messages.size()) {
+				Message message = preGenMsg(CM.messages.get(group).get(c));
+				c++;
+				count.put(group, c);
+				if (c >= CM.messages.get(group).size()) {
 					resetCount(group);
 				}
 				return message;
@@ -124,7 +125,7 @@ public class Lib {
 			}
 			Message message = generateMsg(p, msg);
 			String percent = msg.Percent;
-			if (msg.Message.contains(".")||msg.Message.contains("/")||msg.Message.contains("*")||msg.Message.contains("+")||msg.Message.contains("-")||msg.Message.contains("(")||msg.Message.contains(")")) {
+			if (msg.Percent.contains(".")||msg.Percent.contains("/")||msg.Percent.contains("*")||msg.Percent.contains("+")||msg.Percent.contains("-")||msg.Percent.contains("(")||msg.Percent.contains(")")) {
 				percent = calculatePct(percent);
 			}
 			int time = msg.Show;
@@ -310,6 +311,17 @@ public class Lib {
 			}
 		}
 		return null;
+	}
+	
+	public static boolean groupExists(String g) {
+		boolean output = false;
+		for (String group:CM.groups) {
+			if (group.equalsIgnoreCase(g)) {
+				output = true;
+				break;
+			}
+		}
+		return output;
 	}
 
 	public static void broadcastError(String msg) {

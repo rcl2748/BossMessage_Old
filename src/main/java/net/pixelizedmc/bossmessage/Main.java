@@ -123,12 +123,7 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent e) {
         Player p = e.getPlayer();
-        String msgGroup = null;
-        for (String group:CM.groups) {
-        	if (p.hasPermission("bossmessage.see." + group.toLowerCase())) {
-        		msgGroup = group;
-        	}
-        }
+        String msgGroup = Lib.getPlayerGroup(p);
         if (msgGroup != null) {
 	        if (CM.whitelist) {
 	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {

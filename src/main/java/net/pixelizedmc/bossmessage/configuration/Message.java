@@ -1,5 +1,8 @@
 package net.pixelizedmc.bossmessage.configuration;
 
+import org.bukkit.configuration.serialization.SerializableAs;
+
+@SerializableAs(value = "Message")
 public class Message implements Cloneable {
 	public String Message;
 	public String Percent;

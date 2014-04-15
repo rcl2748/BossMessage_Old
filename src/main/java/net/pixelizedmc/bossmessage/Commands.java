@@ -31,32 +31,36 @@ public class Commands implements CommandExecutor {
     					return true;
     				}
     				if (args.length > 5) {
-						if (Utils.isInteger(args[3])) {
-							if (Utils.isInteger(args[4])) {
-	    						List<String> listmsg = new ArrayList<>();
-	    						for (int i = 5;i < args.length;i++) {
-	    							listmsg.add(args[i]);
-	    						}
-	    						String textmsg = StringUtils.join(listmsg, " ");
-	    						if (textmsg.length() > 64) {
-	    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
-	    	    					return true;
-	    						}
-	    						Message message = new Message(textmsg, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-	    						if (CM.messages.containsKey(args[1])) {
-		    						CM.rawmessages.get(args[1]).add(message);
-		    						CM.messages.get(args[1]).add(CM.colorMsg(message));
-		    						CM.config.set("BossMessage.Messages." + args[1].toLowerCase(), CM.rawmessages);
-		    						CM.save();
-	    						}
-	    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
-		    				
+    					if (Lib.groupExists(args[1])) {
+							if (Utils.isInteger(args[3])) {
+								if (Utils.isInteger(args[4])) {
+		    						List<String> listmsg = new ArrayList<>();
+		    						for (int i = 5;i < args.length;i++) {
+		    							listmsg.add(args[i]);
+		    						}
+		    						String textmsg = StringUtils.join(listmsg, " ");
+		    						if (textmsg.length() > 64) {
+		    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
+		    	    					return true;
+		    						}
+		    						Message message = new Message(textmsg, args[2], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+		    						if (CM.messages.containsKey(args[1])) {
+			    						CM.rawmessages.get(args[1]).add(message);
+			    						CM.messages.get(args[1]).add(CM.colorMsg(message));
+			    						CM.config.set("BossMessage.Messages" + args[1].toLowerCase(), CM.rawmessages);
+			    						CM.save();
+		    						}
+		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
+			    				
+								} else {
+									sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
+								}
 							} else {
-								sender.sendMessage(ChatColor.RED + args[3] + ChatColor.DARK_RED + " is not a valid number!");
+								sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
 							}
-						} else {
-							sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
-						}
+    					} else {
+    						Lib.sendError(sender, "That group doesn't exist!");
+    					}
 					} else {
 						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <group> <precent> <show> <interval> <message>");
 					}
@@ -69,14 +73,7 @@ public class Commands implements CommandExecutor {
     					return true;
     				}
     				if (args.length == 3) {
-    					boolean contains = false;
-    					for (String group:CM.groups) {
-    						if (group.equalsIgnoreCase(args[1])) {
-    							contains = true;
-    							break;
-    						}
-    					}
-    					if (contains) {
+    					if (Lib.groupExists(args[1])) {
 		    				if (Utils.isInteger(args[2])) {
 		    					int num = Integer.parseInt(args[2]);
 		    					if (CM.messages.size() >= num && num > 0) {
@@ -89,6 +86,8 @@ public class Commands implements CommandExecutor {
 		    						sender.sendMessage(ChatColor.DARK_RED + "Message " + ChatColor.RED + args[1] + ChatColor.DARK_RED + " was not found!");
 		    					}
 		    				}
+    					} else {
+    						Lib.sendError(sender, "That group doesn't exist!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm remove <group> <#>");
@@ -114,15 +113,8 @@ public class Commands implements CommandExecutor {
 	    				}
     				}
     				else if (args.length == 2) {
-    					boolean contains = false;
-    					for (String group:CM.groups) {
-    						if (group.equalsIgnoreCase(args[1])) {
-    							contains = true;
-    							break;
-    						}
-    					}
-    					if (contains) {
-		    				sender.sendMessage(ChatColor.YELLOW + "=== Message list ===");
+    					if (Lib.groupExists(args[1])) {
+		    				sender.sendMessage(ChatColor.YELLOW + "=== Message list for " + ChatColor.GOLD + args[1].toLowerCase() + ChatColor.YELLOW + " ===");
 		    				int i = 0;
 		    				for (Message msg:CM.messages.get(args[1].toLowerCase())) {
 		    					i++;
