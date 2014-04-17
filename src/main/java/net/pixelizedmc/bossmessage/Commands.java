@@ -48,7 +48,7 @@ public class Commands implements CommandExecutor {
 		    						Message message = new Message(textmsg, args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
 		    						CM.rawmessages.get(group).add(message);
 		    						CM.messages.get(group).add(CM.colorMsg(message));
-		    						CM.config.set("BossMessage.Messages" + group, CM.rawmessages);
+		    						CM.config.set("BossMessage.Messages." + group, CM.rawmessages);
 		    						CM.save();
 		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
 			    				
@@ -77,7 +77,7 @@ public class Commands implements CommandExecutor {
     					if (Lib.groupExists(group)) {
 		    				if (Utils.isInteger(args[2])) {
 		    					int num = Integer.parseInt(args[2]);
-		    					if (CM.messages.size() >= num && num > 0) {
+		    					if (CM.messages.get(group).size() >= num && num > 0) {
 		    						CM.rawmessages.get(group).remove(num - 1);
 		    						CM.messages.get(group).remove(num - 1);
 		    						CM.save();
@@ -87,7 +87,7 @@ public class Commands implements CommandExecutor {
 		    						Lib.sendError(sender, "Message " + args[2] + " was not found!");
 		    					}
 		    				} else {
-		    					Lib.sendError(sender, args[2] + "is not a number!");
+		    					Lib.sendError(sender, args[2] + " is not a number!");
 		    				}
     					} else {
     						Lib.sendError(sender, "That group doesn't exist!");
@@ -108,9 +108,9 @@ public class Commands implements CommandExecutor {
     					String group = args[1].toLowerCase();
     					if (!CM.groups.contains(group)) {
     						CM.groups.add(group);
-    						Main.messagers.put(group, new Messager(group));
     						CM.messages.put(group, new ArrayList<Message>());
     						CM.rawmessages.put(group, new ArrayList<Message>());
+    						Main.messagers.put(group, new Messager(group));
     						CM.config.set("BossMessage.Messages." + group, new ArrayList<>());
     						CM.save();
     						Lib.sendMessage(sender, "Group " + group + " was created!");
