@@ -8,6 +8,7 @@ import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,8 +31,8 @@ import javax.script.ScriptEngineManager;
 public class Main extends JavaPlugin implements Listener {
 
     private static Main instance = null;
-    public static String PREFIX_ERROR = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "]" + ChatColor.GOLD + " ";
-    public static String PREFIX_NORMAL = ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "BossMessage" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " ";
+    public static String PREFIX_ERROR = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "] " + ChatColor.GOLD;
+    public static String PREFIX_NORMAL = ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "BossMessage" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW;
     public static String PREFIX_CONSOLE = "[BossMessage] ";
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
@@ -44,11 +45,8 @@ public class Main extends JavaPlugin implements Listener {
     public static String updater_name;
     public static String updater_version;
     public static String updater_link;
-    public static boolean isBroadcasting;
-    public static Message broadcasting;
     public static Logger logger = Bukkit.getLogger();
     public static ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
-    public static int broadcastTaskId = -1;
     public static Map<String, Messager> messagers = new HashMap<String, Messager>();
     
     public void onEnable() {
@@ -58,13 +56,14 @@ public class Main extends JavaPlugin implements Listener {
         
         //Hook in BarAPI
         if (plm.getPlugin("BarAPI") == null) {
-        	logger.severe("THIS PLUGIN REQUIRES BARAPI TO BE INSTALLED!!!");
-        	logger.severe("BOSSMESSAGE IS NOW BEING DISABLED!!!");
+        	logger.severe(PREFIX_CONSOLE + "THIS PLUGIN REQUIRES BARAPI TO BE INSTALLED!!!");
+        	logger.severe(PREFIX_CONSOLE + "BOSSMESSAGE IS NOW BEING DISABLED!!!");
         	plm.disablePlugin(this);
         	return;
         }
         
         //config
+        ConfigurationSerialization.registerClass(Message.class, "Message");
         CM.createConfig();
         CM.readConfig();
         
@@ -76,13 +75,13 @@ public class Main extends JavaPlugin implements Listener {
         	Metrics metrics = new Metrics(this);
         	metrics.start();
         } catch (IOException e) {
-        	logger.warning(ChatColor.RED + "BossMessage couldn't connect to Metrics :(");
+        	logger.warning(PREFIX_CONSOLE + "BossMessage couldn't connect to Metrics :(");
         }
         
         //Hook in Vault
         if (setupEconomy()) {
         	useEconomy = true;
-        	logger.info("Successfully hooked in to Vault Economy");
+        	logger.info(PREFIX_CONSOLE + "Successfully hooked in to Vault Economy");
         } else {
         	logger.warning(PREFIX_CONSOLE + "Failed to hook in Vault's Economy! Is vault even installed?");
         }
@@ -90,10 +89,10 @@ public class Main extends JavaPlugin implements Listener {
         //Hook in VNP
         if (CM.useVNP) {
 	        if (plm.getPlugin("VanishNoPacket") != null) {
-	         	logger.info("Successfully hooked in to VanishNoPacket!");
+	         	logger.info(PREFIX_CONSOLE + "Successfully hooked in to VanishNoPacket!");
 	        } else {
 	        	CM.useVNP = false;
-	        	logger.warning("ATTENTION!!! VanishNoPacket is NOT installed!");
+	        	logger.warning(PREFIX_CONSOLE + "ATTENTION!!! VanishNoPacket is NOT installed!");
 	        }
         }
         
@@ -124,11 +123,12 @@ public class Main extends JavaPlugin implements Listener {
     public void onPlayerPortal(PlayerPortalEvent e) {
         Player p = e.getPlayer();
         String msgGroup = Lib.getPlayerGroup(p);
+        Messager msgr = messagers.get(msgGroup);
         if (msgGroup != null) {
 	        if (CM.whitelist) {
 	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
-	        		if (Main.isBroadcasting) {
-	        			Lib.setPlayerMsg(p, broadcasting);
+	        		if (msgr.isBroadcasting) {
+	        			Lib.setPlayerMsg(p, msgr.broadcasting);
 	        		} else if (messagers.get(msgGroup).isset) {
 	        			Lib.setPlayerMsg(p, current.get(msgGroup));
 	        		}
@@ -144,17 +144,19 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
-        String msgGroup = null;
+        String msgGroup = Lib.getPlayerGroup(p);
+        Messager msgr = messagers.get(msgGroup);
         for (String group:CM.groups) {
         	if (p.hasPermission("bossmessage.see." + group.toLowerCase())) {
         		msgGroup = group;
+        		msgr = messagers.get(group);
         	}
         }
         if (msgGroup != null) {
 	        if (CM.whitelist) {
 	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
-	        		if (Main.isBroadcasting) {
-	        			Lib.setPlayerMsg(p, broadcasting);
+	        		if (msgr.isBroadcasting) {
+	        			Lib.setPlayerMsg(p, msgr.broadcasting);
 	        		} else if (messagers.get(msgGroup).isset) {
 	        			Lib.setPlayerMsg(p, current.get(msgGroup));
 	        		}
@@ -170,24 +172,20 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        String msgGroup = null;
-        for (String group:CM.groups) {
-        	if (p.hasPermission("bossmessage.see." + group.toLowerCase())) {
-        		msgGroup = group;
-        	}
-        }
+        String msgGroup = Lib.getPlayerGroup(p);
+        Messager msgr = messagers.get(msgGroup);
         if (msgGroup != null) {
 	        if (messagers.get(msgGroup).isset) {
 		        if (CM.whitelist) {
 		        	if (CM.worlds.contains(p.getWorld().getName())) {
-		        		if (Main.isBroadcasting) {
-		        			Lib.setPlayerMsg(p, broadcasting);
+		        		if (msgr.isBroadcasting) {
+		        			Lib.setPlayerMsg(p, msgr.broadcasting);
 		        		} else if (messagers.get(msgGroup).isset) {
-		        			Lib.setPlayerMsg(p, current.get(msgGroup));
+		        			Lib.setPlayerMsg(p, msgr.current);
 		        		}
 		        	}
 		        } else {
-		        	Lib.setPlayerMsg(p, current.get(msgGroup));
+		        	Lib.setPlayerMsg(p, msgr.current);
 		        }
 	        }
         }

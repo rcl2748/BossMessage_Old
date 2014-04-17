@@ -33,11 +33,13 @@ public class CM {
     public static String mode;
     public static boolean checkUpdates;
     public static List<String> groups;
+    public static int broadcastDefaultTime;
+    public static String broadcastPercent;
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
     	config.addDefault("BossMessage.Messages", new ArrayList<>());
-        if (!config.contains("BossMessage.Messages.default")) {
+        if (config.get("BossMessage.Messages") != null) {
         	List<Message> defaultMessages = new ArrayList<Message>();
         	defaultMessages.add(new Message("&bYo &5%player%&b, wazzup?", "100", 100, 0));
         	defaultMessages.add(new Message("&aBossMessage - best BossBar plugin by &bplay.pixelizedmc.net", "30", 100, 0));
@@ -64,6 +66,13 @@ public class CM {
         ignoreplayers = config.getStringList("BossMessage.IgnoredPlayers");
         useVNP = config.getBoolean("BossMessage.VanishNoPacketSupport");
         checkUpdates = config.getBoolean("BossMessage.CheckUpdates");
+        broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
+        broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
+        
+        if (broadcastDefaultTime < 1) {
+        	Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
+        	broadcastDefaultTime = 600;
+        }
     }
 	
     @SuppressWarnings("unchecked")
@@ -76,7 +85,7 @@ public class CM {
     	}
 		return output;
 	}
-
+    
 	public static void save() {
         try {
             config.save(path);

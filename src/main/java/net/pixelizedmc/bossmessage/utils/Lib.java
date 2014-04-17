@@ -25,7 +25,7 @@ public class Lib {
 	static Map<String, Integer> count = new HashMap<String, Integer>();
 	
 	public static Message getMessage(String group) {
-		if (CM.messages.size() > 0) {
+		if (CM.messages.get(group).size() > 0) {
 			if (CM.random) {
 				int r = Utils.randInt(0, CM.messages.size() - 1);
 				Message message = preGenMsg(CM.messages.get(group).get(r));
@@ -139,30 +139,6 @@ public class Lib {
 				BarAPI.setMessage(p, message.Message, Float.parseFloat(percent));
 			}
 		}
-	}
-	
-	public static void broadcast(final Message current, String group) {
-        final int show = current.Show;
-        Runnable run = new Runnable() {
-    		@Override
-	        public void run() {
-    			for (String group:CM.groups) {
-    				setMsg(current, group);
-    			}
-	            Main.broadcasting = current;
-	            Main.isBroadcasting = true;
-	            if (Main.broadcastTaskId != -1) {
-	            	Main.scr.cancelTask(Main.broadcastTaskId);
-	            }
-	            Main.broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-	            	public void run() {
-	        			Main.isBroadcasting = false;
-	        			setMsgs();
-	            	}
-	            }, show);
-	        }
-        };
-        Main.scr.runTask(Main.getInstance(), run);
 	}
 	
 	public static void setMsgs() {
@@ -289,7 +265,9 @@ public class Lib {
 			}
 		} else {
 			for (Player p:Bukkit.getOnlinePlayers()) {
-				setPlayerMsg(p, preGenMsg(msg.clone()));
+				if (p.hasPermission("bossmessage.see." + group)) {
+					setPlayerMsg(p, preGenMsg(msg.clone()));
+				}
 			}
 		}
 	}
@@ -314,14 +292,7 @@ public class Lib {
 	}
 	
 	public static boolean groupExists(String g) {
-		boolean output = false;
-		for (String group:CM.groups) {
-			if (group.equalsIgnoreCase(g)) {
-				output = true;
-				break;
-			}
-		}
-		return output;
+		return CM.groups.contains(g);
 	}
 
 	public static void broadcastError(String msg) {

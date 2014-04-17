@@ -6,6 +6,7 @@ import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.configuration.Message;
 import net.pixelizedmc.bossmessage.utils.Lib;
+import net.pixelizedmc.bossmessage.utils.Messager;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -31,7 +32,8 @@ public class Commands implements CommandExecutor {
     					return true;
     				}
     				if (args.length > 5) {
-    					if (Lib.groupExists(args[1])) {
+    					String group = args[1].toLowerCase();
+    					if (Lib.groupExists(group)) {
 							if (Utils.isInteger(args[3])) {
 								if (Utils.isInteger(args[4])) {
 		    						List<String> listmsg = new ArrayList<>();
@@ -43,13 +45,11 @@ public class Commands implements CommandExecutor {
 		    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
 		    	    					return true;
 		    						}
-		    						Message message = new Message(textmsg, args[2], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-		    						if (CM.messages.containsKey(args[1])) {
-			    						CM.rawmessages.get(args[1]).add(message);
-			    						CM.messages.get(args[1]).add(CM.colorMsg(message));
-			    						CM.config.set("BossMessage.Messages" + args[1].toLowerCase(), CM.rawmessages);
-			    						CM.save();
-		    						}
+		    						Message message = new Message(textmsg, args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+		    						CM.rawmessages.get(group).add(message);
+		    						CM.messages.get(group).add(CM.colorMsg(message));
+		    						CM.config.set("BossMessage.Messages" + group, CM.rawmessages);
+		    						CM.save();
 		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
 			    				
 								} else {
@@ -73,18 +73,21 @@ public class Commands implements CommandExecutor {
     					return true;
     				}
     				if (args.length == 3) {
-    					if (Lib.groupExists(args[1])) {
+    					String group = args[1].toLowerCase();
+    					if (Lib.groupExists(group)) {
 		    				if (Utils.isInteger(args[2])) {
 		    					int num = Integer.parseInt(args[2]);
 		    					if (CM.messages.size() >= num && num > 0) {
-		    						CM.rawmessages.get(args[1].toLowerCase()).remove(num - 1);
-		    						CM.messages.get(args[1].toLowerCase()).remove(num - 1);
+		    						CM.rawmessages.get(group).remove(num - 1);
+		    						CM.messages.get(group).remove(num - 1);
 		    						CM.save();
 		    						Lib.resetCount();
 		    						sender.sendMessage(ChatColor.GREEN + "Message #" + num + " was successfully removed!");
 		    					} else {
-		    						sender.sendMessage(ChatColor.DARK_RED + "Message " + ChatColor.RED + args[1] + ChatColor.DARK_RED + " was not found!");
+		    						Lib.sendError(sender, "Message " + args[2] + " was not found!");
 		    					}
+		    				} else {
+		    					Lib.sendError(sender, args[2] + "is not a number!");
 		    				}
     					} else {
     						Lib.sendError(sender, "That group doesn't exist!");
@@ -93,9 +96,33 @@ public class Commands implements CommandExecutor {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm remove <group> <#>");
     				}
     				
+    			}
+    			//AddGroup
+    			else if (args[0].equalsIgnoreCase("addgroup")) {
+    				
+    				if (!sender.hasPermission("bossmessage.addgroup")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					String group = args[1].toLowerCase();
+    					if (!CM.groups.contains(group)) {
+    						CM.groups.add(group);
+    						Main.messagers.put(group, new Messager(group));
+    						CM.messages.put(group, new ArrayList<Message>());
+    						CM.rawmessages.put(group, new ArrayList<Message>());
+    						CM.config.set("BossMessage.Messages." + group, new ArrayList<>());
+    						CM.save();
+    						Lib.sendMessage(sender, "Group " + group + " was created!");
+    					} else {
+    						Lib.sendError(sender, "Group " + group + " already exists!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addgroup <group>");
+    				}
     				
     			}
-    			// Command: LIST
+    			//List
     			else if (args[0].equalsIgnoreCase("list")) {
     				
     				if (!sender.hasPermission("bossmessage.list")) {
@@ -113,10 +140,11 @@ public class Commands implements CommandExecutor {
 	    				}
     				}
     				else if (args.length == 2) {
-    					if (Lib.groupExists(args[1])) {
-		    				sender.sendMessage(ChatColor.YELLOW + "=== Message list for " + ChatColor.GOLD + args[1].toLowerCase() + ChatColor.YELLOW + " ===");
+    					String group = args[1].toLowerCase();
+    					if (Lib.groupExists(group)) {
+		    				sender.sendMessage(ChatColor.YELLOW + "=== Message list for " + ChatColor.GOLD + group + ChatColor.YELLOW + " ===");
 		    				int i = 0;
-		    				for (Message msg:CM.messages.get(args[1].toLowerCase())) {
+		    				for (Message msg:CM.messages.get(group)) {
 		    					i++;
 		    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.Message);
 		    				}
@@ -388,7 +416,7 @@ public class Commands implements CommandExecutor {
     			//Broadcast
     			else if (args[0].equalsIgnoreCase("broadcast")) {
     				
-    				if (!sender.hasPermission("bossmessage.broadcast")) {
+    				if (!sender.hasPermission("bossmessage.broadcast.normal")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -401,9 +429,9 @@ public class Commands implements CommandExecutor {
 	    							listmsg.add(args[i]);
 	    						}
 	    						String textmsg = StringUtils.join(listmsg, " ");
-	    						Message msg = new Message(textmsg, "auto", show*20, 0);
+	    						Message msg = new Message(textmsg, CM.broadcastPercent, show*20, 0);
 	    						for (String group:CM.groups) {
-	    							Lib.broadcast(msg, group);
+	    							Main.messagers.get(group).broadcast(msg);
 	    						}
     							Lib.sendMessage(sender, "Broadcasting your message for " + show + " seconds.");
     						} else {
@@ -414,6 +442,63 @@ public class Commands implements CommandExecutor {
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm broadcast <sec> <message>");
+    				}
+    				
+    			}
+    			//Qb
+    			else if (args[0].equalsIgnoreCase("qb")) {
+    				
+    				if (!sender.hasPermission("bossmessage.broadcast.quick")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length > 1) {
+						List<String> listmsg = new ArrayList<>();
+						for (int i = 1;i < args.length;i++) {
+							listmsg.add(args[i]);
+						}
+						String textmsg = StringUtils.join(listmsg, " ");
+						Message msg = new Message(textmsg, CM.broadcastPercent, CM.broadcastDefaultTime*20, 0);
+						for (String group:CM.groups) {
+							Main.messagers.get(group).broadcast(msg);
+						}
+						Lib.sendMessage(sender, "QuickBroadcasting your message.");
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm qb <message>");
+    				}
+    				
+    			}
+    			//Gb
+    			else if (args[0].equalsIgnoreCase("gb")) {
+    				
+    				if (!sender.hasPermission("bossmessage.broadcast.group")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length > 3) {
+    					if (CM.groups.contains(args[1])) {
+	    					if (Utils.isInteger(args[2])) {
+	    						int show = Integer.parseInt(args[2]);
+	    						if (show > 0) {
+		    						List<String> listmsg = new ArrayList<>();
+		    						for (int i = 3;i < args.length;i++) {
+		    							listmsg.add(args[i]);
+		    						}
+		    						String textmsg = StringUtils.join(listmsg, " ");
+		    						Message msg = new Message(textmsg, CM.broadcastPercent, show*20, 0);
+		    						Main.messagers.get(args[1]).broadcast(msg);
+	    							Lib.sendMessage(sender, "Broadcasting your message to group " + args[1] + " for " + args[2] + " seconds.");
+	    						} else {
+	    							Lib.sendError(sender, "Show time must be more than 0!");
+	    						}
+	    					} else {
+	    						Lib.sendError(sender, args[2] + " is not a valid show time!");
+	    					}
+    					} else {
+    						Lib.sendError(sender, args[1] + " is not a valid group!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm gb <group> <sec> <message>");
     				}
     				
     			}
@@ -442,7 +527,7 @@ public class Commands implements CommandExecutor {
     				printHelp(sender);
     				
     			} else {
-    				sender.sendMessage(ChatColor.DARK_RED + "Invalid command! Usage: " + ChatColor.RED + "/bm help");
+    				Lib.sendError(sender, ("Invalid command! Usage: " + ChatColor.RED + "/bm help"));
     			}
     		}
     	}
@@ -495,8 +580,14 @@ public class Commands implements CommandExecutor {
 		if (sender.hasPermission("bossmessage.update.check")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm check " + ChatColor.RED + "-" + ChatColor.RESET + " checks for updates");
 		}
-		if (sender.hasPermission("bossmessage.broadcast")) {
+		if (sender.hasPermission("bossmessage.broadcast.normal")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm broadcast <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message");
+		}
+		if (sender.hasPermission("bossmessage.broadcast.quick")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm qb <message> " + ChatColor.RED + "-" + ChatColor.RESET + " quick-broadcasts the message");
+		}
+		if (sender.hasPermission("bossmessage.broadcast.group")) {
+			sender.sendMessage(ChatColor.YELLOW + "/bm gb <group> <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message for a group");
 		}
 		if (sender.hasPermission("bossmessage.info")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");

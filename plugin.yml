@@ -16,7 +16,6 @@ permissions:
       bossmessage.add: true
       bossmessage.remove: true
       bossmessage.list: true
-      bossmessage.see: true
       bossmessage.whitelist: true
       bossmessage.rrc: true
       bossmessage.random: true
@@ -34,26 +33,7 @@ permissions:
   bossmessage.*:
     default: op
     children:
-      bossmessage.reload: true
-      bossmessage.add: true
-      bossmessage.remove: true
-      bossmessage.list: true
-      bossmessage.interval: true
-      bossmessage.see: true
-      bossmessage.whitelist: true
-      bossmessage.rrc: true
-      bossmessage.random: true
-      bossmessage.addworld: true
-      bossmessage.delworld: true
-      bossmessage.setcolors: true
-      bossmessage.noperm: true
-      bossmessage.exemptrdm: true
-      bossmessage.toggle: true
-      bossmessage.seeerrors: true
-      bossmessage.update.perform: true
-      bossmessage.update.check: true
-      bossmessage.update.notify: true
-      bossmessage.info: true
+      bossmessage.admin: true
   bossmessage.add:
     description: Permission to add messages
   bossmessage.seeerrors:
@@ -76,9 +56,6 @@ permissions:
     description: Permission to toggle the whitelist
   bossmessage.info:
     description: Permission to see the info
-    default: true
-  bossmessage.see:
-    description: Permission to see messages
     default: true
   bossmessage.toggle:
     description: Permission to toggle your message view

@@ -10,6 +10,9 @@ BossMessage:
   Random: false
   ColorCodes: 1234567890abcdef
   NoPermission: '&cNo Permission!'
+  Broadcast:
+    DefaultTime: 30
+    Percent: auto
   CheckUpdates: true
   Whitelist: false
   RepeatRandomColors: true

@@ -1,9 +1,13 @@
 package net.pixelizedmc.bossmessage.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
-@SerializableAs(value = "Message")
-public class Message implements Cloneable {
+@SerializableAs("Message")
+public class Message implements Cloneable, ConfigurationSerializable {
 	public String Message;
 	public String Percent;
 	public int Show;
@@ -30,5 +34,18 @@ public class Message implements Cloneable {
 	
 	public void setPercent(String percent) {
 		this.Percent = percent;
+	}
+	
+	public Map<String, Object> serialize() {
+		Map<String, Object> output = new HashMap<String, Object>();
+		output.put("Message", Message);
+		output.put("Percent", Percent);
+		output.put("Show", Show);
+		output.put("Interval", Interval);
+		return output;
+	}
+	
+	public static Message deserialize(Map<String, Object> serial) {
+		return new Message(serial.get("Message").toString(), serial.get("Percent").toString(), Integer.parseInt(serial.get("Show").toString()), Integer.parseInt(serial.get("Interval").toString()));
 	}
 }
