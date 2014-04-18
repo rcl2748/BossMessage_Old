@@ -7,6 +7,7 @@ import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.configuration.Message;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Messager;
+import net.pixelizedmc.bossmessage.utils.Utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -48,7 +49,7 @@ public class Commands implements CommandExecutor {
 		    						Message message = new Message(textmsg, args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
 		    						CM.rawmessages.get(group).add(message);
 		    						CM.messages.get(group).add(CM.colorMsg(message));
-		    						CM.config.set("BossMessage.Messages." + group, CM.rawmessages);
+		    						CM.config.set("BossMessage.Messages." + group, CM.rawmessages.get(group));
 		    						CM.save();
 		    						sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
 			    				
@@ -59,7 +60,7 @@ public class Commands implements CommandExecutor {
 								sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
 							}
     					} else {
-    						Lib.sendError(sender, "That group doesn't exist!");
+    						Lib.sendError(sender, "Group " + group + " does not exist!");
     					}
 					} else {
 						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <group> <precent> <show> <interval> <message>");
@@ -90,7 +91,7 @@ public class Commands implements CommandExecutor {
 		    					Lib.sendError(sender, args[2] + " is not a number!");
 		    				}
     					} else {
-    						Lib.sendError(sender, "That group doesn't exist!");
+    						Lib.sendError(sender, "Group " + group + " does not exist!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm remove <group> <#>");
@@ -122,6 +123,31 @@ public class Commands implements CommandExecutor {
     				}
     				
     			}
+    			//DelGroup
+    			else if (args[0].equalsIgnoreCase("delgroup")) {
+    				
+    				if (!sender.hasPermission("bossmessage.delgroup")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					String group = args[1].toLowerCase();
+    					if (CM.groups.contains(group)) {
+    						CM.groups.remove(group);
+    						CM.messages.remove(group);
+    						CM.rawmessages.remove(group);
+    						Main.messagers.remove(group).stop();
+    						CM.config.set("BossMessage.Messages." + group, null);
+    						CM.save();
+    						Lib.sendMessage(sender, "Group " + group + " was deleted!");
+    					} else {
+    						Lib.sendError(sender, "Group " + group + " doesn't exist!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delgroup <group>");
+    				}
+    				
+    			}
     			//List
     			else if (args[0].equalsIgnoreCase("list")) {
     				
@@ -144,10 +170,12 @@ public class Commands implements CommandExecutor {
     					if (Lib.groupExists(group)) {
 		    				sender.sendMessage(ChatColor.YELLOW + "=== Message list for " + ChatColor.GOLD + group + ChatColor.YELLOW + " ===");
 		    				int i = 0;
-		    				for (Message msg:CM.messages.get(group)) {
+		    				for (Message msg:CM.rawmessages.get(group)) {
 		    					i++;
-		    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.Message);
+		    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + CM.colorMsg(msg).Message);
 		    				}
+    					} else {
+    						Lib.sendError(sender, "Group " + group + " does not exist!");
     					}
     				}
     			}
@@ -363,7 +391,7 @@ public class Commands implements CommandExecutor {
     					Main.stopProcess();
     					Lib.resetCount();
     					Main.startProcess();
-    					Lib.sendMessage(sender, ChatColor.GREEN + "BossMessage was successfully reloaded");
+    					Lib.sendMessage(sender, "BossMessage was successfully reloaded");
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm reload");
     				}

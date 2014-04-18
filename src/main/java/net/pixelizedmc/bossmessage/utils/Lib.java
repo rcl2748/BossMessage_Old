@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.script.ScriptException;
 
 import net.pixelizedmc.bossmessage.Main;
-import net.pixelizedmc.bossmessage.Utils;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.configuration.Message;
 
@@ -50,11 +49,14 @@ public class Lib {
 		String rawmsg = m.Message;
 		String message = m.Message;
 		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-			String colorcode;
+			String colorcode = null;
+			int randint = 0;
 			String colorcodes = CM.colorcodes;
 			while (message.toLowerCase().contains("%rdm_color%".toLowerCase())) {
-				int randint = Utils.randInt(0, colorcodes.length() - 1);
-				colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
+				if (colorcodes.length() > 0) {
+					randint = Utils.randInt(0, colorcodes.length() - 1);
+					colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
+				}
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 				if (!CM.repeatrdmcolors) {
 					StringBuilder sb = new StringBuilder(colorcodes);

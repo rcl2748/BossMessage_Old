@@ -1,4 +1,4 @@
-package net.pixelizedmc.bossmessage;
+package net.pixelizedmc.bossmessage.utils;
 
 import java.util.Random;
 
