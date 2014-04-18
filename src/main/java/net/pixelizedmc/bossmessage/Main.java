@@ -1,20 +1,15 @@
 package net.pixelizedmc.bossmessage;
 
-import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.economy.Economy;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.configuration.Message;
-import net.pixelizedmc.bossmessage.utils.Lib;
+import net.pixelizedmc.bossmessage.listeners.OnJoin;
+import net.pixelizedmc.bossmessage.listeners.OnPlayerPortal;
+import net.pixelizedmc.bossmessage.listeners.OnPlayerTeleport;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +23,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 
-public class Main extends JavaPlugin implements Listener {
+public class Main extends JavaPlugin {
 
     private static Main instance = null;
     public static String PREFIX_ERROR = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "] " + ChatColor.GOLD;
@@ -101,7 +96,11 @@ public class Main extends JavaPlugin implements Listener {
         	checkUpdate();
         }
         
-        Bukkit.getPluginManager().registerEvents(this, this);
+        //Register events
+        Bukkit.getPluginManager().registerEvents(new OnJoin(), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerTeleport(), this);
+        Bukkit.getPluginManager().registerEvents(new OnPlayerPortal(), this);
+        
         //enabled
         startProcess();
     }
@@ -116,83 +115,6 @@ public class Main extends JavaPlugin implements Listener {
     public static void startProcess() {
         for (String group:CM.groups) {
         	messagers.put(group, new Messager(group));
-        }
-    }
-    
-    @EventHandler
-    public void onPlayerPortal(PlayerPortalEvent e) {
-        Player p = e.getPlayer();
-        String msgGroup = Lib.getPlayerGroup(p);
-        Messager msgr = messagers.get(msgGroup);
-        if (msgGroup != null) {
-	        if (CM.whitelist) {
-	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
-	        		if (msgr.isBroadcasting) {
-	        			Lib.setPlayerMsg(p, msgr.broadcasting);
-	        		} else if (messagers.get(msgGroup).isset) {
-	        			Lib.setPlayerMsg(p, current.get(msgGroup));
-	        		}
-	        	} else {
-	        		BarAPI.removeBar(p);
-	        	}
-	        }
-        } else {
-    		BarAPI.removeBar(p);
-    	}
-    }
-    
-    @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent e) {
-        Player p = e.getPlayer();
-        String msgGroup = Lib.getPlayerGroup(p);
-        Messager msgr = messagers.get(msgGroup);
-        for (String group:CM.groups) {
-        	if (p.hasPermission("bossmessage.see." + group.toLowerCase())) {
-        		msgGroup = group;
-        		msgr = messagers.get(group);
-        	}
-        }
-        if (msgGroup != null) {
-	        if (CM.whitelist) {
-	        	if (CM.worlds.contains(e.getTo().getWorld().getName())) {
-	        		if (msgr.isBroadcasting) {
-	        			Lib.setPlayerMsg(p, msgr.broadcasting);
-	        		} else if (messagers.get(msgGroup).isset) {
-	        			Lib.setPlayerMsg(p, current.get(msgGroup));
-	        		}
-	        	} else {
-	        		BarAPI.removeBar(p);
-	        	}
-	        }
-        } else {
-    		BarAPI.removeBar(p);
-    	}
-    }
-    
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-        String msgGroup = Lib.getPlayerGroup(p);
-        Messager msgr = messagers.get(msgGroup);
-        if (msgGroup != null) {
-	        if (messagers.get(msgGroup).isset) {
-		        if (CM.whitelist) {
-		        	if (CM.worlds.contains(p.getWorld().getName())) {
-		        		if (msgr.isBroadcasting) {
-		        			Lib.setPlayerMsg(p, msgr.broadcasting);
-		        		} else if (messagers.get(msgGroup).isset) {
-		        			Lib.setPlayerMsg(p, msgr.current);
-		        		}
-		        	}
-		        } else {
-		        	Lib.setPlayerMsg(p, msgr.current);
-		        }
-	        }
-        }
-        if (p.hasPermission("bossmessage.update.notify") && updater_available) {
-        	Lib.sendMessage(p, "A new update (" + updater_name + ") is available!");
-        	Lib.sendMessage(p, "Please type /bm update to update it automatically, or click the link below do download it manually:");
-        	Lib.sendMessage(p, updater_link);
         }
     }
     

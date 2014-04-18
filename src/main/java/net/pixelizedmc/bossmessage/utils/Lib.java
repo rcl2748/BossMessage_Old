@@ -27,11 +27,11 @@ public class Lib {
 		if (CM.messages.get(group).size() > 0) {
 			if (CM.random) {
 				int r = Utils.randInt(0, CM.messages.size() - 1);
-				Message message = preGenMsg(CM.messages.get(group).get(r));
+				Message message = preGenMsg(CM.messages.get(group).get(r).clone());
 				return message;
 			} else {
 				int c = count.get(group) != null ? count.get(group) : 0;
-				Message message = preGenMsg(CM.messages.get(group).get(c));
+				Message message = preGenMsg(CM.messages.get(group).get(c).clone());
 				c++;
 				count.put(group, c);
 				if (c >= CM.messages.get(group).size()) {
@@ -45,6 +45,7 @@ public class Lib {
 	}
 	
 	public static Message preGenMsg(Message m) {
+		Bukkit.broadcastMessage("2");
 		//Generate string output message
 		String rawmsg = m.Message;
 		String message = m.Message;
@@ -56,6 +57,8 @@ public class Lib {
 				if (colorcodes.length() > 0) {
 					randint = Utils.randInt(0, colorcodes.length() - 1);
 					colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
+				} else {
+					colorcode = ChatColor.COLOR_CHAR + "r";
 				}
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 				if (!CM.repeatrdmcolors) {
@@ -68,11 +71,17 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%rdm_player%".toLowerCase())) {
 			String playername;
 			List<String> playernames = getRdmPlayers();
+			int randint;
 			while (message.toLowerCase().contains("%rdm_player%".toLowerCase())) {
-				int randint = Utils.randInt(0, playernames.size() - 1);
-				playername = playernames.get(randint);
+				if (playernames.size() > 0) {
+					randint = Utils.randInt(0, playernames.size() - 1);
+					playername = playernames.get(randint);
+				} else {
+					randint = -1;
+					playername = "";
+				}
 				message = message.replaceFirst("(?i)%rdm_player%", playername);
-				if (!CM.repeatrdmcolors) {
+				if (!CM.repeatrdmcolors&&randint >= 0) {
 					playernames.remove(randint);
 				}
 			}
@@ -148,17 +157,17 @@ public class Lib {
 			if (Main.messagers.get(group).isset) {
 				setMsg(Main.messagers.get(group).current, group);
 			} else {
-				for (Player p:getPlayersWithPerm("bossmessage.see." + group)) {
+				for (Player p:getPlayersInGroup(group)) {
 					BarAPI.removeBar(p);
 				}
 			}
 		}
 	}
 	
-	public static List<Player> getPlayersWithPerm(String perm) {
+	public static List<Player> getPlayersInGroup(String group) {
 		List<Player> output = new ArrayList<Player>();
 		for (Player player:Bukkit.getOnlinePlayers()) {
-			if (player.hasPermission(perm)) {
+			if (getPlayerGroup(player) == group) {
 				output.add(player);
 			}
 		}
@@ -216,7 +225,7 @@ public class Lib {
 		if (percent.toLowerCase().contains("econ_cents".toLowerCase())) {
 			if (Main.useEconomy) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));
-				String cents = money.split("\\.")[0];
+				String cents = money.split("\\.")[1];
 				percent = percent.replaceAll("(?i)econ_cents", cents.length() > 1 ? cents : cents + "0");
 			} else {
 				message = "§cVault economy is not enabled!";
@@ -230,6 +239,7 @@ public class Lib {
 	}
 	
 	public static List<String> getRdmPlayers() {
+		Bukkit.broadcastMessage("1");
 		List<String> players = new ArrayList<>();
 		List<String> vplayers = new ArrayList<>();
 		if (CM.useVNP) {
@@ -244,9 +254,6 @@ public class Lib {
 				players.add(p.getName());
 			}
 		}
-		if (players.size() < 1) {
-			players.add("NullPlayer");
-		}
 		return players;
 	}
 	
@@ -258,16 +265,15 @@ public class Lib {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
 					for (Player p:players) {
-						if (p.hasPermission("bossmessage.see." + group)) {
+						if (getPlayerGroup(p) == group) {
 							setPlayerMsg(p, preGenMsg(msg.clone()));
 						}
 					}
-					players.clear();
 				}
 			}
 		} else {
 			for (Player p:Bukkit.getOnlinePlayers()) {
-				if (p.hasPermission("bossmessage.see." + group)) {
+				if (getPlayerGroup(p) == group) {
 					setPlayerMsg(p, preGenMsg(msg.clone()));
 				}
 			}
