@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.configuration.CM;
-import net.pixelizedmc.bossmessage.configuration.Message;
 import net.pixelizedmc.bossmessage.utils.Lib;
+import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import net.pixelizedmc.bossmessage.utils.Utils;
 

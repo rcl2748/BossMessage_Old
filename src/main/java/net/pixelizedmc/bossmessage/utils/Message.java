@@ -1,4 +1,4 @@
-package net.pixelizedmc.bossmessage.configuration;
+package net.pixelizedmc.bossmessage.utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
-@SerializableAs("Message")
+@SerializableAs("ConfigurationMessage")
 public class Message implements Cloneable, ConfigurationSerializable {
 	public String Message;
 	public String Percent;

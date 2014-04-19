@@ -3,6 +3,10 @@
 #     |       IP: play.pixelizedmc.net                                    |
 #     |       Website: Pixelizedmc.net                                    |
 #     |       http://dev.bukkit.org/bukkit-plugins/bossmessage/           |
+#     |-------------------------------------------------------------------|
+#     |                      DO NOT TOUCH THE LINE:                       |
+#     |                     '- ==: Message'                               |
+#     |                  OR IT WILL BREAK YOUR CONFIG!!!                  |
 #     =====================================================================
 
 BossMessage:
@@ -18,9 +22,10 @@ BossMessage:
   RepeatRandomColors: true
   RepeatRandomPlayers: true
   VanishNoPacketSupport: false
-  Messages: []
+  Messages: {}
   WhitelistedWorlds:
   - world
   - world_nether
   - ExampleWorld
   IgnoredPlayers: []
+  ConfigVersion: 0

@@ -2,10 +2,10 @@ package net.pixelizedmc.bossmessage;
 
 import net.milkbowl.vault.economy.Economy;
 import net.pixelizedmc.bossmessage.configuration.CM;
-import net.pixelizedmc.bossmessage.configuration.Message;
 import net.pixelizedmc.bossmessage.listeners.OnJoin;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerPortal;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerTeleport;
+import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -58,7 +58,7 @@ public class Main extends JavaPlugin {
         }
         
         //config
-        ConfigurationSerialization.registerClass(Message.class, "Message");
+        ConfigurationSerialization.registerClass(Message.class, "ConfigurationMessage");
         CM.createConfig();
         CM.readConfig();
         

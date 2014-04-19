@@ -1,7 +1,7 @@
 package net.pixelizedmc.bossmessage.configuration;
 
 import net.pixelizedmc.bossmessage.Main;
-import net.pixelizedmc.bossmessage.configuration.Message;
+import net.pixelizedmc.bossmessage.utils.Message;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,8 +38,16 @@ public class CM {
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
-    	config.addDefault("BossMessage.Messages", new ArrayList<>());
-        if (config.get("BossMessage.Messages") == null||config.get("BossMessage.Messages") == new ArrayList<>()) {
+    	boolean outdatedConfig = false;
+    	if (config.getString("BossMessage.ConfigVersion") != "0") {
+    		for (String key:config.getKeys(false)) {
+    			config.set(key, null);
+    		}
+    		save();
+        	config.options().copyDefaults(true);
+        	outdatedConfig = true;
+    	}
+        if (config.getConfigurationSection("BossMessage.Messages") == null||config.getConfigurationSection("BossMessage.Messages").getKeys(false).size() == 0||outdatedConfig) {
         	List<Message> defaultMessages = new ArrayList<Message>();
         	defaultMessages.add(new Message("&bYo &5%player%&b, wazzup?", "100", 100, 0));
         	defaultMessages.add(new Message("&aBossMessage - best BossBar plugin by &bplay.pixelizedmc.net", "30", 100, 0));

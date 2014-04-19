@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
-import net.pixelizedmc.bossmessage.configuration.Message;
 
 public class Messager {
 	

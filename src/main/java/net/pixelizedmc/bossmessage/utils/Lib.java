@@ -9,7 +9,6 @@ import javax.script.ScriptException;
 
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
-import net.pixelizedmc.bossmessage.configuration.Message;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,7 +44,6 @@ public class Lib {
 	}
 	
 	public static Message preGenMsg(Message m) {
-		Bukkit.broadcastMessage("2");
 		//Generate string output message
 		String rawmsg = m.Message;
 		String message = m.Message;
@@ -239,7 +237,6 @@ public class Lib {
 	}
 	
 	public static List<String> getRdmPlayers() {
-		Bukkit.broadcastMessage("1");
 		List<String> players = new ArrayList<>();
 		List<String> vplayers = new ArrayList<>();
 		if (CM.useVNP) {
