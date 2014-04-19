@@ -39,7 +39,7 @@ public class CM {
     public static void createConfig() {
     	config.options().copyDefaults(true);
     	config.addDefault("BossMessage.Messages", new ArrayList<>());
-        if (config.get("BossMessage.Messages") != null) {
+        if (config.get("BossMessage.Messages") == null||config.get("BossMessage.Messages") == new ArrayList<>()) {
         	List<Message> defaultMessages = new ArrayList<Message>();
         	defaultMessages.add(new Message("&bYo &5%player%&b, wazzup?", "100", 100, 0));
         	defaultMessages.add(new Message("&aBossMessage - best BossBar plugin by &bplay.pixelizedmc.net", "30", 100, 0));
