@@ -2,6 +2,7 @@ package net.pixelizedmc.bossmessage.listeners;
 
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.lang.LangUtils;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Messager;
 
@@ -33,9 +34,9 @@ public class OnJoin implements Listener {
 	        }
         }
         if (p.hasPermission("bossmessage.update.notify") && Main.updater_available) {
-        	Lib.sendMessage(p, "A new update (" + Main.updater_name + ") is available!");
-        	Lib.sendMessage(p, "Please type /bm update to update it automatically, or click the link below do download it manually:");
-        	Lib.sendMessage(p, Main.updater_link);
+        	LangUtils.sendMessage(p, "A new update (" + Main.updater_name + ") is available!");
+        	LangUtils.sendMessage(p, "Please type /bm update to update it automatically, or click the link below do download it manually:");
+        	LangUtils.sendMessage(p, Main.updater_link);
         }
 	}
 }

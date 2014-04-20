@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.lang.LangUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -139,7 +140,7 @@ public class Lib {
 			}
 			int time = msg.Show;
 			if (!Utils.isInteger(percent)&&!msg.Percent.equalsIgnoreCase("auto")) {
-	    		broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
+	    		LangUtils.broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
 	    		percent = "100";
 			}
 			if (msg.Percent.equalsIgnoreCase("auto")) {
@@ -299,26 +300,17 @@ public class Lib {
 	public static boolean groupExists(String g) {
 		return CM.groups.contains(g);
 	}
-
-	public static void broadcastError(String msg) {
-		Bukkit.broadcast(Main.PREFIX_ERROR + msg, "bossmessage.seeerrors");
-	}
-	public static void sendError(CommandSender p, String msg) {
-		p.sendMessage(Main.PREFIX_ERROR + msg);
-	}
-	public static void sendMessage(CommandSender p, String msg) {
-		p.sendMessage(Main.PREFIX_NORMAL + msg);
-	}
+	
 	public static String calculatePct(String percent) {
         try {
 			String output = Double.toString((double) Main.engine.eval(percent)).split("\\.")[0];
 			if (!Utils.isInteger(output)) {
-	    		broadcastError("FAILED to parse message: output bossbar percent script returned NOT A NUMBER!");
+	    		LangUtils.broadcastError("FAILED to parse message: output bossbar percent script returned NOT A NUMBER!");
 				return "100";
 			}
 			return output;
 		} catch (ScriptException e) {
-    		broadcastError("FAILED to parse message: output bossbar script is INVALID!");
+    		LangUtils.broadcastError("FAILED to parse message: output bossbar script is INVALID!");
 			return "100";
 		}
 	}

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.lang.LangUtils;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import net.pixelizedmc.bossmessage.utils.Utils;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -60,7 +60,7 @@ public class Commands implements CommandExecutor {
 								sender.sendMessage(ChatColor.RED + args[2] + ChatColor.DARK_RED + " is not a valid number!");
 							}
     					} else {
-    						Lib.sendError(sender, "Group " + group + " does not exist!");
+    						LangUtils.sendError(sender, "Group " + group + " does not exist!");
     					}
 					} else {
 						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm add <group> <precent> <show> <interval> <message>");
@@ -85,13 +85,13 @@ public class Commands implements CommandExecutor {
 		    						Lib.resetCount();
 		    						sender.sendMessage(ChatColor.GREEN + "Message #" + num + " was successfully removed!");
 		    					} else {
-		    						Lib.sendError(sender, "Message " + args[2] + " was not found!");
+		    						LangUtils.sendError(sender, "Message " + args[2] + " was not found!");
 		    					}
 		    				} else {
-		    					Lib.sendError(sender, args[2] + " is not a number!");
+		    					LangUtils.sendError(sender, args[2] + " is not a number!");
 		    				}
     					} else {
-    						Lib.sendError(sender, "Group " + group + " does not exist!");
+    						LangUtils.sendError(sender, "Group " + group + " does not exist!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm remove <group> <#>");
@@ -114,9 +114,9 @@ public class Commands implements CommandExecutor {
     						Main.messagers.put(group, new Messager(group));
     						CM.config.set("BossMessage.Messages." + group, new ArrayList<>());
     						CM.save();
-    						Lib.sendMessage(sender, "Group " + group + " was created!");
+    						LangUtils.sendMessage(sender, "Group " + group + " was created!");
     					} else {
-    						Lib.sendError(sender, "Group " + group + " already exists!");
+    						LangUtils.sendError(sender, "Group " + group + " already exists!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addgroup <group>");
@@ -139,9 +139,9 @@ public class Commands implements CommandExecutor {
     						Main.messagers.remove(group).stop();
     						CM.config.set("BossMessage.Messages." + group, null);
     						CM.save();
-    						Lib.sendMessage(sender, "Group " + group + " was deleted!");
+    						LangUtils.sendMessage(sender, "Group " + group + " was deleted!");
     					} else {
-    						Lib.sendError(sender, "Group " + group + " doesn't exist!");
+    						LangUtils.sendError(sender, "Group " + group + " doesn't exist!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delgroup <group>");
@@ -157,7 +157,7 @@ public class Commands implements CommandExecutor {
     				}
     				
     				if (args.length == 1) {
-    					Lib.sendError(sender, "/bm list <group>");
+    					LangUtils.sendError(sender, "/bm list <group>");
 	    				sender.sendMessage(ChatColor.YELLOW + "=== Group list ===");
 	    				int i = 0;
 	    				for (String group:CM.groups) {
@@ -175,7 +175,7 @@ public class Commands implements CommandExecutor {
 		    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + CM.colorMsg(msg).Message);
 		    				}
     					} else {
-    						Lib.sendError(sender, "Group " + group + " does not exist!");
+    						LangUtils.sendError(sender, "Group " + group + " does not exist!");
     					}
     				}
     			}
@@ -369,7 +369,7 @@ public class Commands implements CommandExecutor {
     						CM.random = random;
     						CM.config.set("BossMessage.Random", random);
     						CM.save();
-    						Lib.sendMessage(sender, ChatColor.DARK_GREEN + "Random is set to " + ChatColor.GREEN + args[1]);
+    						LangUtils.sendMessage(sender, ChatColor.DARK_GREEN + "Random is set to " + ChatColor.GREEN + args[1]);
     					} else {
         					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm random <true/false>");
     					}
@@ -391,7 +391,7 @@ public class Commands implements CommandExecutor {
     					Main.stopProcess();
     					Lib.resetCount();
     					Main.startProcess();
-    					Lib.sendMessage(sender, "BossMessage was successfully reloaded");
+    					LangUtils.sendMessage(sender, "BossMessage was successfully reloaded");
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm reload");
     				}
@@ -407,9 +407,9 @@ public class Commands implements CommandExecutor {
     				if (args.length <= 1) {
     					if (Main.updater_available) {
     						new Updater(Main.getInstance(), 64888, Main.file, Updater.UpdateType.NO_VERSION_CHECK, true);
-    						Lib.sendMessage(sender, "BossMessage is updated! It will be working upon restart!");
+    						LangUtils.sendMessage(sender, "BossMessage is updated! It will be working upon restart!");
     					} else {
-    						Lib.sendError(sender, "No update currently available!");
+    						LangUtils.sendError(sender, "No update currently available!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm update");
@@ -427,14 +427,14 @@ public class Commands implements CommandExecutor {
     					if (Main.updater_available) {
     						Main.checkUpdate();
     						if (Main.updater_available) {
-    				        	Lib.sendMessage(sender, "A new update (" + Main.updater_name + ") is available!");
-    				        	Lib.sendMessage(sender, "Please type /bm update to update it automatically, or click the link below do download it manually:");
-    				        	Lib.sendMessage(sender, Main.updater_link);
+    				        	LangUtils.sendMessage(sender, "A new update (" + Main.updater_name + ") is available!");
+    				        	LangUtils.sendMessage(sender, "Please type /bm update to update it automatically, or click the link below do download it manually:");
+    				        	LangUtils.sendMessage(sender, Main.updater_link);
     						} else {
-    				        	Lib.sendMessage(sender, "Your BossMessage is up to date.");
+    				        	LangUtils.sendMessage(sender, "Your BossMessage is up to date.");
     						}
     					} else {
-    						Lib.sendMessage(sender, "Your BossMessage is up to date.");
+    						LangUtils.sendMessage(sender, "Your BossMessage is up to date.");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm check");
@@ -461,12 +461,12 @@ public class Commands implements CommandExecutor {
 	    						for (String group:CM.groups) {
 	    							Main.messagers.get(group).broadcast(msg);
 	    						}
-    							Lib.sendMessage(sender, "Broadcasting your message for " + show + " seconds.");
+    							LangUtils.sendMessage(sender, "Broadcasting your message for " + show + " seconds.");
     						} else {
-    							Lib.sendError(sender, "Show time must be more than 0!");
+    							LangUtils.sendError(sender, "Show time must be more than 0!");
     						}
     					} else {
-    						Lib.sendError(sender, args[1] + " is not a valid show time!");
+    						LangUtils.sendError(sender, args[1] + " is not a valid show time!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm broadcast <sec> <message>");
@@ -490,7 +490,7 @@ public class Commands implements CommandExecutor {
 						for (String group:CM.groups) {
 							Main.messagers.get(group).broadcast(msg);
 						}
-						Lib.sendMessage(sender, "QuickBroadcasting your message.");
+						LangUtils.sendMessage(sender, "QuickBroadcasting your message.");
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm qb <message>");
     				}
@@ -515,15 +515,15 @@ public class Commands implements CommandExecutor {
 		    						String textmsg = StringUtils.join(listmsg, " ");
 		    						Message msg = new Message(textmsg, CM.broadcastPercent, show*20, 0);
 		    						Main.messagers.get(args[1]).broadcast(msg);
-	    							Lib.sendMessage(sender, "Broadcasting your message to group " + args[1] + " for " + args[2] + " seconds.");
+	    							LangUtils.sendMessage(sender, "Broadcasting your message to group " + args[1] + " for " + args[2] + " seconds.");
 	    						} else {
-	    							Lib.sendError(sender, "Show time must be more than 0!");
+	    							LangUtils.sendError(sender, "Show time must be more than 0!");
 	    						}
 	    					} else {
-	    						Lib.sendError(sender, args[2] + " is not a valid show time!");
+	    						LangUtils.sendError(sender, args[2] + " is not a valid show time!");
 	    					}
     					} else {
-    						Lib.sendError(sender, args[1] + " is not a valid group!");
+    						LangUtils.sendError(sender, args[1] + " is not a valid group!");
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm gb <group> <sec> <message>");
@@ -555,7 +555,7 @@ public class Commands implements CommandExecutor {
     				printHelp(sender);
     				
     			} else {
-    				Lib.sendError(sender, ("Invalid command! Usage: " + ChatColor.RED + "/bm help"));
+    				LangUtils.sendError(sender, ("Invalid command! Usage: " + ChatColor.RED + "/bm help"));
     			}
     		}
     	}
@@ -620,5 +620,11 @@ public class Commands implements CommandExecutor {
 		if (sender.hasPermission("bossmessage.info")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");
 		}
+		List<String> desc = new ArrayList<>();
+		desc.add(ChatColor.YELLOW + "" + ChatColor.BOLD + "/bm list [group]");
+		desc.add(ChatColor.BLUE + "If the group name is specified," + "\n" + "lists all the messages in that" + "\n" + "group, otherwise lists the existing" + "\n" + "groups.");
+		desc.add("");
+		desc.add(ChatColor.RED + "Example: " + ChatColor.GOLD + "/bm list default");
+		LangUtils.sendFancyMessage(sender, "/bm info", "/bm list", desc);
     }
 }
