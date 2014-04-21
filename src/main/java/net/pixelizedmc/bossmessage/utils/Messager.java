@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
-import net.pixelizedmc.bossmessage.configuration.CM;
 
 public class Messager {
 	
@@ -26,37 +25,35 @@ public class Messager {
 	}
 	
 	public void startProcess() {
-		if (!this.isClosed) {
-	    	if (CM.mode.equalsIgnoreCase("AutoMessage")) {
-		        current = Lib.getMessage(group);
-		        show = current.Show;
-		        interval = current.Interval;
-		        Runnable run = new Runnable() {
-		    		@Override
-			        public void run() {
-		    			if (!isBroadcasting) {
-		    				Lib.setMsg(current, group);
-		    			}
-			            isset = true;
-			            showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-			            	public void run() {
-			            		for (Player p:Bukkit.getOnlinePlayers()) {
-			            			if (!isBroadcasting) {
-			            				BarAPI.removeBar(p);
-			            			}
-			            		}
-			        			isset = false;
-			        			delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-			            			public void run() {
-			    	        			startProcess();
-			            			}
-			            		}, interval);
-			            	}
-			            }, show);
-			        }
-		        };
-		        Main.scr.runTask(Main.getInstance(), run);
-	    	}
+		if (isClosed) {
+	        current = Lib.getMessage(group);
+	        show = current.Show;
+	        interval = current.Interval;
+	        Runnable run = new Runnable() {
+	    		@Override
+		        public void run() {
+	    			if (!isBroadcasting) {
+	    				Lib.setMsg(current, group);
+	    			}
+		            isset = true;
+		            showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+		            	public void run() {
+		            		for (Player p:Bukkit.getOnlinePlayers()) {
+		            			if (!isBroadcasting) {
+		            				BarAPI.removeBar(p);
+		            			}
+		            		}
+		        			isset = false;
+		        			delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+		            			public void run() {
+		    	        			startProcess();
+		            			}
+		            		}, interval);
+		            	}
+		            }, show);
+		        }
+	        };
+	        Main.scr.runTask(Main.getInstance(), run);
 		}
 	}
 	

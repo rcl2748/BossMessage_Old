@@ -1,5 +1,6 @@
 package net.pixelizedmc.bossmessage.lang;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.fancymessage.FancyMessage;
@@ -19,11 +20,16 @@ public class LangUtils {
 	public static void sendMessage(CommandSender sender, String msg) {
 		sender.sendMessage(Main.PREFIX_NORMAL + msg);
 	}
-	public static void sendFancyMessage(CommandSender sender, String msg, String command, List<String> desc) {
+	public static void sendHelpMessage(CommandSender sender, String command, String example, String desc) {
 		if (sender instanceof Player) {
-			new FancyMessage(msg).color(ChatColor.YELLOW).tooltip(desc).suggest(command).send((Player) sender);
+			List<String> listdesc = new ArrayList<>();
+			listdesc.add(ChatColor.YELLOW + "" + ChatColor.BOLD + command);
+			listdesc.add(ChatColor.BLUE + desc);
+			listdesc.add("");
+			listdesc.add(ChatColor.RED + "Example: " + ChatColor.GOLD + example);
+			new FancyMessage(command).color(ChatColor.YELLOW).tooltip(listdesc).suggest(command).send((Player) sender);
 		} else {
-			sender.sendMessage(ChatColor.YELLOW + msg);
+			sender.sendMessage(ChatColor.YELLOW + command);
 		}
 	}
 }

@@ -30,7 +30,6 @@ public class CM {
     public static boolean whitelist;
     public static List<String> worlds;
     public static List<String> ignoreplayers;
-    public static String mode;
     public static boolean checkUpdates;
     public static List<String> groups;
     public static int broadcastDefaultTime;
@@ -61,8 +60,7 @@ public class CM {
     
 	public static void readConfig() {
 		groups = new ArrayList<String>(config.getConfigurationSection("BossMessage.Messages").getKeys(false));
-		mode = config.getString("BossMessage.Mode");
-        random = config.getBoolean("BossMessage.Random");
+		random = config.getBoolean("BossMessage.Random");
         repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
         repeatrdmplayers = config.getBoolean("BossMessage.RepeatRandomPlayers");
         noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));

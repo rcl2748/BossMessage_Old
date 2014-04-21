@@ -10,7 +10,6 @@
 #     =====================================================================
 
 BossMessage:
-  Mode: AutoMessage
   Random: false
   ColorCodes: 1234567890abcdef
   NoPermission: '&cNo Permission!'

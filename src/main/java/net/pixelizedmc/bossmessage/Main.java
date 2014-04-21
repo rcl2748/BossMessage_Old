@@ -1,6 +1,7 @@
 package net.pixelizedmc.bossmessage;
 
 import net.milkbowl.vault.economy.Economy;
+import net.pixelizedmc.bossmessage.commands.Commands;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.listeners.OnJoin;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerPortal;

@@ -1,9 +1,12 @@
-package net.pixelizedmc.bossmessage;
+package net.pixelizedmc.bossmessage.commands;
 
 import java.util.ArrayList;
 import java.util.List;
 import me.confuser.barapi.BarAPI;
+import net.pixelizedmc.bossmessage.Main;
+import net.pixelizedmc.bossmessage.Updater;
 import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.lang.Lang;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
@@ -188,9 +191,8 @@ public class Commands implements CommandExecutor {
     				}
     				if (args.length == 2) {
     					if (Utils.isBoolean(args[1])) {
-    						boolean whitelist = Boolean.parseBoolean(args[1]);
-    						CM.whitelist = whitelist;
-    						CM.config.set("BossMessage.Whitelist", whitelist);
+    						CM.whitelist = Boolean.parseBoolean(args[1]);
+    						CM.config.set("BossMessage.Whitelist", CM.whitelist);
     						CM.save();
     						sender.sendMessage(ChatColor.DARK_GREEN + "Whitelist is set to " + ChatColor.GREEN + args[1]);
     					} else {
@@ -620,11 +622,6 @@ public class Commands implements CommandExecutor {
 		if (sender.hasPermission("bossmessage.info")) {
 			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");
 		}
-		List<String> desc = new ArrayList<>();
-		desc.add(ChatColor.YELLOW + "" + ChatColor.BOLD + "/bm list [group]");
-		desc.add(ChatColor.BLUE + "If the group name is specified," + "\n" + "lists all the messages in that" + "\n" + "group, otherwise lists the existing" + "\n" + "groups.");
-		desc.add("");
-		desc.add(ChatColor.RED + "Example: " + ChatColor.GOLD + "/bm list default");
-		LangUtils.sendFancyMessage(sender, "/bm info", "/bm list", desc);
+		LangUtils.sendHelpMessage(sender, Lang.COMMAND_ADD.command, Lang.COMMAND_ADD.example, Lang.COMMAND_ADD.description);
     }
 }
