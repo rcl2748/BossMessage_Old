@@ -18,6 +18,7 @@ permissions:
       bossmessage.list: true
       bossmessage.whitelist: true
       bossmessage.rrc: true
+      bossmessage.rrp: true
       bossmessage.random: true
       bossmessage.addworld: true
       bossmessage.delworld: true
@@ -52,6 +53,8 @@ permissions:
     description: Permission to toggle random message picking
   bossmessage.rrc:
     description: Permission to toggle random color repeating
+  bossmessage.rrp:
+    description: Permission to toggle random player repeating
   bossmessage.whitelist:
     description: Permission to toggle the whitelist
   bossmessage.info:

@@ -5,7 +5,7 @@
 #     |       http://dev.bukkit.org/bukkit-plugins/bossmessage/           |
 #     |-------------------------------------------------------------------|
 #     |                      DO NOT TOUCH THE LINE:                       |
-#     |                     '- ==: Message'                               |
+#     |                  '- ==: ConfigurationMessage'                     |
 #     |                  OR IT WILL BREAK YOUR CONFIG!!!                  |
 #     =====================================================================
 

@@ -203,7 +203,7 @@ public class Commands implements CommandExecutor {
     				}
     				
     			}
-    			// Command: RRC
+    			// RRC
     			else if (args[0].equalsIgnoreCase("rrc")) {
     				
     				if (!sender.hasPermission("bossmessage.rrc")) {
@@ -212,9 +212,8 @@ public class Commands implements CommandExecutor {
     				}
     				if (args.length == 2) {
     					if (Utils.isBoolean(args[1])) {
-    						boolean rrc = Boolean.parseBoolean(args[1]);
-    						CM.repeatrdmcolors = rrc;
-    						CM.config.set("BossMessage.RepeatRandomColors", rrc);
+    						CM.repeatrdmcolors = Boolean.parseBoolean(args[1]);
+    						CM.config.set("BossMessage.RepeatRandomColors", CM.repeatrdmcolors);
     						CM.save();
     						sender.sendMessage(ChatColor.DARK_GREEN + "RepeatRandomColors is set to " + ChatColor.GREEN + args[1]);
     					} else {
@@ -222,6 +221,27 @@ public class Commands implements CommandExecutor {
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm rrc <true/false>");
+    				}
+    				
+    			}
+    			// RRP
+    			else if (args[0].equalsIgnoreCase("rrp")) {
+    				
+    				if (!sender.hasPermission("bossmessage.rrp")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+    					if (Utils.isBoolean(args[1])) {
+    						CM.repeatrdmplayers = Boolean.parseBoolean(args[1]);
+    						CM.config.set("BossMessage.RepeatRandomColors", CM.repeatrdmplayers);
+    						CM.save();
+    						sender.sendMessage(ChatColor.DARK_GREEN + "RepeatRandomColors is set to " + ChatColor.GREEN + args[1]);
+    					} else {
+        					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm rrp <true/false>");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm rrp <true/false>");
     				}
     				
     			}
@@ -568,60 +588,63 @@ public class Commands implements CommandExecutor {
     public static void printHelp(CommandSender sender) {
     	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
 		sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
-		if (sender.hasPermission("bossmessage.add")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm add <percent> <show> <interval> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a message");
+		sender.sendMessage(ChatColor.ITALIC + "HOVER commands to see desc. and examples");
+//		if (sender.hasPermission("bossmessage.add")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm add <percent> <show> <interval> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a message");
+//		}
+//		if (sender.hasPermission("bossmessage.remove")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm remove <#> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a message");
+//		}
+//		if (sender.hasPermission("bossmessage.reload")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm reload " + ChatColor.RED + "-" + ChatColor.RESET + " reloads the config");
+//		}
+//		if (sender.hasPermission("bossmessage.list")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm list " + ChatColor.RED + "-" + ChatColor.RESET + " lists the messages");
+//		}
+//		if (sender.hasPermission("bossmessage.whitelist")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm whitelist <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles the whitelist");
+//		}
+//		if (sender.hasPermission("bossmessage.rrc")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm rrc <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random color repeating");
+//		}
+//		if (sender.hasPermission("bossmessage.random")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm random <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random message picking");
+//		}
+//		if (sender.hasPermission("bossmessage.addworld")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm addworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a world to the whitelist");
+//		}
+//		if (sender.hasPermission("bossmessage.delworld")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm delworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a world from the whitelist");
+//		}
+//		if (sender.hasPermission("bossmessage.noperm")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm noperm <msg> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the NoPermission message");
+//		}
+//		if (sender.hasPermission("bossmessage.setcolors")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm setcolors <colorcodes> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the random color list");
+//		}
+//		if (sender.hasPermission("bossmessage.setcolors")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm toggle " + ChatColor.RED + "-" + ChatColor.RESET + " toggles your message view");
+//		}
+//		if (sender.hasPermission("bossmessage.update.perform")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm update " + ChatColor.RED + "-" + ChatColor.RESET + " updates BossMessage to the latest version");
+//		}
+//		if (sender.hasPermission("bossmessage.update.check")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm check " + ChatColor.RED + "-" + ChatColor.RESET + " checks for updates");
+//		}
+//		if (sender.hasPermission("bossmessage.broadcast.normal")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm broadcast <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message");
+//		}
+//		if (sender.hasPermission("bossmessage.broadcast.quick")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm qb <message> " + ChatColor.RED + "-" + ChatColor.RESET + " quick-broadcasts the message");
+//		}
+//		if (sender.hasPermission("bossmessage.broadcast.group")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm gb <group> <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message for a group");
+//		}
+//		if (sender.hasPermission("bossmessage.info")) {
+//			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");
+//		}
+		for (HelpCommand cmd:Lang.commands) {
+			LangUtils.sendHelpMessage(sender, cmd);
 		}
-		if (sender.hasPermission("bossmessage.remove")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm remove <#> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a message");
-		}
-		if (sender.hasPermission("bossmessage.reload")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm reload " + ChatColor.RED + "-" + ChatColor.RESET + " reloads the config");
-		}
-		if (sender.hasPermission("bossmessage.list")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm list " + ChatColor.RED + "-" + ChatColor.RESET + " lists the messages");
-		}
-		if (sender.hasPermission("bossmessage.whitelist")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm whitelist <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles the whitelist");
-		}
-		if (sender.hasPermission("bossmessage.rrc")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm rrc <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random color repeating");
-		}
-		if (sender.hasPermission("bossmessage.random")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm random <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random message picking");
-		}
-		if (sender.hasPermission("bossmessage.addworld")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm addworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a world to the whitelist");
-		}
-		if (sender.hasPermission("bossmessage.delworld")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm delworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a world from the whitelist");
-		}
-		if (sender.hasPermission("bossmessage.noperm")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm noperm <msg> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the NoPermission message");
-		}
-		if (sender.hasPermission("bossmessage.setcolors")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm setcolors <colorcodes> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the random color list");
-		}
-		if (sender.hasPermission("bossmessage.setcolors")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm toggle " + ChatColor.RED + "-" + ChatColor.RESET + " toggles your message view");
-		}
-		if (sender.hasPermission("bossmessage.update.perform")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm update " + ChatColor.RED + "-" + ChatColor.RESET + " updates BossMessage to the latest version");
-		}
-		if (sender.hasPermission("bossmessage.update.check")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm check " + ChatColor.RED + "-" + ChatColor.RESET + " checks for updates");
-		}
-		if (sender.hasPermission("bossmessage.broadcast.normal")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm broadcast <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message");
-		}
-		if (sender.hasPermission("bossmessage.broadcast.quick")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm qb <message> " + ChatColor.RED + "-" + ChatColor.RESET + " quick-broadcasts the message");
-		}
-		if (sender.hasPermission("bossmessage.broadcast.group")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm gb <group> <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message for a group");
-		}
-		if (sender.hasPermission("bossmessage.info")) {
-			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");
-		}
-		LangUtils.sendHelpMessage(sender, Lang.COMMAND_ADD.command, Lang.COMMAND_ADD.example, Lang.COMMAND_ADD.description);
     }
 }

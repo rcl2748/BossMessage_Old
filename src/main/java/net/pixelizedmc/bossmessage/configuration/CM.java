@@ -77,13 +77,12 @@ public class CM {
         
         if (broadcastDefaultTime < 1) {
         	Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
-        	broadcastDefaultTime = 600;
+        	broadcastDefaultTime = 30;
         }
     }
 	
     @SuppressWarnings("unchecked")
 	public static Map<String, List<Message>> readMessages() {
-    	List<String> groups = new ArrayList<>(config.getConfigurationSection("BossMessage.Messages").getKeys(false));
     	Map<String, List<Message>> output = new HashMap<String, List<Message>>();
     	for (String group:groups) {
     		List<Message> msgs = (List<Message>) config.getList("BossMessage.Messages." + group);

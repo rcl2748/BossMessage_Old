@@ -185,6 +185,12 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%world%".toLowerCase())) {
 			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
 		}
+		if (rawmsg.toLowerCase().contains("%world%".toLowerCase())) {
+			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
+		}
+		if (rawmsg.toLowerCase().contains("%rank%".toLowerCase())) {
+			message = message.replaceAll("(?i)%rank%", Main.permManager.getPrimaryGroup(p));
+		}
 		if (rawmsg.toLowerCase().contains("%econ_dollars%".toLowerCase())) {
 			if (Main.useEconomy) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));

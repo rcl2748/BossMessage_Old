@@ -1,8 +1,10 @@
 package net.pixelizedmc.bossmessage;
 
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import net.pixelizedmc.bossmessage.commands.Commands;
 import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.lang.Lang;
 import net.pixelizedmc.bossmessage.listeners.OnJoin;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerPortal;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerTeleport;
@@ -34,6 +36,7 @@ public class Main extends JavaPlugin {
 	public static BukkitScheduler scr = Bukkit.getScheduler();
     public static Map<String, Message> current;
     public static Economy econ;
+    public static Permission permManager;
     public static boolean useEconomy = false;
     public static File file;
     public static boolean updater_available;
@@ -63,6 +66,9 @@ public class Main extends JavaPlugin {
         CM.createConfig();
         CM.readConfig();
         
+        //Load lang
+        Lang.loadLang();
+        
         //Register commands
         getCommand("bm").setExecutor(new Commands());
         
@@ -75,7 +81,7 @@ public class Main extends JavaPlugin {
         }
         
         //Hook in Vault
-        if (setupEconomy()) {
+        if (setupVault()) {
         	useEconomy = true;
         	logger.info(PREFIX_CONSOLE + "Successfully hooked in to Vault Economy");
         } else {
@@ -106,7 +112,7 @@ public class Main extends JavaPlugin {
         startProcess();
     }
     
-    public static void stopProcess() {
+	public static void stopProcess() {
     	for (String group:CM.groups) {
     		messagers.get(group).stop();
     	}
@@ -123,14 +129,16 @@ public class Main extends JavaPlugin {
         return instance;
     }
     
-    public static boolean setupEconomy() {
+    public static boolean setupVault() {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Permission> pp = Bukkit.getServicesManager().getRegistration(Permission.class);
+        if (rsp == null||pp == null) {
             return false;
         }
+        permManager = pp.getProvider();
         econ = rsp.getProvider();
         return econ != null;
     }

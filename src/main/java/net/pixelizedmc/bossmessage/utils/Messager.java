@@ -25,7 +25,7 @@ public class Messager {
 	}
 	
 	public void startProcess() {
-		if (isClosed) {
+		if (!isClosed) {
 	        current = Lib.getMessage(group);
 	        show = current.Show;
 	        interval = current.Interval;

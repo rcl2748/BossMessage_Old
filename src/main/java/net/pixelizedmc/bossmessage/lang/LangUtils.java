@@ -3,6 +3,7 @@ package net.pixelizedmc.bossmessage.lang;
 import java.util.ArrayList;
 import java.util.List;
 import net.pixelizedmc.bossmessage.Main;
+import net.pixelizedmc.bossmessage.commands.HelpCommand;
 import net.pixelizedmc.bossmessage.fancymessage.FancyMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,16 +21,18 @@ public class LangUtils {
 	public static void sendMessage(CommandSender sender, String msg) {
 		sender.sendMessage(Main.PREFIX_NORMAL + msg);
 	}
-	public static void sendHelpMessage(CommandSender sender, String command, String example, String desc) {
+	public static void sendHelpMessage(CommandSender sender, HelpCommand cmd) {
 		if (sender instanceof Player) {
 			List<String> listdesc = new ArrayList<>();
-			listdesc.add(ChatColor.YELLOW + "" + ChatColor.BOLD + command);
-			listdesc.add(ChatColor.BLUE + desc);
+			listdesc.add(ChatColor.YELLOW + "" + ChatColor.BOLD + cmd.command);
+			listdesc.add(ChatColor.BLUE + cmd.description);
 			listdesc.add("");
-			listdesc.add(ChatColor.RED + "Example: " + ChatColor.GOLD + example);
-			new FancyMessage(command).color(ChatColor.YELLOW).tooltip(listdesc).suggest(command).send((Player) sender);
+			listdesc.add(ChatColor.DARK_RED + "Example: " + ChatColor.GOLD + cmd.example);
+			listdesc.add("");
+			listdesc.add(ChatColor.RED + "" + ChatColor.ITALIC + "[Click to paste in chat]");
+			new FancyMessage(cmd.command).color(ChatColor.YELLOW).tooltip(listdesc).suggest(cmd.command).send((Player) sender);
 		} else {
-			sender.sendMessage(ChatColor.YELLOW + command);
+			sender.sendMessage(ChatColor.YELLOW + cmd.command);
 		}
 	}
 }
