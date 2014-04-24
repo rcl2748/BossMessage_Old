@@ -3,6 +3,7 @@ package net.pixelizedmc.bossmessage.listeners;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.utils.GroupManager;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Messager;
 
@@ -16,7 +17,7 @@ public class OnPlayerPortal implements Listener {
 	@EventHandler
 	public void event(PlayerPortalEvent e) {
         Player p = e.getPlayer();
-        String msgGroup = Lib.getPlayerGroup(p);
+        String msgGroup = GroupManager.getPlayerGroup(p);
         Messager msgr = Main.messagers.get(msgGroup);
         if (msgGroup != null) {
 	        if (CM.whitelist) {

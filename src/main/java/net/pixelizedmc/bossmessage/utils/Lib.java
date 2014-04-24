@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.script.ScriptException;
-
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.kitteh.vanish.staticaccess.VanishNoPacket;
 import me.confuser.barapi.BarAPI;
@@ -156,21 +152,11 @@ public class Lib {
 			if (Main.messagers.get(group).isset) {
 				setMsg(Main.messagers.get(group).current, group);
 			} else {
-				for (Player p:getPlayersInGroup(group)) {
+				for (Player p:GroupManager.getPlayersInGroup(group)) {
 					BarAPI.removeBar(p);
 				}
 			}
 		}
-	}
-	
-	public static List<Player> getPlayersInGroup(String group) {
-		List<Player> output = new ArrayList<Player>();
-		for (Player player:Bukkit.getOnlinePlayers()) {
-			if (getPlayerGroup(player) == group) {
-				output.add(player);
-			}
-		}
-		return output;
 	}
 	
 	public static Message generateMsg(Player p, Message current) {
@@ -189,10 +175,14 @@ public class Lib {
 			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
 		}
 		if (rawmsg.toLowerCase().contains("%rank%".toLowerCase())) {
-			message = message.replaceAll("(?i)%rank%", Main.permManager.getPrimaryGroup(p));
+			if (Main.useVault) {
+				message = message.replaceAll("(?i)%rank%", Main.permManager.getPrimaryGroup(p));
+			} else {
+				message = "§cVault is not enabled!";
+			}
 		}
 		if (rawmsg.toLowerCase().contains("%econ_dollars%".toLowerCase())) {
-			if (Main.useEconomy) {
+			if (Main.useVault) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));
 				String dollars = money.split("\\.")[0];
 				message = message.replaceAll("(?i)%econ_dollars%", dollars);
@@ -201,7 +191,7 @@ public class Lib {
 			}
 		}
 		if (rawmsg.toLowerCase().contains("%econ_cents%".toLowerCase())) {
-			if (Main.useEconomy) {
+			if (Main.useVault) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));
 				String cents = money.split("\\.")[1];
 				message = message.replaceAll("(?i)%econ_cents%", cents.length() > 1 ? cents : cents + "0");
@@ -218,7 +208,7 @@ public class Lib {
 			percent = percent.replaceAll("(?i)health", Double.toString(p.getMaxHealth()));
 		}
 		if (percent.toLowerCase().contains("econ_dollars".toLowerCase())) {
-			if (Main.useEconomy) {
+			if (Main.useVault) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));
 				String dollars = money.split("\\.")[0];
 				percent = percent.replaceAll("(?i)econ_dollars", dollars);
@@ -228,7 +218,7 @@ public class Lib {
 			}
 		}
 		if (percent.toLowerCase().contains("econ_cents".toLowerCase())) {
-			if (Main.useEconomy) {
+			if (Main.useVault) {
 				String money = Double.toString(Main.econ.getBalance(p.getName()));
 				String cents = money.split("\\.")[1];
 				percent = percent.replaceAll("(?i)econ_cents", cents.length() > 1 ? cents : cents + "0");
@@ -269,7 +259,7 @@ public class Lib {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
 					for (Player p:players) {
-						if (getPlayerGroup(p) == group) {
+						if (GroupManager.getPlayerGroup(p) == group) {
 							setPlayerMsg(p, preGenMsg(msg.clone()));
 						}
 					}
@@ -277,7 +267,7 @@ public class Lib {
 			}
 		} else {
 			for (Player p:Bukkit.getOnlinePlayers()) {
-				if (getPlayerGroup(p) == group) {
+				if (GroupManager.getPlayerGroup(p) == group) {
 					setPlayerMsg(p, preGenMsg(msg.clone()));
 				}
 			}
@@ -292,19 +282,6 @@ public class Lib {
 		for (String group:CM.groups) {
 			count.remove(group);
 		}
-	}
-	
-	public static String getPlayerGroup(CommandSender p) {
-		for (String group:CM.groups) {
-			if (p.hasPermission("bossmessage.see." + group)) {
-				return group;
-			}
-		}
-		return null;
-	}
-	
-	public static boolean groupExists(String g) {
-		return CM.groups.contains(g);
 	}
 	
 	public static String calculatePct(String percent) {

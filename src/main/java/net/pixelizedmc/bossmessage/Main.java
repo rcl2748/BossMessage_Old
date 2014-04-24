@@ -37,7 +37,7 @@ public class Main extends JavaPlugin {
     public static Map<String, Message> current;
     public static Economy econ;
     public static Permission permManager;
-    public static boolean useEconomy = false;
+    public static boolean useVault = false;
     public static File file;
     public static boolean updater_available;
     public static String version;
@@ -82,7 +82,7 @@ public class Main extends JavaPlugin {
         
         //Hook in Vault
         if (setupVault()) {
-        	useEconomy = true;
+        	useVault = true;
         	logger.info(PREFIX_CONSOLE + "Successfully hooked in to Vault Economy");
         } else {
         	logger.warning(PREFIX_CONSOLE + "Failed to hook in Vault's Economy! Is vault even installed?");

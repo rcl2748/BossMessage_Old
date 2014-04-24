@@ -3,6 +3,7 @@ package net.pixelizedmc.bossmessage.listeners;
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
+import net.pixelizedmc.bossmessage.utils.GroupManager;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Messager;
 
@@ -16,7 +17,7 @@ public class OnJoin implements Listener {
 	@EventHandler
 	public void event(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        String msgGroup = Lib.getPlayerGroup(p);
+        String msgGroup = GroupManager.getPlayerGroup(p);
         Messager msgr = Main.messagers.get(msgGroup);
         if (msgGroup != null) {
 	        if (msgr.isset) {
@@ -33,7 +34,7 @@ public class OnJoin implements Listener {
 		        }
 	        }
         }
-        if (p.hasPermission("bossmessage.update.notify") && Main.updater_available) {
+        if (GroupManager.hasPermission(p, "bossmessage.update.notify") && Main.updater_available) {
         	LangUtils.sendMessage(p, "A new update (" + Main.updater_name + ") is available!");
         	LangUtils.sendMessage(p, "Please type /bm update to update it automatically, or click the link below do download it manually:");
         	LangUtils.sendMessage(p, Main.updater_link);

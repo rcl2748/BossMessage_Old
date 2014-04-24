@@ -9,54 +9,6 @@ commands:
     description: Main BossMessage Command
     aliases: [bm, bmessage]
 permissions:
-  bossmessage.admin:
-    default: op
-    children:
-      bossmessage.reload: true
-      bossmessage.add: true
-      bossmessage.remove: true
-      bossmessage.list: true
-      bossmessage.whitelist: true
-      bossmessage.rrc: true
-      bossmessage.rrp: true
-      bossmessage.random: true
-      bossmessage.addworld: true
-      bossmessage.delworld: true
-      bossmessage.setcolors: true
-      bossmessage.noperm: true
-      bossmessage.exemptrdm: true
-      bossmessage.toggle: true
-      bossmessage.seeerrors: true
-      bossmessage.update.perform: true
-      bossmessage.update.check: true
-      bossmessage.update.notify: true
-      bossmessage.info: true
-  bossmessage.*:
-    default: op
-    children:
-      bossmessage.admin: true
-  bossmessage.add:
-    description: Permission to add messages
-  bossmessage.seeerrors:
-    description: Permission to see broadcasted errors in chat
-  bossmessage.addworld:
-    description: Permission to add worlds to whitelist
-  bossmessage.exemptrdm:
-    description: Permission to be exempted from %rdm_player% tag
-  bossmessage.noperm:
-    description: Permission to set the NoPermission message
-  bossmessage.setcolors:
-    description: Permission to set the random color list
-  bossmessage.delworld:
-    description: Permission to remove worlds from whitelist
-  bossmessage.random:
-    description: Permission to toggle random message picking
-  bossmessage.rrc:
-    description: Permission to toggle random color repeating
-  bossmessage.rrp:
-    description: Permission to toggle random player repeating
-  bossmessage.whitelist:
-    description: Permission to toggle the whitelist
   bossmessage.info:
     description: Permission to see the info
     default: true
@@ -66,15 +18,6 @@ permissions:
   bossmessage.see.default:
     description: Permission to see messages from default group
     default: true
-  bossmessage.remove:
-    description: Permission to remove messages
-  bossmessage.list:
-    description: Permission to list messages
-  bossmessage.reload:
-    description: Permission to reload the plugin
-  bossmessage.update.check:
-    description: Permission to check for updates
-  bossmessage.update.perform:
-    description: Permission to update the plugin
-  bossmessage.update.notify:
-    description: Permission to see available updates
+  bossmessage.user:
+    description: Permission to be a user
+    default: true

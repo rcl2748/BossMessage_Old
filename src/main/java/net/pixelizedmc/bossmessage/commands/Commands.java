@@ -8,6 +8,7 @@ import net.pixelizedmc.bossmessage.Updater;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.Lang;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
+import net.pixelizedmc.bossmessage.utils.GroupManager;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
@@ -31,13 +32,13 @@ public class Commands implements CommandExecutor {
     		} else {
     			// Command: ADD
     			if (args[0].equalsIgnoreCase("add")) {
-    				if (!sender.hasPermission("bossmessage.add")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.add")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
     				if (args.length > 5) {
     					String group = args[1].toLowerCase();
-    					if (Lib.groupExists(group)) {
+    					if (GroupManager.groupExists(group)) {
 							if (Utils.isInteger(args[3])) {
 								if (Utils.isInteger(args[4])) {
 		    						List<String> listmsg = new ArrayList<>();
@@ -72,13 +73,13 @@ public class Commands implements CommandExecutor {
     			// Command: REMOVE
     			else if (args[0].equalsIgnoreCase("remove")) {
     				
-    				if (!sender.hasPermission("bossmessage.remove")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.remove")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
     				if (args.length == 3) {
     					String group = args[1].toLowerCase();
-    					if (Lib.groupExists(group)) {
+    					if (GroupManager.groupExists(group)) {
 		    				if (Utils.isInteger(args[2])) {
 		    					int num = Integer.parseInt(args[2]);
 		    					if (CM.messages.get(group).size() >= num && num > 0) {
@@ -104,7 +105,7 @@ public class Commands implements CommandExecutor {
     			//AddGroup
     			else if (args[0].equalsIgnoreCase("addgroup")) {
     				
-    				if (!sender.hasPermission("bossmessage.addgroup")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.addgroup")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -129,7 +130,7 @@ public class Commands implements CommandExecutor {
     			//DelGroup
     			else if (args[0].equalsIgnoreCase("delgroup")) {
     				
-    				if (!sender.hasPermission("bossmessage.delgroup")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.delgroup")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -154,7 +155,7 @@ public class Commands implements CommandExecutor {
     			//List
     			else if (args[0].equalsIgnoreCase("list")) {
     				
-    				if (!sender.hasPermission("bossmessage.list")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.list")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -170,7 +171,7 @@ public class Commands implements CommandExecutor {
     				}
     				else if (args.length == 2) {
     					String group = args[1].toLowerCase();
-    					if (Lib.groupExists(group)) {
+    					if (GroupManager.groupExists(group)) {
 		    				sender.sendMessage(ChatColor.YELLOW + "=== Message list for " + ChatColor.GOLD + group + ChatColor.YELLOW + " ===");
 		    				int i = 0;
 		    				for (Message msg:CM.rawmessages.get(group)) {
@@ -185,7 +186,7 @@ public class Commands implements CommandExecutor {
     			// Command WHITELIST
     			else if (args[0].equalsIgnoreCase("whitelist")) {
     				
-    				if (!sender.hasPermission("bossmessage.whitelist")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.whitelist")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -206,7 +207,7 @@ public class Commands implements CommandExecutor {
     			// RRC
     			else if (args[0].equalsIgnoreCase("rrc")) {
     				
-    				if (!sender.hasPermission("bossmessage.rrc")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.rrc")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -227,7 +228,7 @@ public class Commands implements CommandExecutor {
     			// RRP
     			else if (args[0].equalsIgnoreCase("rrp")) {
     				
-    				if (!sender.hasPermission("bossmessage.rrp")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.rrp")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -248,7 +249,7 @@ public class Commands implements CommandExecutor {
     			// Command: SETCOLORS
     			else if (args[0].equalsIgnoreCase("setcolors")) {
     				
-    				if (!sender.hasPermission("bossmessage.setcolors")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.setcolors")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -265,7 +266,7 @@ public class Commands implements CommandExecutor {
     			// Command: NOPERM
     			else if (args[0].equalsIgnoreCase("noperm")) {
     				
-    				if (!sender.hasPermission("bossmessage.noperm")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.noperm")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -290,7 +291,7 @@ public class Commands implements CommandExecutor {
     			else if (args[0].equalsIgnoreCase("toggle")) {
     				if (sender instanceof Player) {
     					Player p = (Player) sender;
-	    				if (!sender.hasPermission("bossmessage.toggle")) {
+	    				if (!GroupManager.hasPermission(sender, "bossmessage.toggle")) {
 	    					sender.sendMessage(CM.noperm);
 	    					return true;
 	    				}
@@ -299,7 +300,7 @@ public class Commands implements CommandExecutor {
 	    						CM.ignoreplayers.remove(sendername);
 	    						CM.config.set("BossMessage.IgnoredPlayers", CM.ignoreplayers);
 	    						CM.save();
-	    						String group = Lib.getPlayerGroup(p);
+	    						String group = GroupManager.getPlayerGroup(p);
 	    						if (Main.messagers.get(group).isset) {
 	    							Lib.setPlayerMsg(p, Main.messagers.get(group).current);
 	    						}
@@ -322,7 +323,7 @@ public class Commands implements CommandExecutor {
     			// Command: DELWORLD
     			else if (args[0].equalsIgnoreCase("delworld")) {
     				
-    				if (!sender.hasPermission("bossmessage.delworld")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.delworld")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -352,7 +353,7 @@ public class Commands implements CommandExecutor {
     			// Command: ADDWORLD
     			else if (args[0].equalsIgnoreCase("addworld")) {
     				
-    				if (!sender.hasPermission("bossmessage.addworld")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.addworld")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -381,7 +382,7 @@ public class Commands implements CommandExecutor {
     			// Command: RANDOM
     			else if (args[0].equalsIgnoreCase("random")) {
     				
-    				if (!sender.hasPermission("bossmessage.random")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.random")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -403,7 +404,7 @@ public class Commands implements CommandExecutor {
     			//Reload
     			else if (args[0].equalsIgnoreCase("reload")) {
     				
-    				if (!sender.hasPermission("bossmessage.reload")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.reload")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -422,7 +423,7 @@ public class Commands implements CommandExecutor {
     			//Update
     			else if (args[0].equalsIgnoreCase("update")) {
     				
-    				if (!sender.hasPermission("bossmessage.update.perform")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.update.perform")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -441,7 +442,7 @@ public class Commands implements CommandExecutor {
     			//Check
     			else if (args[0].equalsIgnoreCase("check")) {
     				
-    				if (!sender.hasPermission("bossmessage.update.check")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.update.check")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -466,7 +467,7 @@ public class Commands implements CommandExecutor {
     			//Broadcast
     			else if (args[0].equalsIgnoreCase("broadcast")) {
     				
-    				if (!sender.hasPermission("bossmessage.broadcast.normal")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.broadcast.normal")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -498,7 +499,7 @@ public class Commands implements CommandExecutor {
     			//Qb
     			else if (args[0].equalsIgnoreCase("qb")) {
     				
-    				if (!sender.hasPermission("bossmessage.broadcast.quick")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.broadcast.quick")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -521,7 +522,7 @@ public class Commands implements CommandExecutor {
     			//Gb
     			else if (args[0].equalsIgnoreCase("gb")) {
     				
-    				if (!sender.hasPermission("bossmessage.broadcast.group")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.broadcast.group")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -555,7 +556,7 @@ public class Commands implements CommandExecutor {
     			//Info
     			else if (args[0].equalsIgnoreCase("info")) {
     				
-    				if (!sender.hasPermission("bossmessage.info")) {
+    				if (!GroupManager.hasPermission(sender, "bossmessage.info")) {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
@@ -589,62 +590,10 @@ public class Commands implements CommandExecutor {
     	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
 		sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
 		sender.sendMessage(ChatColor.ITALIC + "HOVER commands to see desc. and examples");
-//		if (sender.hasPermission("bossmessage.add")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm add <percent> <show> <interval> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a message");
-//		}
-//		if (sender.hasPermission("bossmessage.remove")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm remove <#> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a message");
-//		}
-//		if (sender.hasPermission("bossmessage.reload")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm reload " + ChatColor.RED + "-" + ChatColor.RESET + " reloads the config");
-//		}
-//		if (sender.hasPermission("bossmessage.list")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm list " + ChatColor.RED + "-" + ChatColor.RESET + " lists the messages");
-//		}
-//		if (sender.hasPermission("bossmessage.whitelist")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm whitelist <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles the whitelist");
-//		}
-//		if (sender.hasPermission("bossmessage.rrc")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm rrc <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random color repeating");
-//		}
-//		if (sender.hasPermission("bossmessage.random")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm random <true/false> " + ChatColor.RED + "-" + ChatColor.RESET + " toggles random message picking");
-//		}
-//		if (sender.hasPermission("bossmessage.addworld")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm addworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " adds a world to the whitelist");
-//		}
-//		if (sender.hasPermission("bossmessage.delworld")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm delworld <world> " + ChatColor.RED + "-" + ChatColor.RESET + " removes a world from the whitelist");
-//		}
-//		if (sender.hasPermission("bossmessage.noperm")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm noperm <msg> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the NoPermission message");
-//		}
-//		if (sender.hasPermission("bossmessage.setcolors")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm setcolors <colorcodes> " + ChatColor.RED + "-" + ChatColor.RESET + " sets the random color list");
-//		}
-//		if (sender.hasPermission("bossmessage.setcolors")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm toggle " + ChatColor.RED + "-" + ChatColor.RESET + " toggles your message view");
-//		}
-//		if (sender.hasPermission("bossmessage.update.perform")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm update " + ChatColor.RED + "-" + ChatColor.RESET + " updates BossMessage to the latest version");
-//		}
-//		if (sender.hasPermission("bossmessage.update.check")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm check " + ChatColor.RED + "-" + ChatColor.RESET + " checks for updates");
-//		}
-//		if (sender.hasPermission("bossmessage.broadcast.normal")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm broadcast <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message");
-//		}
-//		if (sender.hasPermission("bossmessage.broadcast.quick")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm qb <message> " + ChatColor.RED + "-" + ChatColor.RESET + " quick-broadcasts the message");
-//		}
-//		if (sender.hasPermission("bossmessage.broadcast.group")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm gb <group> <sec> <message> " + ChatColor.RED + "-" + ChatColor.RESET + " broadcasts the message for a group");
-//		}
-//		if (sender.hasPermission("bossmessage.info")) {
-//			sender.sendMessage(ChatColor.YELLOW + "/bm info " + ChatColor.RED + "-" + ChatColor.RESET + " displays the info");
-//		}
 		for (HelpCommand cmd:Lang.commands) {
-			LangUtils.sendHelpMessage(sender, cmd);
+			if (GroupManager.hasPermission(sender, "bossmessage." + cmd.perm)) {
+				LangUtils.sendHelpMessage(sender, cmd);
+			}
 		}
     }
 }
