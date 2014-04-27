@@ -27,4 +27,5 @@ BossMessage:
   - world_nether
   - ExampleWorld
   IgnoredPlayers: []
+  Regions: {}
   ConfigVersion: 0

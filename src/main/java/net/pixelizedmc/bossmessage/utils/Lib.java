@@ -120,6 +120,10 @@ public class Lib {
 	}
 
 	public static void setPlayerMsg(Player p, Message msg) {
+		if (msg == null) {
+			BarAPI.removeBar(p);
+			return;
+		}
 		if (!CM.ignoreplayers.contains(p.getName())) {
 			if (Utils.isInteger(msg.Percent)) {
 				float pst = Float.parseFloat(msg.Percent);
@@ -187,7 +191,7 @@ public class Lib {
 				String dollars = money.split("\\.")[0];
 				message = message.replaceAll("(?i)%econ_dollars%", dollars);
 			} else {
-				message = "§cVault economy is not enabled!";
+				message = "§cVault is not enabled!";
 			}
 		}
 		if (rawmsg.toLowerCase().contains("%econ_cents%".toLowerCase())) {
@@ -272,6 +276,15 @@ public class Lib {
 				}
 			}
 		}
+	}
+	
+	public static Message getPlayerMsg(Player player) {
+		if (Main.useWorldGuard && WorldGuardManager.getRegion(player) != null) {
+			if (WorldGuardManager.hasRegion(WorldGuardManager.getRegion(player))) {
+				return WorldGuardManager.getRegionMessage(WorldGuardManager.getRegion(player));
+			}
+		}
+		return Main.messagers.get(GroupManager.getPlayerGroup(player)).getCurrentMessage();
 	}
 
 	public static void resetCount(String group) {

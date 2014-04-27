@@ -2,16 +2,18 @@ package net.pixelizedmc.bossmessage.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.pixelizedmc.bossmessage.configuration.CM;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class GroupManager {
 	
-	public static String getPlayerGroup(CommandSender p) {
+	public static String getPlayerGroup(Player p) {
+		String region = WorldGuardManager.getRegion(p);
+		if (region != null && WorldGuardManager.hasRegion(region)) {
+			return CM.regions.get(region);
+		}
 		for (String group:CM.groups) {
 			if (p.hasPermission("bossmessage.see." + group)) {
 				return group;

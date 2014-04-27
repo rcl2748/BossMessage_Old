@@ -2,8 +2,8 @@ package net.pixelizedmc.bossmessage.configuration;
 
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.utils.Message;
-
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
@@ -34,11 +34,13 @@ public class CM {
     public static List<String> groups;
     public static int broadcastDefaultTime;
     public static String broadcastPercent;
+    public static Map<String, String> regions;
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
+    	
     	boolean outdatedConfig = false;
-    	if (config.getString("BossMessage.ConfigVersion") != "0") {
+    	if (config.getInt("BossMessage.ConfigVersion") != 0) {
     		for (String key:config.getKeys(false)) {
     			config.set(key, null);
     		}
@@ -53,6 +55,7 @@ public class CM {
         	defaultMessages.add(new Message("%rdm_color%Now %rdm_color%supports %rdm_color%custom %rdm_color%random %rdm_color%colors", "30", 100, 0));
         	defaultMessages.add(new Message("&aRight now, there are &b%online_players%&c/&b%max_players% &aPlayers online", "online_players/max_players*100", 100, 0));
         	defaultMessages.add(new Message("&6Th1s 1s a m3ssag3 w1th &brand0m&6 p3rs3ntag3", "Math.floor(Math.random()*100)", 100, 0));
+        	defaultMessages.add(new Message("&eThis is a message with an auto-reducing percentage", "auto", 100, 0));
         	config.set("BossMessage.Messages.default", defaultMessages);
         }
         save();
@@ -74,6 +77,7 @@ public class CM {
         checkUpdates = config.getBoolean("BossMessage.CheckUpdates");
         broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
         broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
+        regions = readRegionGroups();
         
         if (broadcastDefaultTime < 1) {
         	Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
@@ -91,12 +95,20 @@ public class CM {
 		return output;
 	}
     
+    public static Map<String, String> readRegionGroups() {
+    	Map<String, String> output = new HashMap<String, String>();
+    	ConfigurationSection sec = config.getConfigurationSection("BossMessage.Regions");
+    	if (sec != null && sec.getKeys(false).size() > 0) {
+	    	List<String> regions = new ArrayList<>(sec.getKeys(false));
+	    	for (String region:regions) {
+	    		output.put(region, config.getString("BossMessage.Regions." + region));
+	    	}
+    	}
+    	return output;
+    }
+    
 	public static void save() {
-        try {
-            config.save(path);
-        } catch (IOException e) {
-            System.out.println("[BossMessage] Error 'createConfig' on " + path);
-        }
+        Main.getInstance().saveConfig();
     }
     
 	public static Message colorMsg(Message m) {

@@ -1,6 +1,5 @@
 package net.pixelizedmc.bossmessage.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
@@ -38,10 +37,10 @@ public class Messager {
 		            isset = true;
 		            showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 		            	public void run() {
-		            		for (Player p:Bukkit.getOnlinePlayers()) {
-		            			if (!isBroadcasting) {
-		            				BarAPI.removeBar(p);
-		            			}
+		            		if (!isBroadcasting) {
+			            		for (Player p:GroupManager.getPlayersInGroup(group)) {
+			            			BarAPI.removeBar(p);
+			            		}
 		            		}
 		        			isset = false;
 		        			delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
@@ -76,6 +75,15 @@ public class Messager {
 	        }
         };
         Main.scr.runTask(Main.getInstance(), run);
+	}
+	
+	public Message getCurrentMessage() {
+		if (isBroadcasting) {
+			return broadcasting;
+		} else if (isset) {
+			return current;
+		}
+		return null;
 	}
 	
 	public void stop() {

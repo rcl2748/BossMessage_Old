@@ -5,18 +5,18 @@ import net.milkbowl.vault.permission.Permission;
 import net.pixelizedmc.bossmessage.commands.Commands;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.Lang;
-import net.pixelizedmc.bossmessage.listeners.OnJoin;
-import net.pixelizedmc.bossmessage.listeners.OnPlayerPortal;
-import net.pixelizedmc.bossmessage.listeners.OnPlayerTeleport;
+import net.pixelizedmc.bossmessage.listeners.*;
 import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,6 +38,8 @@ public class Main extends JavaPlugin {
     public static Economy econ;
     public static Permission permManager;
     public static boolean useVault = false;
+    public static boolean useWorldGuard = false;
+    public static WorldGuardPlugin worldGuard;
     public static File file;
     public static boolean updater_available;
     public static String version;
@@ -83,9 +85,9 @@ public class Main extends JavaPlugin {
         //Hook in Vault
         if (setupVault()) {
         	useVault = true;
-        	logger.info(PREFIX_CONSOLE + "Successfully hooked in to Vault Economy");
+        	logger.info(PREFIX_CONSOLE + "Successfully hooked in to Vault");
         } else {
-        	logger.warning(PREFIX_CONSOLE + "Failed to hook in Vault's Economy! Is vault even installed?");
+        	logger.warning(PREFIX_CONSOLE + "Vault is either not installed, or not enabled! Using economy and tag %rank% will not be possible!");
         }
         
         //Hook in VNP
@@ -96,6 +98,19 @@ public class Main extends JavaPlugin {
 	        	CM.useVNP = false;
 	        	logger.warning(PREFIX_CONSOLE + "ATTENTION!!! VanishNoPacket is NOT installed!");
 	        }
+        }
+        
+        //Hook in WorldGuard
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
+        Plugin wgEvents = Bukkit.getPluginManager().getPlugin("WGRegionEvents");
+        if (plugin != null && wgEvents != null) {
+        	logger.info(PREFIX_CONSOLE + "Successfully hooked in to WorldGuard");
+        	worldGuard = (WorldGuardPlugin) plugin;
+            Bukkit.getPluginManager().registerEvents(new OnRegionEntered(), this);
+            Bukkit.getPluginManager().registerEvents(new OnRegionLeft(), this);
+            useWorldGuard = true;
+        } else {
+        	logger.warning(PREFIX_CONSOLE + "WorldGuard and/or WorldGuardRegionEvents are either not installed, or not enabled! Having per-region messages will not be possible!");
         }
         
         //Updater
