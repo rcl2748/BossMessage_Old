@@ -13,6 +13,8 @@ import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import net.pixelizedmc.bossmessage.utils.Utils;
+import net.pixelizedmc.bossmessage.utils.WorldGuardManager;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -46,10 +48,6 @@ public class Commands implements CommandExecutor {
 		    							listmsg.add(args[i]);
 		    						}
 		    						String textmsg = StringUtils.join(listmsg, " ");
-		    						if (textmsg.length() > 64) {
-		    	    					sender.sendMessage(ChatColor.RED + "Message is too long!");
-		    	    					return true;
-		    						}
 		    						Message message = new Message(textmsg, args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
 		    						CM.rawmessages.get(group).add(message);
 		    						CM.messages.get(group).add(CM.colorMsg(message));
@@ -480,7 +478,7 @@ public class Commands implements CommandExecutor {
 	    							listmsg.add(args[i]);
 	    						}
 	    						String textmsg = StringUtils.join(listmsg, " ");
-	    						Message msg = new Message(textmsg, CM.broadcastPercent, show*20, 0);
+	    						Message msg = CM.colorMsg(new Message(textmsg, CM.broadcastPercent, show*20, 0));
 	    						for (String group:CM.groups) {
 	    							Main.messagers.get(group).broadcast(msg);
 	    						}
@@ -509,7 +507,7 @@ public class Commands implements CommandExecutor {
 							listmsg.add(args[i]);
 						}
 						String textmsg = StringUtils.join(listmsg, " ");
-						Message msg = new Message(textmsg, CM.broadcastPercent, CM.broadcastDefaultTime*20, 0);
+						Message msg = CM.colorMsg(new Message(textmsg, CM.broadcastPercent, CM.broadcastDefaultTime*20, 0));
 						for (String group:CM.groups) {
 							Main.messagers.get(group).broadcast(msg);
 						}
@@ -536,7 +534,7 @@ public class Commands implements CommandExecutor {
 		    							listmsg.add(args[i]);
 		    						}
 		    						String textmsg = StringUtils.join(listmsg, " ");
-		    						Message msg = new Message(textmsg, CM.broadcastPercent, show*20, 0);
+		    						Message msg = CM.colorMsg(new Message(textmsg, CM.broadcastPercent, show*20, 0));
 		    						Main.messagers.get(args[1]).broadcast(msg);
 	    							LangUtils.sendMessage(sender, "Broadcasting your message to group " + args[1] + " for " + args[2] + " seconds.");
 	    						} else {
@@ -552,6 +550,31 @@ public class Commands implements CommandExecutor {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm gb <group> <sec> <message>");
     				}
     				
+    			}
+    			//SetRegion
+    			else if (args[0].equalsIgnoreCase("setregion")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.setregion")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 3) {
+    					if (Main.useWorldGuard) {
+	    					String region = args[1].toLowerCase();
+	    					String group = args[2].toLowerCase();
+	    					if (WorldGuardManager.regionExists(region)) {
+	    						CM.regions.put(region, group);
+	    						CM.config.set("BossMessage.Regions." + region, group);
+	    						LangUtils.sendMessage(sender, "Region " + region + " was set to message group " + group + "!");
+	    					} else {
+	    						LangUtils.sendError(sender, "Region " + args[1] + " does not exist!");
+	    					}
+    					} else {
+    						LangUtils.sendError(sender, "This feature is not available, as WorldGuard and/or WorldGuardRegionEvents are not installed!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm setregion <region> <group>");
+    				}
     			}
     			//Info
     			else if (args[0].equalsIgnoreCase("info")) {

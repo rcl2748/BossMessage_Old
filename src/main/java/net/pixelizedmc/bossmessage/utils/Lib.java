@@ -248,7 +248,7 @@ public class Lib {
 			}
 		}
 		for (Player p:Bukkit.getOnlinePlayers()) {
-			if (!p.hasPermission("bossmessage.exemptrdm")&&!vplayers.contains(p.getName())) {
+			if (!p.hasPermission("bossmessage.exemptrdm") && !vplayers.contains(p.getName())) {
 				players.add(p.getName());
 			}
 		}

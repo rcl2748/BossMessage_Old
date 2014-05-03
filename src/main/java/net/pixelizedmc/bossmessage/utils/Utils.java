@@ -3,6 +3,7 @@ package net.pixelizedmc.bossmessage.utils;
 import java.util.Random;
 
 public class Utils {
+	
 	public static boolean isInteger(String s) {
     	try {
         	Integer.parseInt(s); 
@@ -19,8 +20,7 @@ public class Utils {
     	}
     }
 	
-	public static int randInt(int min, int max)
-    {
+	public static int randInt(int min, int max) {
         return min + new Random().nextInt(Math.abs(max - min + 1));
     }
 }

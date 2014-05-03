@@ -14,7 +14,7 @@ public class Messager {
 	public int delayTaskId;
 	public String group;
 	public boolean isClosed = false;
-	public boolean isBroadcasting;
+	public boolean isBroadcasting = false;
 	public Message broadcasting;
     public int broadcastTaskId = -1;
 	

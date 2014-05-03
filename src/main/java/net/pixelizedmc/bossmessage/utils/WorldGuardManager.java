@@ -33,6 +33,20 @@ public class WorldGuardManager {
 		}
 	}
 	
+	public static boolean regionExists(String region) {
+		if (Main.useWorldGuard) {
+			for (World w : Bukkit.getWorlds()) {
+				Map<String, ProtectedRegion> regions = Main.worldGuard.getRegionManager(w).getRegions();
+				for (String name : regions.keySet()) {
+					if (name.equalsIgnoreCase(region)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static String getRegion(Player player) {
 		if (Main.useWorldGuard) {
 			Location loc = player.getLocation();

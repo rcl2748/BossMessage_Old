@@ -107,6 +107,11 @@ public class Lang {
 			"Same as regular broadcast (see /bm broadcast), except\n§9that it only broadcasts the message to players in\n§9the specific message group.",
 			"/bm gb default 20 &6This is a broadcast message!",
 			"gb");
+	public static HelpCommand COMMAND_SETREGION = new HelpCommand(
+			"/bm setregion <region> <message>",
+			"Same as regular broadcast (see /bm broadcast), except\n§9that it only broadcasts the message to players in\n§9the specific message group.",
+			"/bm setregion spawn default",
+			"gb");
 	public static HelpCommand COMMAND_INFO = new HelpCommand(
 			"/bm info",
 			"Displays information about the plugin, everyone has\n§9access to this command by default.",
@@ -138,6 +143,7 @@ public class Lang {
 		commands.add(COMMAND_BROADCAST);
 		commands.add(COMMAND_QB);
 		commands.add(COMMAND_GB);
+		commands.add(COMMAND_SETREGION);
 		commands.add(COMMAND_INFO);
 		commands.add(COMMAND_HELP);
 	}
