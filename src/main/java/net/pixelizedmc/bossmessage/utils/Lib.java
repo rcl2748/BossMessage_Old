@@ -284,9 +284,13 @@ public class Lib {
 				return WorldGuardManager.getRegionMessage(WorldGuardManager.getRegion(player));
 			}
 		}
-		return Main.messagers.get(GroupManager.getPlayerGroup(player)).getCurrentMessage();
+		String group = GroupManager.getPlayerGroup(player);
+		if (group != null) {
+			return Main.messagers.get(group).getCurrentMessage();
+		}
+		return null;
 	}
-
+	
 	public static void resetCount(String group) {
 		count.remove(group);
 	}

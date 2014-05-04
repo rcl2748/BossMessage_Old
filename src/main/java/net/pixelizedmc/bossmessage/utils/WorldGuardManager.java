@@ -26,7 +26,7 @@ public class WorldGuardManager {
 	}
 	
 	public static boolean hasRegion(String region) {
-		if (CM.regions.containsKey(region)) {
+		if (region != null && CM.regions.containsKey(region.toLowerCase())) {
 			return true;
 		} else {
 			return false;
@@ -51,7 +51,7 @@ public class WorldGuardManager {
 		if (Main.useWorldGuard) {
 			Location loc = player.getLocation();
 			for (ProtectedRegion r:Main.worldGuard.getRegionManager(loc.getWorld()).getApplicableRegions(loc)) {
-				return r.getId();
+				return r.getId().toLowerCase();
 			}
 		}
 		return null;

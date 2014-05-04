@@ -14,7 +14,6 @@ import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import net.pixelizedmc.bossmessage.utils.Utils;
 import net.pixelizedmc.bossmessage.utils.WorldGuardManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
