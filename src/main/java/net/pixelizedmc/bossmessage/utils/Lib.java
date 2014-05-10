@@ -280,8 +280,8 @@ public class Lib {
 	
 	public static Message getPlayerMsg(Player player) {
 		if (Main.useWorldGuard && WorldGuardManager.getRegion(player) != null) {
-			if (WorldGuardManager.hasRegion(WorldGuardManager.getRegion(player))) {
-				return WorldGuardManager.getRegionMessage(WorldGuardManager.getRegion(player));
+			if (WorldGuardManager.hasRegion(player.getWorld().getName(), WorldGuardManager.getRegion(player))) {
+				return WorldGuardManager.getRegionMessage(player.getWorld().getName(), WorldGuardManager.getRegion(player));
 			}
 		}
 		String group = GroupManager.getPlayerGroup(player);

@@ -33,7 +33,7 @@ public class CM {
     public static List<String> groups;
     public static int broadcastDefaultTime;
     public static String broadcastPercent;
-    public static Map<String, String> regions;
+    public static Map<String, Map<String, String>> regions;
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
@@ -47,15 +47,17 @@ public class CM {
         	config.options().copyDefaults(true);
         	outdatedConfig = true;
     	}
-        if (config.getConfigurationSection("BossMessage.Messages") == null||config.getConfigurationSection("BossMessage.Messages").getKeys(false).size() == 0||outdatedConfig) {
+        if (config.getConfigurationSection("BossMessage.Messages") == null || config.getConfigurationSection("BossMessage.Messages").getKeys(false).size() == 0 || outdatedConfig) {
         	List<Message> defaultMessages = new ArrayList<Message>();
         	defaultMessages.add(new Message("&bYo &5%player%&b, wazzup?", "100", 100, 0));
-        	defaultMessages.add(new Message("&aBossMessage - best BossBar plugin by &bplay.pixelizedmc.net", "50", 100, 0));
+        	defaultMessages.add(new Message("&aBossMessage - best BossBar plugin by &bVictor2748", "50", 100, 0));
         	defaultMessages.add(new Message("%rdm_color%Now %rdm_color%supports %rdm_color%custom %rdm_color%random %rdm_color%colors", "30", 100, 0));
         	defaultMessages.add(new Message("&aRight now, there are &b%online_players%&c/&b%max_players% &aPlayers online", "online_players/max_players*100", 100, 0));
         	defaultMessages.add(new Message("&6Th1s 1s a m3ssag3 w1th &brand0m&6 p3rs3ntag3", "Math.floor(Math.random()*100)", 100, 0));
         	defaultMessages.add(new Message("&eThis is a message with an auto-reducing percentage", "auto", 100, 0));
-        	defaultMessages.add(new Message("Your balance: %econ_dollars%.%econ_cents%", "100", 100, 0));
+        	defaultMessages.add(new Message("&bYour balance: &c%econ_dollars%.%econ_cents%", "100", 100, 0));
+        	defaultMessages.add(new Message("&bYour health is shown on the bossbar!", "health/max_health*100", 100, 0));
+        	defaultMessages.add(new Message("&dDon't forget to check out the new cool BossMessage Animator!", "100", 100, 0));
         	config.set("BossMessage.Messages.default", defaultMessages);
         }
         save();
@@ -95,13 +97,17 @@ public class CM {
 		return output;
 	}
     
-    public static Map<String, String> readRegionGroups() {
-    	Map<String, String> output = new HashMap<String, String>();
+    public static Map<String, Map<String, String>> readRegionGroups() {
+    	Map<String, Map<String, String>> output = new HashMap<String, Map<String, String>>();
     	ConfigurationSection sec = config.getConfigurationSection("BossMessage.Regions");
     	if (sec != null && sec.getKeys(false).size() > 0) {
-	    	List<String> regions = new ArrayList<>(sec.getKeys(false));
-	    	for (String region:regions) {
-	    		output.put(region.toLowerCase(), config.getString("BossMessage.Regions." + region));
+	    	for (String world:sec.getKeys(false)) {
+	    		Map<String, String> worldmap = new HashMap<String, String>();
+	    		ConfigurationSection worldsec = sec.getConfigurationSection(world);
+	    		for (String region:worldsec.getKeys(false)) {
+	    			worldmap.put(region, worldsec.getString(region));
+	    		}
+	    		output.put(world, worldmap);
 	    	}
     	}
     	return output;

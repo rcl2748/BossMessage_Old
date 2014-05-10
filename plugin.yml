@@ -1,9 +1,9 @@
 name: BossMessage
-version: 1.7
+version: 1.8
 author: victor2748
 main: net.pixelizedmc.bossmessage.Main
 depend: [BarAPI]
-softdepend: [Vault, VanishNoPacket, WorldGUard, WGRegionEvents]
+softdepend: [Vault, VanishNoPacket, WorldGuard, WGRegionEvents]
 commands:
   BossMessage:
     description: Main BossMessage Command

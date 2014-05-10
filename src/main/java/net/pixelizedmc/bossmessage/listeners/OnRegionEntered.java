@@ -11,7 +11,7 @@ public class OnRegionEntered implements Listener {
 	@EventHandler
 	public void event(RegionEnteredEvent e) {
 		String region = e.getRegion().getId();
-		if (WorldGuardManager.hasRegion(region)) {
+		if (WorldGuardManager.hasRegion(e.getPlayer().getWorld().getName(), region)) {
 			Lib.setPlayerMsg(e.getPlayer(), Lib.getPlayerMsg(e.getPlayer()));
 		}
 	}

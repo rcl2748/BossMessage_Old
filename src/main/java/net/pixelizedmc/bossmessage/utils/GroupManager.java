@@ -11,8 +11,8 @@ public class GroupManager {
 	
 	public static String getPlayerGroup(Player p) {
 		String region = WorldGuardManager.getRegion(p);
-		if (region != null && WorldGuardManager.hasRegion(region)) {
-			return CM.regions.get(region);
+		if (region != null && WorldGuardManager.hasRegion(p.getWorld().getName(), region)) {
+			return CM.regions.get(p.getWorld().getName()).get(region);
 		}
 		for (String group:CM.groups) {
 			if (p.hasPermission("bossmessage.see." + group)) {

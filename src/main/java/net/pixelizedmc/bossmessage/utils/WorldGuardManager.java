@@ -17,20 +17,20 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class WorldGuardManager {
 	
-	public static Message getRegionMessage(String region) {
-		if (region == null || !CM.regions.containsKey(region)) {
+	public static Message getRegionMessage(String world, String region) {
+		if (region == null || !CM.regions.get(world.toLowerCase()).containsKey(region)) {
 			return null;
 		} else {
-			return Main.messagers.get(CM.regions.get(region)).getCurrentMessage();
+			return Main.messagers.get(CM.regions.get(world.toLowerCase()).get(region)).getCurrentMessage();
 		}
 	}
 	
-	public static boolean hasRegion(String region) {
-		if (region != null && CM.regions.containsKey(region.toLowerCase())) {
+	public static boolean hasRegion(String world, String region) {
+		Map<String, String> worldmap = CM.regions.get(world.toLowerCase());
+		if (region != null && worldmap != null && worldmap.containsKey(region)) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	public static boolean regionExists(String region) {

@@ -60,7 +60,7 @@ public class Messager {
         Runnable run = new Runnable() {
     		@Override
 	        public void run() {
-    			Lib.setMsg(message, group);
+    			Lib.setMsg(Lib.preGenMsg(message), group);
 	            broadcasting = message;
 	            isBroadcasting = true;
 	            if (broadcastTaskId != -1) {

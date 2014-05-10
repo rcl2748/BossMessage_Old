@@ -109,7 +109,7 @@ public class Lang {
 			"gb");
 	public static HelpCommand COMMAND_SETREGION = new HelpCommand(
 			"/bm setregion <region> <message>",
-			"Same as regular broadcast (see /bm broadcast), except\n§9that it only broadcasts the message to players in\n§9the specific message group.",
+			"Assigns a message group to the specified WorldGuard\n§9region. This feature requires WorldGuard and\n§9WorldGuardRegionEvents to be installed! When a player\n§9is inside a region with a message group assigned, the\n§9region's messages will override his group.",
 			"/bm setregion spawn default",
 			"gb");
 	public static HelpCommand COMMAND_INFO = new HelpCommand(

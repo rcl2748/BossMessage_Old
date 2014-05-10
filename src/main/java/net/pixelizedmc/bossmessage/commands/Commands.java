@@ -1,7 +1,10 @@
 package net.pixelizedmc.bossmessage.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.Updater;
@@ -13,13 +16,15 @@ import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import net.pixelizedmc.bossmessage.utils.Utils;
-import net.pixelizedmc.bossmessage.utils.WorldGuardManager;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class Commands implements CommandExecutor {
 	
@@ -557,22 +562,36 @@ public class Commands implements CommandExecutor {
     					sender.sendMessage(CM.noperm);
     					return true;
     				}
-    				if (args.length == 3) {
+    				if (args.length == 4) {
     					if (Main.useWorldGuard) {
-	    					String region = args[1].toLowerCase();
-	    					String group = args[2].toLowerCase();
-	    					if (WorldGuardManager.regionExists(region)) {
-	    						CM.regions.put(region, group);
-	    						CM.config.set("BossMessage.Regions." + region, group);
-	    						LangUtils.sendMessage(sender, "Region " + region + " was set to message group " + group + "!");
+    						String world = args[1].toLowerCase();
+	    					String region = args[2].toLowerCase();
+	    					String group = args[3].toLowerCase();
+	    					RegionManager mngr = null;
+	    					try {
+	    					mngr = Main.worldGuard.getRegionManager(Bukkit.getWorld(world));
+	    					} catch (NullPointerException e) {}
+	    					if (mngr != null) {
+	    						if (mngr.hasRegion(region)) {
+		    						Map<String, String> worldmap = CM.regions.get(world);
+		    						if (worldmap == null) {
+			    						CM.regions.put(world, new HashMap<String, String>());
+		    						}
+		    						CM.regions.get(world).put(region, group);
+		    						CM.config.set("BossMessage.Regions." + world + "." + region, group);
+		    						CM.save();
+		    						LangUtils.sendMessage(sender, "Region " + region + " was set to message group " + group + " in the world " + world + "!");
+	    						} else {
+	    							LangUtils.sendError(sender, "Region " + region + " does not exist!");
+	    						}
 	    					} else {
-	    						LangUtils.sendError(sender, "Region " + args[1] + " does not exist!");
+	    						LangUtils.sendError(sender, "World " + world + " does not exist!");
 	    					}
     					} else {
     						LangUtils.sendError(sender, "This feature is not available, as WorldGuard and/or WorldGuardRegionEvents are not installed!");
     					}
     				} else {
-    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm setregion <region> <group>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm setregion <world> <region> <group>");
     				}
     			}
     			//Info
