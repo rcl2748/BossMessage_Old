@@ -112,6 +112,7 @@ public class Main extends JavaPlugin {
         } else {
         	logger.warning(PREFIX_CONSOLE + "WorldGuard and/or WorldGuardRegionEvents are either not installed, or not enabled! Having per-region messages will not be possible!");
         }
+        Bukkit.getPluginManager().addPermission(new org.bukkit.permissions.Permission("test"));
         
         //Updater
         if (CM.checkUpdates) {

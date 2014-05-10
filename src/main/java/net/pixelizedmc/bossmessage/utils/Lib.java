@@ -301,6 +301,10 @@ public class Lib {
 		}
 	}
 	
+	static void registerPermission(String perm, boolean def) {
+		
+	}
+	
 	public static String calculatePct(String percent) {
         try {
 			String output = Double.toString((double) Main.engine.eval(percent)).split("\\.")[0];

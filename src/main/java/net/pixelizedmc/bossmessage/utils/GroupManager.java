@@ -6,6 +6,8 @@ import net.pixelizedmc.bossmessage.configuration.CM;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 public class GroupManager {
 	
@@ -15,7 +17,7 @@ public class GroupManager {
 			return CM.regions.get(p.getWorld().getName()).get(region);
 		}
 		for (String group:CM.groups) {
-			if (p.hasPermission("bossmessage.see." + group)) {
+			if (hasAssignedPermission(p, "bossmessage.see." + group)) {
 				return group;
 			}
 		}
@@ -51,5 +53,9 @@ public class GroupManager {
             }
         }
         return false;
+	}
+	
+	public static boolean hasAssignedPermission(CommandSender sender, String permission) {
+		return sender.hasPermission(new Permission(permission, PermissionDefault.FALSE));
 	}
 }

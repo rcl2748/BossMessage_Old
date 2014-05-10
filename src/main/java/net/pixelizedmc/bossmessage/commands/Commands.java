@@ -11,6 +11,7 @@ import net.pixelizedmc.bossmessage.Updater;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.Lang;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
+import net.pixelizedmc.bossmessage.utils.DataManager;
 import net.pixelizedmc.bossmessage.utils.GroupManager;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
@@ -413,6 +414,7 @@ public class Commands implements CommandExecutor {
     				if (args.length <= 1) {
     					Main.scr.cancelAllTasks();
     					CM.reloadConfig();
+    					DataManager.reloadConfig();
     					Main.stopProcess();
     					Lib.resetCount();
     					Main.startProcess();
@@ -592,6 +594,44 @@ public class Commands implements CommandExecutor {
     					}
     				} else {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm setregion <world> <region> <group>");
+    				}
+    			}
+    			//UnsetRegion
+    			else if (args[0].equalsIgnoreCase("unsetregion")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.unsetregion")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 3) {
+    					if (Main.useWorldGuard) {
+    						String world = args[1].toLowerCase();
+	    					String region = args[2].toLowerCase();
+	    					RegionManager mngr = null;
+	    					try {
+	    						mngr = Main.worldGuard.getRegionManager(Bukkit.getWorld(world));
+	    					} catch (NullPointerException e) {}
+	    					if (mngr != null) {
+	    						if (mngr.hasRegion(region)) {
+		    						Map<String, String> worldmap = CM.regions.get(world);
+		    						if (worldmap == null) {
+			    						CM.regions.put(world, new HashMap<String, String>());
+		    						}
+		    						CM.regions.get(world).remove(region);
+		    						CM.config.set("BossMessage.Regions." + world + "." + region, null);
+		    						CM.save();
+		    						LangUtils.sendMessage(sender, "Region " + region + " was unset in the world " + world + "!");
+	    						} else {
+	    							LangUtils.sendError(sender, "Region " + region + " does not exist!");
+	    						}
+	    					} else {
+	    						LangUtils.sendError(sender, "World " + world + " does not exist!");
+	    					}
+    					} else {
+    						LangUtils.sendError(sender, "This feature is not available, as WorldGuard and/or WorldGuardRegionEvents are not installed!");
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm unsetregion <world> <region>");
     				}
     			}
     			//Info
