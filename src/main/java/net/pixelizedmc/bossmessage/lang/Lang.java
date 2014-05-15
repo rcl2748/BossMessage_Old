@@ -108,10 +108,15 @@ public class Lang {
 			"/bm gb default 20 &6This is a broadcast message!",
 			"gb");
 	public static HelpCommand COMMAND_SETREGION = new HelpCommand(
-			"/bm setregion <region> <message>",
+			"/bm setregion <world> <region> <message>",
 			"Assigns a message group to the specified WorldGuard\n§9region. This feature requires WorldGuard and\n§9WorldGuardRegionEvents to be installed! When a player\n§9is inside a region with a message group assigned, the\n§9region's messages will override his group.",
 			"/bm setregion spawn default",
-			"gb");
+			"setregion");
+	public static HelpCommand COMMAND_UNSETREGION = new HelpCommand(
+			"/bm unsetregion <world> <region>",
+			"Clears the message group from the specified region (see /bm setregion).",
+			"/bm unsetregion world spawn",
+			"unsetregion");
 	public static HelpCommand COMMAND_INFO = new HelpCommand(
 			"/bm info",
 			"Displays information about the plugin, everyone has\n§9access to this command by default.",
@@ -144,6 +149,7 @@ public class Lang {
 		commands.add(COMMAND_QB);
 		commands.add(COMMAND_GB);
 		commands.add(COMMAND_SETREGION);
+		commands.add(COMMAND_UNSETREGION);
 		commands.add(COMMAND_INFO);
 		commands.add(COMMAND_HELP);
 	}
