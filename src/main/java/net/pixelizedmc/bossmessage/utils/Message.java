@@ -28,12 +28,36 @@ public class Message implements Cloneable, ConfigurationSerializable {
 		}
 	}
 	
-	public void setMessage(String msg) {
-		this.Message = msg;
+	public String getMessage() {
+		return Message;
+	}
+	
+	public void setMessage(String message) {
+		Message = message;
+	}
+	
+	public String getPercent() {
+		return Percent;
 	}
 	
 	public void setPercent(String percent) {
-		this.Percent = percent;
+		Percent = percent;
+	}
+	
+	public int getShow() {
+		return Show;
+	}
+	
+	public void setShow(int show) {
+		Show = show;
+	}
+	
+	public int getInterval() {
+		return Interval;
+	}
+	
+	public void setInterval(int interval) {
+		Interval = interval;
 	}
 	
 	public Map<String, Object> serialize() {

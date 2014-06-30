@@ -27,5 +27,12 @@ BossMessage:
   - world_nether
   - ExampleWorld
   IgnoredPlayers: []
+  Events:
+    PlayerJoinEvent:
+      Enabled: true
+      Message: 
+      Percent:
+      Show:
+      BroadcastLevel: 1
   Regions: {}
   ConfigVersion: 0

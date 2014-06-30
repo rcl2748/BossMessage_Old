@@ -12,4 +12,36 @@ public class HelpCommand {
 		this.example = example;
 		this.perm = perm;
 	}
+	
+	public String getCommand() {
+		return command;
+	}
+	
+	public void setCommand(String command) {
+		this.command = command;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	public String getExample() {
+		return example;
+	}
+	
+	public void setExample(String example) {
+		this.example = example;
+	}
+	
+	public String getPerm() {
+		return perm;
+	}
+	
+	public void setPerm(String perm) {
+		this.perm = perm;
+	}
 }
