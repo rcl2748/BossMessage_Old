@@ -15,12 +15,23 @@ public class Messager {
 	public String group;
 	public boolean isClosed = false;
 	public boolean isBroadcasting = false;
+	public boolean isScheduling = false;
 	public Message broadcasting;
+	public Message scheduling;
     public int broadcastTaskId = -1;
+    public int schedulingTaskId = -1;
+    public Thread thread;
 	
 	public Messager(String group) {
 		this.group = group;
-    	startProcess();
+		thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				startProcess();
+			}
+		});
+		thread.start();
 	}
 	
 	public void startProcess() {
@@ -28,53 +39,84 @@ public class Messager {
 	        current = Lib.getMessage(group);
 	        show = current.Show;
 	        interval = current.Interval;
-	        Runnable run = new Runnable() {
-	    		@Override
-		        public void run() {
-	    			if (!isBroadcasting) {
-	    				Lib.setMsg(current, group);
-	    			}
-		            isset = true;
-		            showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-		            	public void run() {
-		            		if (!isBroadcasting) {
-			            		for (Player p:GroupManager.getPlayersInGroup(group)) {
-			            			BarAPI.removeBar(p);
-			            		}
-		            		}
-		        			isset = false;
-		        			delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-		            			public void run() {
-		    	        			startProcess();
-		            			}
-		            		}, interval);
-		            	}
-		            }, show);
-		        }
-	        };
-	        Main.scr.runTask(Main.getInstance(), run);
+			if (!isBroadcasting && !isScheduling) {
+				Lib.setMsg(current, group);
+			}
+            isset = true;
+            showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+            	public void run() {
+            		if (!isBroadcasting) {
+	            		for (Player p:GroupManager.getPlayersInGroup(group)) {
+	            			BarAPI.removeBar(p);
+	            		}
+            		}
+        			isset = false;
+        			delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+            			public void run() {
+    	        			startProcess();
+            			}
+            		}, interval);
+            	}
+            }, show);
+//	        Runnable run = new Runnable() {
+//	    		@Override
+//		        public void run() {
+//	    			if (!isBroadcasting) {
+//	    				Lib.setMsg(current, group);
+//	    			}
+//		            isset = true;
+//		            showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+//		            	public void run() {
+//		            		if (!isBroadcasting) {
+//			            		for (Player p:GroupManager.getPlayersInGroup(group)) {
+//			            			BarAPI.removeBar(p);
+//			            		}
+//		            		}
+//		        			isset = false;
+//		        			delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+//		            			public void run() {
+//		    	        			startProcess();
+//		            			}
+//		            		}, interval);
+//		            	}
+//		            }, show);
+//		        }
+//	        };
+//	        Main.scr.runTask(Main.getInstance(), run);
 		}
 	}
 	
 	public void broadcast(final Message message) {
-        Runnable run = new Runnable() {
-    		@Override
-	        public void run() {
-    			Lib.setMsg(Lib.preGenMsg(message), group);
-	            broadcasting = message;
-	            isBroadcasting = true;
-	            if (broadcastTaskId != -1) {
-	            	Main.scr.cancelTask(broadcastTaskId);
-	            }
-	            broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-	            	public void run() {
-	        			isBroadcasting = false;
-	        			Lib.setMsg(current, group);
-	            	}
-	            }, message.Show);
-	        }
-        };
-        Main.scr.runTask(Main.getInstance(), run);
+		Lib.setMsg(Lib.preGenMsg(message), group);
+        broadcasting = message;
+        isBroadcasting = true;
+        if (broadcastTaskId != -1) {
+        	Main.scr.cancelTask(broadcastTaskId);
+        }
+        broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+        	public void run() {
+    			isBroadcasting = false;
+    			Lib.setMsg(current, group);
+        	}
+        }, message.Show);
+//        Runnable run = new Runnable() {
+//    		@Override
+//	        public void run() {
+//    			Lib.setMsg(Lib.preGenMsg(message), group);
+//	            broadcasting = message;
+//	            isBroadcasting = true;
+//	            if (broadcastTaskId != -1) {
+//	            	Main.scr.cancelTask(broadcastTaskId);
+//	            }
+//	            broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+//	            	public void run() {
+//	        			isBroadcasting = false;
+//	        			Lib.setMsg(current, group);
+//	            	}
+//	            }, message.Show);
+//	        }
+//        };
+//        Main.scr.runTask(Main.getInstance(), run);
 	}
 	
 	public Message getCurrentMessage() {

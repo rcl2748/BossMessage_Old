@@ -1,5 +1,5 @@
 name: BossMessage
-version: 1.8
+version: 1.9
 author: victor2748
 main: net.pixelizedmc.bossmessage.Main
 depend: [BarAPI]

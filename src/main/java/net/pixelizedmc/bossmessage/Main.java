@@ -136,7 +136,7 @@ public class Main extends JavaPlugin {
     }
     
     public static void startProcess() {
-        for (String group:CM.groups) {
+        for (String group : CM.groups) {
         	messagers.put(group, new Messager(group));
         }
     }
@@ -151,7 +151,7 @@ public class Main extends JavaPlugin {
         }
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         RegisteredServiceProvider<Permission> pp = Bukkit.getServicesManager().getRegistration(Permission.class);
-        if (rsp == null||pp == null) {
+        if (rsp == null || pp == null) {
             return false;
         }
         permManager = pp.getProvider();

@@ -34,5 +34,6 @@ BossMessage:
       Percent:
       Show:
       BroadcastLevel: 1
+  Tasks: {}
   Regions: {}
   ConfigVersion: 0

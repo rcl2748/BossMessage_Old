@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
+import net.pixelizedmc.bossmessage.Task;
 import net.pixelizedmc.bossmessage.Updater;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.Lang;
@@ -164,7 +165,7 @@ public class Commands implements CommandExecutor {
     					LangUtils.sendError(sender, "/bm list <group>");
 	    				sender.sendMessage(ChatColor.YELLOW + "=== Group list ===");
 	    				int i = 0;
-	    				for (String group:CM.groups) {
+	    				for (String group : CM.groups) {
 	    					i++;
 	    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + group);
 	    				}
@@ -602,7 +603,7 @@ public class Commands implements CommandExecutor {
     				if (args.length == 3) {
 						String world = args[1].toLowerCase();
     					String region = args[2].toLowerCase();
-						if (CM.config.getString("BossMessage.Regions." + world + "." + region) != null) {
+						if (CM.config.contains("BossMessage.Regions." + world + "." + region)) {
     						CM.regions.get(world).remove(region);
     						CM.config.set("BossMessage.Regions." + world + "." + region, null);
     						CM.save();
@@ -614,6 +615,168 @@ public class Commands implements CommandExecutor {
     					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm unsetregion <world> <region>");
     				}
     			}
+    			//Schedule
+    			else if (args[0].equalsIgnoreCase("schedule")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.scr.schedule")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 3) {
+    					if (Utils.isInteger(args[2])) {
+							String scr = args[1].toLowerCase();
+	    					int time = Integer.parseInt(args[2]);
+							if (CM.tasks.containsKey(scr)) {
+								// Schedule
+							} else {
+								LangUtils.sendError(sender, "Scheduler " + scr + " does not exists!");
+							}
+    					}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
+    				}
+    			}
+    			//Addscr
+    			else if (args[0].equalsIgnoreCase("addscr")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.scr.add")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length > 2) {
+						String scr = args[1].toLowerCase();
+						List<String> listmsg = new ArrayList<>();
+						for (int i = 2;i < args.length;i++) {
+							listmsg.add(args[i]);
+						}
+						String message = StringUtils.join(listmsg, ' ');
+						
+						if (!CM.tasks.containsKey(scr)) {
+							CM.tasks.put(scr, new Task(message, new ArrayList<String>()));
+							CM.config.set("BossMessage.Schedulers." + scr + ".Message", message);
+							CM.config.set("BossMessage.Schedulers." + scr + ".Commands", new ArrayList<>());
+    						CM.save();
+    						LangUtils.sendMessage(sender, "Scheduler " + scr + " was created with a message: " + ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', message));
+						} else {
+							LangUtils.sendError(sender, "Scheduler " + scr + " already exists!");
+						}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addscr <scr>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delscr <event>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr setmsg <scr> <message>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr addcommand <scr> <command>");
+    				}
+    			}
+    			//Delscr
+    			else if (args[0].equalsIgnoreCase("delscr")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.scr.remove")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+						String scr = args[1].toLowerCase();
+						
+						if (CM.tasks.containsKey(scr)) {
+							CM.tasks.remove(scr);
+							CM.config.set("BossMessage.Schedulers." + scr, null);
+    						CM.save();
+    						LangUtils.sendMessage(sender, "Scheduler " + scr + " was removed!");
+						} else {
+							LangUtils.sendError(sender, "Scheduler " + scr + " does not exists!");
+						}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addscr <scr>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delscr <event>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr setmsg <scr> <message>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr addcommand <scr> <command>");
+    				}
+    			}
+    			//Addscrcmd
+    			else if (args[0].equalsIgnoreCase("addscrcmd")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.scr.addcmd")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length > 2) {
+						String scr = args[1].toLowerCase();
+						List<String> listcmd = new ArrayList<>();
+						for (int i = 2;i < args.length;i++) {
+							listcmd.add(args[i]);
+						}
+						String command = StringUtils.join(listcmd, ' ');
+						
+						if (CM.tasks.containsKey(scr)) {
+							Task s = CM.tasks.get(scr);
+							s.addCommand(command);
+							CM.config.set("BossMessage.Schedulers." + scr + ".Commands", s.getCommands());
+    						CM.save();
+    						LangUtils.sendMessage(sender, "Added command " + ChatColor.AQUA + "/" + command + ChatColor.YELLOW + " to scheduler " + scr);
+						} else {
+							LangUtils.sendError(sender, "Scheduler " + scr + " does not exists!");
+						}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addscr <scr>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delscr <event>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr setmsg <scr> <message>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr addcommand <scr> <command>");
+    				}
+    			}
+    			//Listscrs
+    			else if (args[0].equalsIgnoreCase("listscrs")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.scr.list")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 1) {
+	    				sender.sendMessage(ChatColor.YELLOW + "=== Scheduler list ===");
+	    				int i = 0;
+	    				for (String scr : CM.tasks.keySet()) {
+	    					i++;
+	    					sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + scr);
+	    				}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addscr <scr>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delscr <event>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr setmsg <scr> <message>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr addcommand <scr> <command>");
+    				}
+    			}
+    			//Scrinfo
+    			else if (args[0].equalsIgnoreCase("scrinfo")) {
+    				
+    				if (!GroupManager.hasPermission(sender, "bossmessage.scr.info")) {
+    					sender.sendMessage(CM.noperm);
+    					return true;
+    				}
+    				if (args.length == 2) {
+						String scr = args[1].toLowerCase();
+						
+						if (CM.tasks.containsKey(scr)) {
+							Task s = CM.tasks.get(scr);
+		    				sender.sendMessage(ChatColor.YELLOW + "=== " + ChatColor.GOLD + scr + ChatColor.YELLOW + " info ===");
+		    				sender.sendMessage(ChatColor.GREEN + "Message: " + ChatColor.WHITE + s.getMessage());
+		    				sender.sendMessage(ChatColor.GREEN + "Command(s):");
+		    				for (String command : s.getCommands()) {
+		    					sender.sendMessage(ChatColor.AQUA + "/" + command);
+		    				}
+						} else {
+							LangUtils.sendError(sender, "Scheduler " + scr + " does not exists!");
+						}
+    				} else {
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addscr <scr>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delscr <event>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr setmsg <scr> <message>");
+    					sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr addcommand <scr> <command>");
+    				}
+    			}
     			//Info
     			else if (args[0].equalsIgnoreCase("info")) {
     				
@@ -622,7 +785,7 @@ public class Commands implements CommandExecutor {
     					return true;
     				}
     				if (args.length <= 1) {
-				    	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
+				    	sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by Victor2748 " + ChatColor.DARK_AQUA + "===");
 				    	sender.sendMessage(ChatColor.YELLOW + "Website: " + ChatColor.GREEN + "http://pixelizedmc.net");
 				    	sender.sendMessage(ChatColor.YELLOW + "Official server: " + ChatColor.GREEN + "play.pixelizedmc.net");
 				    	sender.sendMessage(ChatColor.YELLOW + "Author: " + ChatColor.GREEN + "Victor2748");

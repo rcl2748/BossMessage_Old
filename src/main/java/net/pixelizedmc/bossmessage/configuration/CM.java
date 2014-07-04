@@ -1,6 +1,7 @@
 package net.pixelizedmc.bossmessage.configuration;
 
 import net.pixelizedmc.bossmessage.Main;
+import net.pixelizedmc.bossmessage.Task;
 import net.pixelizedmc.bossmessage.utils.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -34,6 +35,7 @@ public class CM {
     public static int broadcastDefaultTime;
     public static String broadcastPercent;
     public static Map<String, Map<String, String>> regions;
+    public static Map<String, Task> tasks = new HashMap<String, Task>();
     
     public static void createConfig() {
     	config.options().copyDefaults(true);
@@ -80,6 +82,8 @@ public class CM {
         broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
         broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
         regions = readRegionGroups();
+        tasks = getTasks();
+        
         
         if (broadcastDefaultTime < 1) {
         	Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
@@ -90,18 +94,29 @@ public class CM {
     @SuppressWarnings("unchecked")
 	public static Map<String, List<Message>> readMessages() {
     	Map<String, List<Message>> output = new HashMap<String, List<Message>>();
-    	for (String group:groups) {
+    	for (String group : groups) {
     		List<Message> msgs = (List<Message>) config.getList("BossMessage.Messages." + group);
     		output.put(group, msgs);
     	}
 		return output;
 	}
     
+    public static Map<String, Task> getTasks() {
+    	Map<String, Task> output = new HashMap<String, Task>();
+    	ConfigurationSection sec = config.getConfigurationSection("BossMessage.Tasks");
+    	for (String key : sec.getKeys(false)) {
+    		String message = sec.getString(key + ".Message");
+    		List<String> cmds = sec.getStringList(key + ".Commands");
+    		output.put(key, new Task(message, cmds));
+    	}
+    	return output;
+    }
+    
     public static Map<String, Map<String, String>> readRegionGroups() {
     	Map<String, Map<String, String>> output = new HashMap<String, Map<String, String>>();
     	ConfigurationSection sec = config.getConfigurationSection("BossMessage.Regions");
     	if (sec != null && sec.getKeys(false).size() > 0) {
-	    	for (String world:sec.getKeys(false)) {
+	    	for (String world : sec.getKeys(false)) {
 	    		Map<String, String> worldmap = new HashMap<String, String>();
 	    		ConfigurationSection worldsec = sec.getConfigurationSection(world);
 	    		for (String region:worldsec.getKeys(false)) {
@@ -128,9 +143,9 @@ public class CM {
 	
 	public static Map<String, List<Message>> colorMsgs(Map<String, List<Message>> rawmessages2) {
 		Map<String, List<Message>> output = new HashMap<String, List<Message>>();
-		for (String group:groups) {
+		for (String group : groups) {
 			List<Message> output2 = new ArrayList<Message>();
-			for (Message msg:rawmessages2.get(group)) {
+			for (Message msg : rawmessages2.get(group)) {
 				output2.add(colorMsg(msg));
 			}
 			output.put(group, output2);

@@ -31,16 +31,9 @@ public class LangUtils {
 	
 	public static void sendHelpMessage(CommandSender sender, HelpCommand cmd) {
 		if (sender instanceof Player) {
-			List<String> listdesc = new ArrayList<>();
-			listdesc.add(ChatColor.YELLOW + "" + ChatColor.BOLD + cmd.command);
-			listdesc.add(ChatColor.BLUE + cmd.description);
-			listdesc.add("");
-			listdesc.add(ChatColor.DARK_RED + "Example: " + ChatColor.GOLD + cmd.example);
-			listdesc.add("");
-			listdesc.add(ChatColor.RED + "" + ChatColor.ITALIC + "[Click to paste in chat]");
 			new FancyMessage(cmd.command).color(ChatColor.YELLOW).itemTooltip(getDescItem(cmd)).suggest(cmd.getCommand()).send((Player) sender);
 		} else {
-			sender.sendMessage(ChatColor.YELLOW + cmd.command);
+			sender.sendMessage(ChatColor.YELLOW + cmd.getCommand());
 		}
 	}
 	

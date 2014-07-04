@@ -42,8 +42,9 @@ public class Lib {
 	
 	public static Message preGenMsg(Message m) {
 		//Generate string output message
-		String rawmsg = m.Message;
-		String message = m.Message;
+		Message msg = m.clone();
+		String rawmsg = msg.Message;
+		String message = msg.Message;
 		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode = null;
 			int randint = 0;
@@ -53,7 +54,7 @@ public class Lib {
 					randint = Utils.randInt(0, colorcodes.length() - 1);
 					colorcode = ChatColor.COLOR_CHAR + Character.toString(colorcodes.charAt(randint));
 				} else {
-					colorcode = ChatColor.COLOR_CHAR + "r";
+					colorcode = ChatColor.RESET + "";
 				}
 				message = message.replaceFirst("(?i)%rdm_color%", colorcode);
 				if (!CM.repeatrdmcolors) {
@@ -98,9 +99,9 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%server_name%".toLowerCase())) {
 			message = message.replaceAll("(?i)%server_name%", Bukkit.getServerName());
 		}
-		m.setMessage(message);
+		msg.setMessage(message);
 		//Generate precentage
-		String percent = m.Percent;
+		String percent = msg.Percent;
 		if (percent.toLowerCase().contains("online_players".toLowerCase())) {
 			int vplayers = 0;
 			if (CM.useVNP) {
@@ -115,8 +116,8 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("max_players".toLowerCase())) {
 			percent = percent.replaceAll("(?i)max_players", Integer.toString(Bukkit.getMaxPlayers()));
 		}
-		m.setPercent(percent);
-		return m;
+		msg.setPercent(percent);
+		return msg;
 	}
 
 	public static void setPlayerMsg(Player p, Message msg) {
@@ -259,10 +260,10 @@ public class Lib {
 		if (CM.whitelist) {
 			List<String> worlds = CM.worlds;
 			List<Player> players;
-			for (String w:worlds) {
+			for (String w : worlds) {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
-					for (Player p:players) {
+					for (Player p : players) {
 						if (GroupManager.getPlayerGroup(p) == group) {
 							setPlayerMsg(p, preGenMsg(msg.clone()));
 						}
@@ -270,9 +271,9 @@ public class Lib {
 				}
 			}
 		} else {
-			for (Player p:Bukkit.getOnlinePlayers()) {
+			for (Player p : Bukkit.getOnlinePlayers()) {
 				if (GroupManager.getPlayerGroup(p) == group) {
-					setPlayerMsg(p, preGenMsg(msg.clone()));
+					setPlayerMsg(p, preGenMsg(msg));
 				}
 			}
 		}
