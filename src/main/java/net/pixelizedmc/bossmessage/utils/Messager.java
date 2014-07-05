@@ -1,5 +1,6 @@
 package net.pixelizedmc.bossmessage.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
@@ -19,7 +20,7 @@ public class Messager {
 	public Message broadcasting;
 	public Message scheduling;
     public int broadcastTaskId = -1;
-    public int schedulingTaskId = -1;
+    public int scheduleTaskId = -1;
     public Thread thread;
 	
 	public Messager(String group) {
@@ -37,16 +38,14 @@ public class Messager {
 	public void startProcess() {
 		if (!isClosed) {
 	        current = Lib.getMessage(group);
-	        show = current.Show;
-	        interval = current.Interval;
-			if (!isBroadcasting && !isScheduling) {
-				Lib.setMsg(current, group);
-			}
+	        show = current.getShow();
+	        interval = current.getInterval();
             isset = true;
+            setCurrentMessage();
             showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
             	public void run() {
-            		if (!isBroadcasting) {
-	            		for (Player p:GroupManager.getPlayersInGroup(group)) {
+            		if (!isBroadcasting && !isScheduling) {
+	            		for (Player p : GroupManager.getPlayersInGroup(group)) {
 	            			BarAPI.removeBar(p);
 	            		}
             		}
@@ -86,19 +85,47 @@ public class Messager {
 		}
 	}
 	
+	public void setCurrentMessage() { // ALways resets broadcast percentage!
+		if (isBroadcasting) {
+			Lib.setMsg(broadcasting, group);
+		} else if (isScheduling) {
+			Lib.setMsg(scheduling, group);
+		} else {
+			Lib.setMsg(current, group);
+		}
+	}
+	
+	public void schedule(final Message message) {
+        scheduling = message;
+        isScheduling = true;
+        if (!isBroadcasting) {
+			Lib.setMsg(Lib.preGenMsg(scheduling), group);
+        }
+        setCurrentMessage();
+        if (scheduleTaskId != -1) {
+        	Main.scr.cancelTask(scheduleTaskId);
+        }
+        scheduleTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+        	public void run() {
+    			isScheduling = false;
+    			setCurrentMessage();
+        	}
+        }, message.getShow());
+	}
+	
 	public void broadcast(final Message message) {
-		Lib.setMsg(Lib.preGenMsg(message), group);
         broadcasting = message;
         isBroadcasting = true;
+		setCurrentMessage();
         if (broadcastTaskId != -1) {
         	Main.scr.cancelTask(broadcastTaskId);
         }
         broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
         	public void run() {
     			isBroadcasting = false;
-    			Lib.setMsg(current, group);
+    			setCurrentMessage();
         	}
-        }, message.Show);
+        }, message.getShow());
 //        Runnable run = new Runnable() {
 //    		@Override
 //	        public void run() {
