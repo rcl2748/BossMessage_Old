@@ -16,7 +16,7 @@ public class GroupManager {
 		if (region != null && WorldGuardManager.hasRegion(p.getWorld().getName(), region)) {
 			return CM.regions.get(p.getWorld().getName()).get(region);
 		}
-		for (String group:CM.groups) {
+		for (String group : CM.groups) {
 			if (hasAssignedPermission(p, "bossmessage.see." + group)) {
 				return group;
 			}
@@ -26,11 +26,11 @@ public class GroupManager {
 	
 	public static boolean groupExists(String g) {
 		return CM.groups.contains(g);
-	}	
+	}
 	
 	public static List<Player> getPlayersInGroup(String group) {
 		List<Player> output = new ArrayList<Player>();
-		for (Player player:Bukkit.getOnlinePlayers()) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (getPlayerGroup(player) == group) {
 				output.add(player);
 			}
@@ -39,20 +39,20 @@ public class GroupManager {
 	}
 	
 	public static boolean hasPermission(CommandSender sender, String permission) {
-        if (sender.hasPermission("*")||sender.hasPermission(permission)) {
-        	return true;
-        }
-        for (int i = 0; i > -1; i++) {
-            i = permission.indexOf(".", i);
-            if (i > -1) {
-               if (sender.hasPermission(permission.substring(0, i) + ".*")) {
-            	   return true;
-               }
-            } else {
-                break;
-            }
-        }
-        return false;
+		if (sender.hasPermission("*") || sender.hasPermission(permission)) {
+			return true;
+		}
+		for (int i = 0 ; i > -1 ; i++) {
+			i = permission.indexOf(".", i);
+			if (i > -1) {
+				if (sender.hasPermission(permission.substring(0, i) + ".*")) {
+					return true;
+				}
+			} else {
+				break;
+			}
+		}
+		return false;
 	}
 	
 	public static boolean hasAssignedPermission(CommandSender sender, String permission) {

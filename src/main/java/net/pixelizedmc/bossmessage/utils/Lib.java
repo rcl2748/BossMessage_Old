@@ -41,10 +41,10 @@ public class Lib {
 	}
 	
 	public static Message preGenMsg(Message m) {
-		//Generate string output message
+		// Generate string output message
 		Message msg = m.clone();
-		String rawmsg = msg.Message;
-		String message = msg.Message;
+		String rawmsg = msg.getMessage();
+		String message = msg.getMessage();
 		if (rawmsg.toLowerCase().contains("%rdm_color%".toLowerCase())) {
 			String colorcode = null;
 			int randint = 0;
@@ -77,7 +77,7 @@ public class Lib {
 					playername = "";
 				}
 				message = message.replaceFirst("(?i)%rdm_player%", playername);
-				if (!CM.repeatrdmcolors&&randint >= 0) {
+				if (!CM.repeatrdmcolors && randint >= 0) {
 					playernames.remove(randint);
 				}
 			}
@@ -100,8 +100,8 @@ public class Lib {
 			message = message.replaceAll("(?i)%server_name%", Bukkit.getServerName());
 		}
 		msg.setMessage(message);
-		//Generate precentage
-		String percent = msg.Percent;
+		// Generate precentage
+		String percent = msg.getPercent();
 		if (percent.toLowerCase().contains("online_players".toLowerCase())) {
 			int vplayers = 0;
 			if (CM.useVNP) {
@@ -119,45 +119,45 @@ public class Lib {
 		msg.setPercent(percent);
 		return msg;
 	}
-
+	
 	public static void setPlayerMsg(Player p, Message msg) {
 		if (msg == null) {
 			BarAPI.removeBar(p);
 			return;
 		}
 		if (!CM.ignoreplayers.contains(p.getName())) {
-			if (Utils.isInteger(msg.Percent)) {
-				float pst = Float.parseFloat(msg.Percent);
-				if (pst>100) {
+			if (Utils.isInteger(msg.getPercent())) {
+				float pst = Float.parseFloat(msg.getPercent());
+				if (pst > 100) {
 					msg.setPercent("100");
 				} else if (pst < 0) {
 					msg.setPercent("0");
 				}
 			}
 			Message message = generateMsg(p, msg);
-			String percent = msg.Percent;
-			if (msg.Percent.contains(".")||msg.Percent.contains("/")||msg.Percent.contains("*")||msg.Percent.contains("+")||msg.Percent.contains("-")||msg.Percent.contains("(")||msg.Percent.contains(")")) {
+			String percent = msg.getPercent();
+			if (percent.contains(".") || percent.contains("/") || percent.contains("*") || percent.contains("+") || percent.contains("-") || percent.contains("(") || percent.contains(")")) {
 				percent = calculatePct(percent);
 			}
-			int time = msg.Show;
-			if (!Utils.isInteger(percent)&&!msg.Percent.equalsIgnoreCase("auto")) {
-	    		LangUtils.broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
-	    		percent = "100";
+			int time = msg.getShow();
+			if (!Utils.isInteger(percent)/* && !percent.equalsIgnoreCase("auto") */) {
+				LangUtils.broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
+				percent = "100";
 			}
-			if (msg.Percent.equalsIgnoreCase("auto")) {
-				BarAPI.setMessage(p, message.Message, time/20);
-			} else {
-				BarAPI.setMessage(p, message.Message, Float.parseFloat(percent));
-			}
+			// if (percent.equalsIgnoreCase("auto")) {
+			// BarAPI.setMessage(p, message.getMessage(), time/20);
+			// } else {
+			BarAPI.setMessage(p, message.getMessage(), Float.parseFloat(percent));
+			// }
 		}
 	}
 	
 	public static void setMsgs() {
-		for (String group:CM.groups) {
-			if (Main.messagers.get(group).isset) {
-				setMsg(Main.messagers.get(group).current, group);
+		for (String group : CM.groups) {
+			if (Main.messagers.get(group).isSet()) {
+				setMsg(Main.messagers.get(group).getCurrent(), group);
 			} else {
-				for (Player p:GroupManager.getPlayersInGroup(group)) {
+				for (Player p : GroupManager.getPlayersInGroup(group)) {
 					BarAPI.removeBar(p);
 				}
 			}
@@ -167,9 +167,9 @@ public class Lib {
 	public static Message generateMsg(Player p, Message current) {
 		String playername = p.getName();
 		Message msg = current;
-		//Generate msg
-		String message = msg.Message;
-		String rawmsg = msg.Message;
+		// Generate msg
+		String message = msg.getMessage();
+		String rawmsg = message;
 		if (rawmsg.toLowerCase().contains("%player%".toLowerCase())) {
 			message = message.replaceAll("(?i)%player%", playername);
 		}
@@ -204,8 +204,8 @@ public class Lib {
 				message = "§cVault economy is not enabled!";
 			}
 		}
-		//Generate pst
-		String percent = msg.Percent;
+		// Generate pst
+		String percent = msg.getPercent();
 		if (percent.toLowerCase().contains("health".toLowerCase())) {
 			percent = percent.replaceAll("(?i)health", Double.toString(p.getHealth()));
 		}
@@ -248,7 +248,7 @@ public class Lib {
 				Main.logger.warning(Main.PREFIX_CONSOLE + "VanishNotLoadedException occured while trying to filter vanished players from %rdm_player% possibilities");
 			}
 		}
-		for (Player p:Bukkit.getOnlinePlayers()) {
+		for (Player p : Bukkit.getOnlinePlayers()) {
 			if (!p.hasPermission("bossmessage.exemptrdm") && !vplayers.contains(p.getName())) {
 				players.add(p.getName());
 			}
@@ -297,21 +297,21 @@ public class Lib {
 	}
 	
 	public static void resetCount() {
-		for (String group:CM.groups) {
+		for (String group : CM.groups) {
 			count.remove(group);
 		}
 	}
 	
 	public static String calculatePct(String percent) {
-        try {
+		try {
 			String output = Double.toString((double) Main.engine.eval(percent)).split("\\.")[0];
 			if (!Utils.isInteger(output)) {
-	    		LangUtils.broadcastError("FAILED to parse message: output bossbar percent script returned NOT A NUMBER!");
+				LangUtils.broadcastError("FAILED to parse message: output bossbar percent script returned NOT A NUMBER!");
 				return "100";
 			}
 			return output;
 		} catch (ScriptException e) {
-    		LangUtils.broadcastError("FAILED to parse message: output bossbar script is INVALID!");
+			LangUtils.broadcastError("FAILED to parse message: output bossbar script is INVALID!");
 			return "100";
 		}
 	}

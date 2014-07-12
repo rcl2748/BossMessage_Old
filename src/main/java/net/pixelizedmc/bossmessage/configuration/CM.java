@@ -15,130 +15,129 @@ import java.util.Map;
 
 public class CM {
 	
-    final static String path = "plugins/BossMessage/config.yml";
-    static File file = new File(path);
-    public static FileConfiguration config = Main.getInstance().getConfig();
-    
-    public static boolean random;
-    public static boolean repeatrdmcolors;
-    public static boolean repeatrdmplayers;
-    public static String colorcodes;
-    public static Map<String, List<Message>> messages = new HashMap<String, List<Message>>();
-    public static Map<String, List<Message>> rawmessages = new HashMap<String, List<Message>>();
-    public static boolean useVNP;
-    public static String noperm;
-    public static boolean whitelist;
-    public static List<String> worlds;
-    public static List<String> ignoreplayers;
-    public static boolean checkUpdates;
-    public static List<String> groups;
-    public static int broadcastDefaultTime;
-    public static String broadcastPercent;
-    public static Map<String, Map<String, String>> regions;
-    public static Map<String, Task> tasks = new HashMap<String, Task>();
-    
-    public static void createConfig() {
-    	config.options().copyDefaults(true);
-    	
-    	boolean outdatedConfig = false;
-    	if (config.getInt("BossMessage.ConfigVersion") != 0) {
-    		for (String key:config.getKeys(false)) {
-    			config.set(key, null);
-    		}
-    		save();
-        	config.options().copyDefaults(true);
-        	outdatedConfig = true;
-    	}
-        if (config.getConfigurationSection("BossMessage.Messages") == null || config.getConfigurationSection("BossMessage.Messages").getKeys(false).size() == 0 || outdatedConfig) {
-        	List<Message> defaultMessages = new ArrayList<Message>();
-        	defaultMessages.add(new Message("&bYo &5%player%&b, wazzup?", "100", 100, 0));
-        	defaultMessages.add(new Message("&aBossMessage - best BossBar plugin by &bVictor2748", "50", 100, 0));
-        	defaultMessages.add(new Message("%rdm_color%Now %rdm_color%supports %rdm_color%custom %rdm_color%random %rdm_color%colors", "30", 100, 0));
-        	defaultMessages.add(new Message("&aRight now, there are &b%online_players%&c/&b%max_players% &aPlayers online", "online_players/max_players*100", 100, 0));
-        	defaultMessages.add(new Message("&6Th1s 1s a m3ssag3 w1th &brand0m&6 p3rs3ntag3", "Math.floor(Math.random()*100)", 100, 0));
-        	defaultMessages.add(new Message("&eThis is a message with an auto-reducing percentage", "auto", 100, 0));
-        	defaultMessages.add(new Message("&bYour balance: &c%econ_dollars%.%econ_cents%", "100", 100, 0));
-        	defaultMessages.add(new Message("&bYour health is shown on the bossbar!", "health/max_health*100", 100, 0));
-        	defaultMessages.add(new Message("&dDon't forget to check out the new cool BossMessage Animator!", "100", 100, 0));
-        	config.set("BossMessage.Messages.default", defaultMessages);
-        }
-        save();
-    }
-    
+	final static String path = "plugins/BossMessage/config.yml";
+	static File file = new File(path);
+	public static FileConfiguration config = Main.getInstance().getConfig();
+	
+	public static boolean random;
+	public static boolean repeatrdmcolors;
+	public static boolean repeatrdmplayers;
+	public static String colorcodes;
+	public static Map<String, List<Message>> messages = new HashMap<String, List<Message>>();
+	public static Map<String, List<Message>> rawmessages = new HashMap<String, List<Message>>();
+	public static boolean useVNP;
+	public static String noperm;
+	public static boolean whitelist;
+	public static List<String> worlds;
+	public static List<String> ignoreplayers;
+	public static boolean checkUpdates;
+	public static List<String> groups;
+	public static int broadcastDefaultTime;
+	public static String broadcastPercent;
+	public static Map<String, Map<String, String>> regions;
+	public static Map<String, Task> tasks = new HashMap<String, Task>();
+	
+	public static void createConfig() {
+		config.options().copyDefaults(true);
+		
+		boolean outdatedConfig = false;
+		if (config.getInt("BossMessage.ConfigVersion") != 0) {
+			for (String key : config.getKeys(false)) {
+				config.set(key, null);
+			}
+			save();
+			config.options().copyDefaults(true);
+			outdatedConfig = true;
+		}
+		if (config.getConfigurationSection("BossMessage.Messages") == null || config.getConfigurationSection("BossMessage.Messages").getKeys(false).size() == 0 || outdatedConfig) {
+			List<Message> defaultMessages = new ArrayList<Message>();
+			defaultMessages.add(new Message("&bYo &5%player%&b, wazzup?", "100", 100, 0));
+			defaultMessages.add(new Message("&aBossMessage - best BossBar plugin by &bVictor2748", "50", 100, 0));
+			defaultMessages.add(new Message("%rdm_color%Now %rdm_color%supports %rdm_color%custom %rdm_color%random %rdm_color%colors", "30", 100, 0));
+			defaultMessages.add(new Message("&aRight now, there are &b%online_players%&c/&b%max_players% &aPlayers online", "online_players/max_players*100", 100, 0));
+			defaultMessages.add(new Message("&6Th1s 1s a m3ssag3 w1th &brand0m&6 p3rs3ntag3", "Math.floor(Math.random()*100)", 100, 0));
+			defaultMessages.add(new Message("&eThis is a message with an auto-reducing percentage", "auto", 100, 0));
+			defaultMessages.add(new Message("&bYour balance: &c%econ_dollars%.%econ_cents%", "100", 100, 0));
+			defaultMessages.add(new Message("&bYour health is shown on the bossbar!", "health/max_health*100", 100, 0));
+			defaultMessages.add(new Message("&dDon't forget to check out the new cool BossMessage Animator!", "100", 100, 0));
+			config.set("BossMessage.Messages.default", defaultMessages);
+		}
+		save();
+	}
+	
 	public static void readConfig() {
 		groups = new ArrayList<String>(config.getConfigurationSection("BossMessage.Messages").getKeys(false));
 		random = config.getBoolean("BossMessage.Random");
-        repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
-        repeatrdmplayers = config.getBoolean("BossMessage.RepeatRandomPlayers");
-        noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
-        colorcodes = config.getString("BossMessage.ColorCodes");
-        rawmessages = readMessages();
-        messages = colorMsgs(rawmessages);
-        whitelist = config.getBoolean("BossMessage.Whitelist");
-        worlds = config.getStringList("BossMessage.WhitelistedWorlds");
-        ignoreplayers = config.getStringList("BossMessage.IgnoredPlayers");
-        useVNP = config.getBoolean("BossMessage.VanishNoPacketSupport");
-        checkUpdates = config.getBoolean("BossMessage.CheckUpdates");
-        broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
-        broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
-        regions = readRegionGroups();
-        tasks = getTasks();
-        
-        
-        if (broadcastDefaultTime < 1) {
-        	Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
-        	broadcastDefaultTime = 30;
-        }
-    }
+		repeatrdmcolors = config.getBoolean("BossMessage.RepeatRandomColors");
+		repeatrdmplayers = config.getBoolean("BossMessage.RepeatRandomPlayers");
+		noperm = ChatColor.translateAlternateColorCodes('&', config.getString("BossMessage.NoPermission"));
+		colorcodes = config.getString("BossMessage.ColorCodes");
+		rawmessages = readMessages();
+		messages = colorMsgs(rawmessages);
+		whitelist = config.getBoolean("BossMessage.Whitelist");
+		worlds = config.getStringList("BossMessage.WhitelistedWorlds");
+		ignoreplayers = config.getStringList("BossMessage.IgnoredPlayers");
+		useVNP = config.getBoolean("BossMessage.VanishNoPacketSupport");
+		checkUpdates = config.getBoolean("BossMessage.CheckUpdates");
+		broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
+		broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
+		regions = readRegionGroups();
+		tasks = getTasks();
+		
+		if (broadcastDefaultTime < 1) {
+			Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
+			broadcastDefaultTime = 30;
+		}
+	}
 	
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public static Map<String, List<Message>> readMessages() {
-    	Map<String, List<Message>> output = new HashMap<String, List<Message>>();
-    	for (String group : groups) {
-    		List<Message> msgs = (List<Message>) config.getList("BossMessage.Messages." + group);
-    		output.put(group, msgs);
-    	}
+		Map<String, List<Message>> output = new HashMap<String, List<Message>>();
+		for (String group : groups) {
+			List<Message> msgs = (List<Message>) config.getList("BossMessage.Messages." + group);
+			output.put(group, msgs);
+		}
 		return output;
 	}
-    
-    public static Map<String, Task> getTasks() {
-    	Map<String, Task> output = new HashMap<String, Task>();
-    	ConfigurationSection sec = config.getConfigurationSection("BossMessage.Tasks");
-    	for (String key : sec.getKeys(false)) {
-    		String message = sec.getString(key + ".Message");
-    		List<String> cmds = sec.getStringList(key + ".Commands");
-    		output.put(key, new Task(message, cmds));
-    	}
-    	return output;
-    }
-    
-    public static Map<String, Map<String, String>> readRegionGroups() {
-    	Map<String, Map<String, String>> output = new HashMap<String, Map<String, String>>();
-    	ConfigurationSection sec = config.getConfigurationSection("BossMessage.Regions");
-    	if (sec != null && sec.getKeys(false).size() > 0) {
-	    	for (String world : sec.getKeys(false)) {
-	    		Map<String, String> worldmap = new HashMap<String, String>();
-	    		ConfigurationSection worldsec = sec.getConfigurationSection(world);
-	    		for (String region:worldsec.getKeys(false)) {
-	    			worldmap.put(region, worldsec.getString(region));
-	    		}
-	    		output.put(world, worldmap);
-	    	}
-    	}
-    	return output;
-    }
-    
+	
+	public static Map<String, Task> getTasks() {
+		Map<String, Task> output = new HashMap<String, Task>();
+		ConfigurationSection sec = config.getConfigurationSection("BossMessage.Tasks");
+		for (String key : sec.getKeys(false)) {
+			String message = sec.getString(key + ".Message");
+			List<String> cmds = sec.getStringList(key + ".Commands");
+			output.put(key, new Task(message, cmds));
+		}
+		return output;
+	}
+	
+	public static Map<String, Map<String, String>> readRegionGroups() {
+		Map<String, Map<String, String>> output = new HashMap<String, Map<String, String>>();
+		ConfigurationSection sec = config.getConfigurationSection("BossMessage.Regions");
+		if (sec != null && sec.getKeys(false).size() > 0) {
+			for (String world : sec.getKeys(false)) {
+				Map<String, String> worldmap = new HashMap<String, String>();
+				ConfigurationSection worldsec = sec.getConfigurationSection(world);
+				for (String region : worldsec.getKeys(false)) {
+					worldmap.put(region, worldsec.getString(region));
+				}
+				output.put(world, worldmap);
+			}
+		}
+		return output;
+	}
+	
 	public static void save() {
-        Main.getInstance().saveConfig();
-    }
-    
+		Main.getInstance().saveConfig();
+	}
+	
 	public static Message colorMsg(Message m) {
-		return new Message(ChatColor.translateAlternateColorCodes('&', m.Message), m.Percent, m.Show, m.Interval);
-    }
+		return new Message(ChatColor.translateAlternateColorCodes('&', m.getMessage()), m.getPercent(), m.getShow(), m.getInterval());
+	}
 	
 	public static void reloadConfig() {
-	    config = YamlConfiguration.loadConfiguration(file);
-	    readConfig();
+		config = YamlConfiguration.loadConfiguration(file);
+		readConfig();
 	}
 	
 	public static Map<String, List<Message>> colorMsgs(Map<String, List<Message>> rawmessages2) {

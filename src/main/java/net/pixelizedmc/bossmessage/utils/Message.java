@@ -8,10 +8,10 @@ import org.bukkit.configuration.serialization.SerializableAs;
 
 @SerializableAs("ConfigurationMessage")
 public class Message implements Cloneable, ConfigurationSerializable {
-	public String Message;
-	public String Percent;
-	public int Show;
-	public int Interval;
+	private String Message;
+	private String Percent;
+	private int Show;
+	private int Interval;
 	
 	public Message(String msg, String percent, int show, int interval) {
 		this.Interval = interval;
