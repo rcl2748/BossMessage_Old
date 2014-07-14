@@ -32,6 +32,8 @@ public class CM {
 	public static List<String> ignoreplayers;
 	public static boolean checkUpdates;
 	public static List<String> groups;
+	public static int scheduleDefaultTime;
+	public static String schedulePercent;
 	public static int broadcastDefaultTime;
 	public static String broadcastPercent;
 	public static Map<String, Map<String, String>> regions;
@@ -62,6 +64,22 @@ public class CM {
 			defaultMessages.add(new Message("&dDon't forget to check out the new cool BossMessage Animator!", "100", 100, 0));
 			config.set("BossMessage.Messages.default", defaultMessages);
 		}
+		if (config.getConfigurationSection("BossMessage.Tasks") == null || config.getConfigurationSection("BossMessage.Tasks").getKeys(false).size() == 0 || outdatedConfig) {
+			ConfigurationSection tasks = config.getConfigurationSection("BossMessage.Tasks");
+			List<String> cmds1 = new ArrayList<String>();
+			cmds1.add("weather rain");
+			List<String> cmds2 = new ArrayList<String>();
+			cmds2.add("stop");
+			List<String> cmds3 = new ArrayList<String>();
+			cmds3.add("say Now, Skynet will initiate a massive nuclear attack in your a$$");
+			tasks.addDefault("makeitrain.Message", "&4[&6Weather&aForecast&4] &bRa1n 1t w1ll b3 in &e%sec%");
+			tasks.addDefault("makeitrain.Commands", cmds1);
+			tasks.addDefault("stoptheserver.Message", "&4Server is going down in &e%sec%");
+			tasks.addDefault("stoptheserver.Commands", cmds2);
+			tasks.addDefault("starttheskynet.Message", "&aSkynet activated! Its gonna f*** you up in %sec% seconds.");
+			tasks.addDefault("starttheskynet.Commands", cmds3);
+			
+		}
 		save();
 	}
 	
@@ -79,6 +97,8 @@ public class CM {
 		ignoreplayers = config.getStringList("BossMessage.IgnoredPlayers");
 		useVNP = config.getBoolean("BossMessage.VanishNoPacketSupport");
 		checkUpdates = config.getBoolean("BossMessage.CheckUpdates");
+		scheduleDefaultTime = config.getInt("BossMessage.Schedule.DefaultTime");
+		schedulePercent = config.getString("BossMessage.Schedule.Percent");
 		broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
 		broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
 		regions = readRegionGroups();

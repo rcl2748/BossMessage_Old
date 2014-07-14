@@ -117,6 +117,41 @@ public class Lang {
 			"Clears the message group from the specified region (see /bm setregion).",
 			"/bm unsetregion world spawn",
 			"unsetregion");
+	public static HelpCommand COMMAND_SCHEDULE = new HelpCommand(
+			"/bm schedule <task> <sec>",
+			"Schedules the task for the specified time.",
+			"/bm schedule makeitrain 20",
+			"task.schedule");
+	public static HelpCommand COMMAND_QS = new HelpCommand(
+			"/bm qs <task>",
+			"Schedules the task for the default time (60 seconds,\nchangeable on config.yml)",
+			"/bm unsetregion world spawn",
+			"task.quick");
+	public static HelpCommand COMMAND_ADDTASK = new HelpCommand(
+			"/bm addtask <task> <message>",
+			"Creates a new task with a message for scheduling\n(see /bm schedule)",
+			"/bm addtask makeitrain &bRa1n 1t w1ll b3 in: &e%sec%",
+			"task.add");
+	public static HelpCommand COMMAND_DELTASK = new HelpCommand(
+			"/bm deltask <task>",
+			"Removes the specified task (including it's commands)",
+			"/bm deltask makeitrain",
+			"task.remove");
+	public static HelpCommand COMMAND_ADDTASKCMD = new HelpCommand(
+			"/bm addtaskcmd <task> <cmd>",
+			"Adds the command to the specified task. Task commands\nare dispatched from the console when the task is\nexecuted (see /bm schedule)",
+			"/bm addtaskcmd weather thunder",
+			"task.addcmd");
+	public static HelpCommand COMMAND_TASKLIST = new HelpCommand(
+			"/bm tasklist",
+			"Lists all the tasks you have.",
+			"/bm tasklist",
+			"task.list");
+	public static HelpCommand COMMAND_TASKINFO = new HelpCommand(
+			"/bm taskinfo <task>",
+			"Displays the info for the specified task.",
+			"/bm taskinfo makeitrain",
+			"task.info");
 	public static HelpCommand COMMAND_INFO = new HelpCommand(
 			"/bm info",
 			"Displays information about the plugin, everyone has\naccess to this command by default.",
@@ -148,6 +183,12 @@ public class Lang {
 		commands.add(COMMAND_BROADCAST);
 		commands.add(COMMAND_QB);
 		commands.add(COMMAND_GB);
+		commands.add(COMMAND_SCHEDULE);
+		commands.add(COMMAND_QS);
+		commands.add(COMMAND_ADDTASK);
+		commands.add(COMMAND_DELTASK);
+		commands.add(COMMAND_TASKLIST);
+		commands.add(COMMAND_TASKINFO);
 		commands.add(COMMAND_SETREGION);
 		commands.add(COMMAND_UNSETREGION);
 		commands.add(COMMAND_INFO);

@@ -1,6 +1,5 @@
 package net.pixelizedmc.bossmessage.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.confuser.barapi.BarAPI;
@@ -30,7 +29,9 @@ public class Messager {
 	private double messageAutoReduceBy;
 	private double messageAutoLastPercent;
 	private double scheduleAutoLastPercent;
+	private double broadcastAutoLastPercent;
 	private int scheduleAutoTaskId = -1;
+	private int broadcastAutoTaskId = -1;
 	
 	public Message getCurrent() {
 		return current;
@@ -129,7 +130,6 @@ public class Messager {
 			isScheduling = true;
 			if (!isBroadcasting) {
 				Lib.setMsg(Lib.preGenMsg(scheduling), group);
-				Bukkit.broadcastMessage("1");
 			}
 			scheduleTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 				public void run() {
@@ -165,12 +165,11 @@ public class Messager {
 					scheduleAutoLastPercent = 100;
 				}
 				String spct = Integer.toString(percent);
-				Bukkit.broadcastMessage(spct);
 				schedulingAuto.setPercent(spct);
 				toShow.setPercent(spct);
 				toShow.setShow(20);
 				toShow.setMessage(schedulingAuto.getMessage().replaceAll("(?i)%sec%", Long.toString(Math.round(scheduleAutoLastPercent / scheduleAutoReduceBy))));
-				if (scheduleAutoLastPercent <= scheduleAutoReduceBy) {
+				if (scheduleAutoLastPercent < scheduleAutoReduceBy * 1.5) {
 					schedule(toShow, commands);
 					int t = scheduleAutoTaskId;
 					scheduleAutoTaskId = -1;
@@ -180,78 +179,59 @@ public class Messager {
 				}
 			}
 		}, 0, 20);
-		// while (true) {
-		// if (!scheduleAutoLoop) {
-		// schedulingAuto = message;
-		// if (schedulingAuto.getPercent().equalsIgnoreCase("auto")) {
-		// scheduleAutoLoop = true;
-		// scheduleAutoReduceBy = 100D / (current.getShow() / 20D);
-		// schedulingShow = 20;
-		// } else {
-		// schedulingShow = current.getShow();
-		// }
-		// }
-		// Message toShow = schedulingAuto.clone();
-		// if (scheduleAutoLoop) {
-		// int percent;
-		// if (Utils.isInteger(schedulingAuto.getPercent())) {
-		// scheduleAutoLastPercent -= scheduleAutoReduceBy;
-		// percent = (int) Math.round(scheduleAutoLastPercent);
-		// } else {
-		// percent = 100;
-		// scheduleAutoLastPercent = 100;
-		// }
-		// if (scheduleAutoLastPercent <= scheduleAutoReduceBy) {
-		// scheduleAutoLoop = false;
-		// }
-		// String spct = Integer.toString(percent);
-		// schedulingAuto.setPercent(spct);
-		// toShow.setPercent(spct);
-		// toShow.setShow(schedulingShow);
-		// toShow.setMessage(current.getMessage().replaceAll("(?i)%sec%",
-		// Long.toString(Math.round(scheduleAutoLastPercent /
-		// scheduleAutoReduceBy))));
-		// schedule(toShow, new ArrayList<String>());
-		// if (scheduleAutoLastPercent <= scheduleAutoReduceBy) {
-		// scheduleAutoLoop = false;
-		// break;
-		// }
-		// }
-		// }
 	}
 	
 	public void broadcast(Message message) {
-		if (isBroadcasting) {
-			Main.scr.cancelTask(broadcastTaskId);
-		}
-		broadcasting = message;
-		isBroadcasting = true;
-		Lib.setMsg(Lib.preGenMsg(broadcasting), group);
-		broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-			public void run() {
-				isBroadcasting = false;
-				setCurrentMessage();
+		if (message.getPercent().equalsIgnoreCase("auto")) {
+			broadcastAutoReducingMessage(message);
+		} else {
+			if (isBroadcasting) {
+				Main.scr.cancelTask(broadcastTaskId);
 			}
-		}, message.getShow());
-		// Runnable run = new Runnable() {
-		// @Override
-		// public void run() {
-		// Lib.setMsg(Lib.preGenMsg(message), group);
-		// broadcasting = message;
-		// isBroadcasting = true;
-		// if (broadcastTaskId != -1) {
-		// Main.scr.cancelTask(broadcastTaskId);
-		// }
-		// broadcastTaskId =
-		// Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-		// public void run() {
-		// isBroadcasting = false;
-		// Lib.setMsg(current, group);
-		// }
-		// }, message.Show);
-		// }
-		// };
-		// Main.scr.runTask(Main.getInstance(), run);
+			broadcasting = message;
+			isBroadcasting = true;
+			Lib.setMsg(Lib.preGenMsg(broadcasting), group);
+			broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+				public void run() {
+					isBroadcasting = false;
+					setCurrentMessage();
+				}
+			}, message.getShow());
+		}
+	}
+	
+	public void broadcastAutoReducingMessage(final Message message) {
+		if (broadcastAutoTaskId != -1) {
+			Main.scr.cancelTask(broadcastAutoTaskId);
+		}
+		final Message broadcastingAuto = message.clone();
+		final double broadcastAutoReduceBy = 100D / (broadcastingAuto.getShow() / 20D);
+		broadcastAutoTaskId = Main.scr.scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+			
+			@Override
+			public void run() {
+				Message toShow = broadcastingAuto.clone();
+				int percent;
+				if (Utils.isInteger(broadcastingAuto.getPercent())) {
+					broadcastAutoLastPercent -= broadcastAutoReduceBy;
+					percent = (int) Math.round(broadcastAutoLastPercent);
+				} else {
+					percent = 100;
+					broadcastAutoLastPercent = 100;
+				}
+				String spct = Integer.toString(percent);
+				broadcastingAuto.setPercent(spct);
+				toShow.setPercent(spct);
+				toShow.setShow(20);
+				toShow.setMessage(broadcastingAuto.getMessage().replaceAll("(?i)%sec%", Long.toString(Math.round(broadcastAutoLastPercent / broadcastAutoReduceBy))));
+				broadcast(toShow);
+				if (broadcastAutoLastPercent < broadcastAutoReduceBy * 1.5) {
+					int t = broadcastAutoTaskId;
+					broadcastAutoTaskId = -1;
+					Main.scr.cancelTask(t);
+				}
+			}
+		}, 0, 20);
 	}
 	
 	public Message getCurrentMessage() {

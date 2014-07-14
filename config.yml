@@ -1,11 +1,11 @@
 #     =====================================================================
 #     |       BossMessage - by Victor2748 (Pixelized Network)             |
-#     |       IP: play.pixelizedmc.net                                    |
-#     |       Website: Pixelizedmc.net                                    |
 #     |       http://dev.bukkit.org/bukkit-plugins/bossmessage/           |
 #     |-------------------------------------------------------------------|
-#     |                      DO NOT TOUCH THE LINE:                       |
+#     |                          DO NOT TOUCH:                            |
 #     |                  '- ==: ConfigurationMessage'                     |
+#     |                               AND                                 |
+#     |                         'ConfigVersion'                           |
 #     |                  OR IT WILL BREAK YOUR CONFIG!!!                  |
 #     =====================================================================
 
@@ -15,6 +15,9 @@ BossMessage:
   NoPermission: '&cNo Permission!'
   Broadcast:
     DefaultTime: 30
+    Percent: auto
+  Schedule:
+    DefaultTime: 60
     Percent: auto
   CheckUpdates: true
   Whitelist: false
@@ -27,13 +30,6 @@ BossMessage:
   - world_nether
   - ExampleWorld
   IgnoredPlayers: []
-  Events:
-    PlayerJoinEvent:
-      Enabled: true
-      Message: 
-      Percent:
-      Show:
-      BroadcastLevel: 1
   Tasks: {}
   Regions: {}
   ConfigVersion: 0

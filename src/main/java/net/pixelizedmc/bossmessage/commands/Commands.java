@@ -617,26 +617,48 @@ public class Commands implements CommandExecutor {
 				// Schedule
 				else if (args[0].equalsIgnoreCase("schedule")) {
 					
-					if (!GroupManager.hasPermission(sender, "bossmessage.scr.schedule")) {
+					if (!GroupManager.hasPermission(sender, "bossmessage.task.schedule")) {
 						sender.sendMessage(CM.noperm);
 						return true;
 					}
 					if (args.length == 3) {
 						if (Utils.isInteger(args[2])) {
-							String scr = args[1].toLowerCase();
+							String sTask = args[1].toLowerCase();
 							int time = Integer.parseInt(args[2]);
-							if (CM.tasks.containsKey(scr)) {
-								Task task = CM.tasks.get(scr);
-								Message msg = CM.colorMsg(new Message(task.getMessage(), "auto", time * 20, 0));
+							if (CM.tasks.containsKey(sTask)) {
+								Task task = CM.tasks.get(sTask);
+								Message msg = CM.colorMsg(new Message(task.getMessage(), CM.schedulePercent, time * 20, 0));
 								for (Messager m : Main.messagers.values()) {
 									m.schedule(msg, task.getCommands());
 								}
 							} else {
-								LangUtils.sendError(sender, "Scheduler " + scr + " does not exists!");
+								LangUtils.sendError(sender, "Task " + sTask + " does not exists!");
 							}
 						}
 					} else {
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <task> <sec>");
+					}
+				}
+				// Qs
+				else if (args[0].equalsIgnoreCase("qs")) {
+					
+					if (!GroupManager.hasPermission(sender, "bossmessage.task.quick")) {
+						sender.sendMessage(CM.noperm);
+						return true;
+					}
+					if (args.length == 2) {
+						String sTask = args[1].toLowerCase();
+						if (CM.tasks.containsKey(sTask)) {
+							Task task = CM.tasks.get(sTask);
+							Message msg = CM.colorMsg(new Message(task.getMessage(), CM.schedulePercent, CM.scheduleDefaultTime * 20, 0));
+							for (Messager m : Main.messagers.values()) {
+								m.schedule(msg, task.getCommands());
+							}
+						} else {
+							LangUtils.sendError(sender, "Task " + sTask + " does not exists!");
+						}
+					} else {
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm qs <task>");
 					}
 				}
 				// Addtask
@@ -714,11 +736,7 @@ public class Commands implements CommandExecutor {
 							LangUtils.sendError(sender, "Task " + task + " does not exists!");
 						}
 					} else {
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm schedule <scr> <sec>");
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addscr <scr>");
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm delscr <event>");
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr setmsg <scr> <message>");
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm scr addcommand <scr> <command>");
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addtaskcmd <task> <cmd>");
 					}
 				}
 				// Tasklist
@@ -758,7 +776,7 @@ public class Commands implements CommandExecutor {
 								sender.sendMessage(ChatColor.AQUA + "/" + command);
 							}
 						} else {
-							LangUtils.sendError(sender, "Scheduler " + task + " does not exists!");
+							LangUtils.sendError(sender, "Task " + task + " does not exists!");
 						}
 					} else {
 						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm taskinfo <task>");

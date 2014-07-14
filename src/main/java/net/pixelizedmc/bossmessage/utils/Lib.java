@@ -139,8 +139,7 @@ public class Lib {
 			if (percent.contains(".") || percent.contains("/") || percent.contains("*") || percent.contains("+") || percent.contains("-") || percent.contains("(") || percent.contains(")")) {
 				percent = calculatePct(percent);
 			}
-			int time = msg.getShow();
-			if (!Utils.isInteger(percent)/* && !percent.equalsIgnoreCase("auto") */) {
+			if (!Utils.isInteger(percent)) {
 				LangUtils.broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
 				percent = "100";
 			}
