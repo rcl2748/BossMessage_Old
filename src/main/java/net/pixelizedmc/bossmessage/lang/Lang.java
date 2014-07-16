@@ -108,7 +108,7 @@ public class Lang {
 			"/bm gb default 20 &6This is a broadcast message!",
 			"gb");
 	public static HelpCommand COMMAND_SETREGION = new HelpCommand(
-			"/bm setregion <world> <region> <message>",
+			"/bm setregion <world> <region> <group>",
 			"Assigns a message group to the specified WorldGuard\nregion. This feature requires WorldGuard and\nWorldGuardRegionEvents to be installed! When a player\nis inside a region with a message group assigned, the\nregion's messages will override his group.",
 			"/bm setregion spawn default",
 			"setregion");
@@ -134,7 +134,7 @@ public class Lang {
 			"task.add");
 	public static HelpCommand COMMAND_DELTASK = new HelpCommand(
 			"/bm deltask <task>",
-			"Removes the specified task (including it's commands)",
+			"Removes the specified task",
 			"/bm deltask makeitrain",
 			"task.remove");
 	public static HelpCommand COMMAND_ADDTASKCMD = new HelpCommand(
@@ -183,14 +183,14 @@ public class Lang {
 		commands.add(COMMAND_BROADCAST);
 		commands.add(COMMAND_QB);
 		commands.add(COMMAND_GB);
+		commands.add(COMMAND_SETREGION);
+		commands.add(COMMAND_UNSETREGION);
 		commands.add(COMMAND_SCHEDULE);
 		commands.add(COMMAND_QS);
 		commands.add(COMMAND_ADDTASK);
 		commands.add(COMMAND_DELTASK);
 		commands.add(COMMAND_TASKLIST);
 		commands.add(COMMAND_TASKINFO);
-		commands.add(COMMAND_SETREGION);
-		commands.add(COMMAND_UNSETREGION);
 		commands.add(COMMAND_INFO);
 		commands.add(COMMAND_HELP);
 	}

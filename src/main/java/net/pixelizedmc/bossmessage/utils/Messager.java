@@ -18,20 +18,25 @@ public class Messager {
 	private int delayTaskId;
 	private String group;
 	private boolean isClosed = false;
-	private boolean isBroadcasting = false;
-	private boolean isScheduling = false;
-	private Message broadcasting;
-	private Message scheduling;
-	private int broadcastTaskId = -1;
-	private int scheduleTaskId = -1;
-	private Thread thread;
-	private boolean messageAutoLoop = false;
 	private double messageAutoReduceBy;
 	private double messageAutoLastPercent;
-	private double scheduleAutoLastPercent;
-	private double broadcastAutoLastPercent;
+	private Message scheduling;
+	private boolean isScheduling = false;
 	private int scheduleAutoTaskId = -1;
+	private double scheduleAutoLastPercent;
+	private int scheduleTaskId = -1;
+	private Message broadcasting;
+	private int broadcastTaskId = -1;
+	private Thread thread;
+	private boolean messageAutoLoop = false;
+	private double broadcastAutoLastPercent;
+	private boolean isBroadcasting = false;
 	private int broadcastAutoTaskId = -1;
+	private boolean isBroadcastingEvent = false;
+	private int eventAutoTaskId = -1;
+	private int eventTaskId = -1;
+	private Message broadcastingEvent;
+	private double eventAutoLastPercent;
 	
 	public Message getCurrent() {
 		return current;
@@ -128,7 +133,7 @@ public class Messager {
 			}
 			scheduling = message;
 			isScheduling = true;
-			if (!isBroadcasting) {
+			if (!isBroadcasting && !isBroadcastingEvent) {
 				Lib.setMsg(Lib.preGenMsg(scheduling), group);
 			}
 			scheduleTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
@@ -233,10 +238,68 @@ public class Messager {
 			}
 		}, 0, 20);
 	}
+
+	
+	public void broadcastEvent(Message message) {
+		if (message.getPercent().equalsIgnoreCase("auto")) {
+			eventAutoReducingMessage(message);
+		} else {
+			if (isBroadcastingEvent) {
+				Main.scr.cancelTask(eventTaskId);
+			}
+			broadcastingEvent = message;
+			isBroadcastingEvent = true;
+			if (!isBroadcasting) {
+				Lib.setMsg(Lib.preGenMsg(broadcastingEvent), group);
+			}
+			eventTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+				public void run() {
+					isBroadcastingEvent = false;
+					setCurrentMessage();
+				}
+			}, message.getShow());
+		}
+	}
+	
+	public void eventAutoReducingMessage(final Message message) {
+		if (eventAutoTaskId != -1) {
+			Main.scr.cancelTask(eventAutoTaskId);
+		}
+		final Message eventAuto = message.clone();
+		final double eventAutoReduceBy = 100D / (eventAuto.getShow() / 20D);
+		broadcastAutoTaskId = Main.scr.scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+			
+			@Override
+			public void run() {
+				Message toShow = eventAuto.clone();
+				int percent;
+				if (Utils.isInteger(eventAuto.getPercent())) {
+					eventAutoLastPercent -= eventAutoReduceBy;
+					percent = (int) Math.round(eventAutoLastPercent);
+				} else {
+					percent = 100;
+					eventAutoLastPercent = 100;
+				}
+				String spct = Integer.toString(percent);
+				eventAuto.setPercent(spct);
+				toShow.setPercent(spct);
+				toShow.setShow(20);
+				toShow.setMessage(eventAuto.getMessage().replaceAll("(?i)%sec%", Long.toString(Math.round(eventAutoLastPercent / eventAutoReduceBy))));
+				broadcastEvent(toShow);
+				if (eventAutoLastPercent < eventAutoReduceBy * 1.5) {
+					int t = eventAutoTaskId;
+					eventAutoTaskId = -1;
+					Main.scr.cancelTask(t);
+				}
+			}
+		}, 0, 20);
+	}
 	
 	public Message getCurrentMessage() {
 		if (isBroadcasting) {
 			return broadcasting;
+		} else if (isBroadcastingEvent) {
+			return broadcastingEvent;
 		} else if (isScheduling) {
 			return scheduling;
 		} else if (set) {

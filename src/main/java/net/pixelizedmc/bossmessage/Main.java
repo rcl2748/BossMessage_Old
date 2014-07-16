@@ -120,9 +120,10 @@ public class Main extends JavaPlugin {
 		}
 		
 		// Register events
-		Bukkit.getPluginManager().registerEvents(new OnJoin(), this);
+		Bukkit.getPluginManager().registerEvents(new OnPlayerJoin(), this);
 		Bukkit.getPluginManager().registerEvents(new OnPlayerTeleport(), this);
 		Bukkit.getPluginManager().registerEvents(new OnPlayerPortal(), this);
+		Bukkit.getPluginManager().registerEvents(new OnPlayerDeath(), this);
 		
 		// enabled
 		startProcess();

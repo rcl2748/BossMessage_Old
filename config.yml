@@ -32,4 +32,11 @@ BossMessage:
   IgnoredPlayers: []
   Tasks: {}
   Regions: {}
+  Events:
+    PlayerJoin:
+      Enabled: true
+      Message:
+      Percent:
+      Show:
+      Broadcast: EVERYONE
   ConfigVersion: 0

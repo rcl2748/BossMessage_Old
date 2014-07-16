@@ -67,7 +67,7 @@ public class CM {
 		if (config.getConfigurationSection("BossMessage.Tasks") == null || config.getConfigurationSection("BossMessage.Tasks").getKeys(false).size() == 0 || outdatedConfig) {
 			ConfigurationSection tasks = config.getConfigurationSection("BossMessage.Tasks");
 			List<String> cmds1 = new ArrayList<String>();
-			cmds1.add("weather rain");
+			cmds1.add("say Oops, sorry! We are rong again. No rain will be!");
 			List<String> cmds2 = new ArrayList<String>();
 			cmds2.add("stop");
 			List<String> cmds3 = new ArrayList<String>();
