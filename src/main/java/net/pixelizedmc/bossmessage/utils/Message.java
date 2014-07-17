@@ -3,6 +3,7 @@ package net.pixelizedmc.bossmessage.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -58,6 +59,10 @@ public class Message implements Cloneable, ConfigurationSerializable {
 	
 	public void setInterval(int interval) {
 		Interval = interval;
+	}
+	
+	public Message color() {
+		return new Message(ChatColor.translateAlternateColorCodes('&', getMessage()), getPercent(), getShow(), getInterval());
 	}
 	
 	public Map<String, Object> serialize() {

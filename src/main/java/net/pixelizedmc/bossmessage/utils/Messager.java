@@ -93,7 +93,7 @@ public class Messager {
 				toShow.setMessage(current.getMessage().replaceAll("(?i)%sec%", Long.toString(Math.round(messageAutoLastPercent / messageAutoReduceBy))));
 			}
 			set = true;
-			if (!isBroadcasting && !isScheduling) {
+			if (!isBroadcasting && !isBroadcastingEvent && !isScheduling) {
 				Lib.setMsg(Lib.preGenMsg(toShow), group);
 			}
 			showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
@@ -267,7 +267,7 @@ public class Messager {
 		}
 		final Message eventAuto = message.clone();
 		final double eventAutoReduceBy = 100D / (eventAuto.getShow() / 20D);
-		broadcastAutoTaskId = Main.scr.scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+		eventAutoTaskId = Main.scr.scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
 			
 			@Override
 			public void run() {

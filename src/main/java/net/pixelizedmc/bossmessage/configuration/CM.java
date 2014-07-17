@@ -2,6 +2,8 @@ package net.pixelizedmc.bossmessage.configuration;
 
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.Task;
+import net.pixelizedmc.bossmessage.events.BossEvent;
+import net.pixelizedmc.bossmessage.events.EventBroadcastLevel;
 import net.pixelizedmc.bossmessage.utils.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -38,6 +40,8 @@ public class CM {
 	public static String broadcastPercent;
 	public static Map<String, Map<String, String>> regions;
 	public static Map<String, Task> tasks = new HashMap<String, Task>();
+	public static BossEvent onPlayerDeathByPlayer;
+	public static BossEvent onPlayerJoin;
 	
 	public static void createConfig() {
 		config.options().copyDefaults(true);
@@ -104,6 +108,19 @@ public class CM {
 		regions = readRegionGroups();
 		tasks = getTasks();
 		
+		boolean enabled;
+		Message msg;
+		EventBroadcastLevel level;
+		
+		ConfigurationSection events = config.getConfigurationSection("BossMessage.Events");
+		enabled = events.getBoolean("PlayerDeathByPlayer.Enabled");
+		String message = events.getString("PlayerDeathByPlayer.Message");
+		String percent = events.getString("PlayerDeathByPlayer.Percent");
+		int show = events.getInt("PlayerDeathByPlayer.Show");
+		msg = new Message(message, percent, show, 0);
+		level = EventBroadcastLevel.getLevelFromString(events.getString("PlayerDeathByPlayer.Broadcast"));
+		onPlayerDeathByPlayer = new BossEvent(enabled, msg, level);
+		
 		if (broadcastDefaultTime < 1) {
 			Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
 			broadcastDefaultTime = 30;
@@ -151,10 +168,6 @@ public class CM {
 		Main.getInstance().saveConfig();
 	}
 	
-	public static Message colorMsg(Message m) {
-		return new Message(ChatColor.translateAlternateColorCodes('&', m.getMessage()), m.getPercent(), m.getShow(), m.getInterval());
-	}
-	
 	public static void reloadConfig() {
 		config = YamlConfiguration.loadConfiguration(file);
 		readConfig();
@@ -165,7 +178,7 @@ public class CM {
 		for (String group : groups) {
 			List<Message> output2 = new ArrayList<Message>();
 			for (Message msg : rawmessages2.get(group)) {
-				output2.add(colorMsg(msg));
+				output2.add(msg.color());
 			}
 			output.put(group, output2);
 		}

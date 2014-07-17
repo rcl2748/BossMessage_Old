@@ -53,7 +53,7 @@ public class Commands implements CommandExecutor {
 									String textmsg = StringUtils.join(listmsg, " ");
 									Message message = new Message(textmsg, args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
 									CM.rawmessages.get(group).add(message);
-									CM.messages.get(group).add(CM.colorMsg(message));
+									CM.messages.get(group).add(message.color());
 									CM.config.set("BossMessage.Messages." + group, CM.rawmessages.get(group));
 									CM.save();
 									sender.sendMessage(ChatColor.GREEN + "Your message was successfully added!");
@@ -174,9 +174,9 @@ public class Commands implements CommandExecutor {
 						if (GroupManager.groupExists(group)) {
 							sender.sendMessage(ChatColor.YELLOW + "=== Message list for " + ChatColor.GOLD + group + ChatColor.YELLOW + " ===");
 							int i = 0;
-							for (Message msg : CM.rawmessages.get(group)) {
+							for (Message msg : CM.messages.get(group)) {
 								i++;
-								sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + CM.colorMsg(msg).getMessage());
+								sender.sendMessage(ChatColor.DARK_GREEN + "" + i + ". " + ChatColor.RESET + msg.getMessage());
 							}
 						} else {
 							LangUtils.sendError(sender, "Group " + group + " does not exist!");
@@ -478,7 +478,7 @@ public class Commands implements CommandExecutor {
 									listmsg.add(args[i]);
 								}
 								String textmsg = StringUtils.join(listmsg, " ");
-								Message msg = CM.colorMsg(new Message(textmsg, CM.broadcastPercent, show * 20, 0));
+								Message msg = new Message(textmsg, CM.broadcastPercent, show * 20, 0).color();
 								for (String group : CM.groups) {
 									Main.messagers.get(group).broadcast(msg);
 								}
@@ -508,7 +508,7 @@ public class Commands implements CommandExecutor {
 							listmsg.add(args[i]);
 						}
 						String textmsg = StringUtils.join(listmsg, " ");
-						Message msg = CM.colorMsg(new Message(textmsg, CM.broadcastPercent, CM.broadcastDefaultTime * 20, 0));
+						Message msg = new Message(textmsg, CM.broadcastPercent, CM.broadcastDefaultTime * 20, 0).color();
 						for (String group : CM.groups) {
 							Main.messagers.get(group).broadcast(msg);
 						}
@@ -535,7 +535,7 @@ public class Commands implements CommandExecutor {
 										listmsg.add(args[i]);
 									}
 									String textmsg = StringUtils.join(listmsg, " ");
-									Message msg = CM.colorMsg(new Message(textmsg, CM.broadcastPercent, show * 20, 0));
+									Message msg = new Message(textmsg, CM.broadcastPercent, show * 20, 0).color();
 									Main.messagers.get(args[1]).broadcast(msg);
 									LangUtils.sendMessage(sender, "Broadcasting your message to group " + args[1] + " for " + args[2] + " seconds.");
 								} else {
@@ -627,7 +627,7 @@ public class Commands implements CommandExecutor {
 							int time = Integer.parseInt(args[2]);
 							if (CM.tasks.containsKey(sTask)) {
 								Task task = CM.tasks.get(sTask);
-								Message msg = CM.colorMsg(new Message(task.getMessage(), CM.schedulePercent, time * 20, 0));
+								Message msg = new Message(task.getMessage(), CM.schedulePercent, time * 20, 0).color();
 								for (Messager m : Main.messagers.values()) {
 									m.schedule(msg, task.getCommands());
 								}
@@ -650,7 +650,7 @@ public class Commands implements CommandExecutor {
 						String sTask = args[1].toLowerCase();
 						if (CM.tasks.containsKey(sTask)) {
 							Task task = CM.tasks.get(sTask);
-							Message msg = CM.colorMsg(new Message(task.getMessage(), CM.schedulePercent, CM.scheduleDefaultTime * 20, 0));
+							Message msg = new Message(task.getMessage(), CM.schedulePercent, CM.scheduleDefaultTime * 20, 0).color();
 							for (Messager m : Main.messagers.values()) {
 								m.schedule(msg, task.getCommands());
 							}

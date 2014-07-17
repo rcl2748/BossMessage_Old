@@ -33,10 +33,10 @@ BossMessage:
   Tasks: {}
   Regions: {}
   Events:
-    PlayerJoin:
+    PlayerDeathByPlayer:
       Enabled: true
-      Message:
-      Percent:
-      Show:
+      Message: '&ePlayer &a%victim% &ewas killed by &c%killer%'
+      Percent: auto
+      Show: 100
       Broadcast: EVERYONE
   ConfigVersion: 0
