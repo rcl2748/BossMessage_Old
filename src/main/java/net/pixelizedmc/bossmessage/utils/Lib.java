@@ -27,7 +27,7 @@ public class Lib {
 				return message;
 			} else {
 				int c = count.get(group) != null ? count.get(group) : 0;
-				Message message = preGenMsg(CM.messages.get(group).get(c).clone());
+				Message message = CM.messages.get(group).get(c).clone();
 				c++;
 				count.put(group, c);
 				if (c >= CM.messages.get(group).size()) {
@@ -121,6 +121,9 @@ public class Lib {
 	}
 	
 	public static void setPlayerMsg(Player p, Message msg) {
+		for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+			System.out.println(e.toString());
+		}
 		if (msg == null) {
 			BarAPI.removeBar(p);
 			return;
@@ -143,18 +146,14 @@ public class Lib {
 				LangUtils.broadcastError("FAILED to parse message: output bossbar percent is NOT A NUMBER!");
 				percent = "100";
 			}
-			// if (percent.equalsIgnoreCase("auto")) {
-			// BarAPI.setMessage(p, message.getMessage(), time/20);
-			// } else {
 			BarAPI.setMessage(p, message.getMessage(), Float.parseFloat(percent));
-			// }
 		}
 	}
 	
 	public static void setMsgs() {
 		for (String group : CM.groups) {
 			if (Main.messagers.get(group).isSet()) {
-				setMsg(Main.messagers.get(group).getCurrent(), group);
+				setMsg(Main.messagers.get(group).getCurrent(), Main.messagers.get(group));
 			} else {
 				for (Player p : GroupManager.getPlayersInGroup(group)) {
 					BarAPI.removeBar(p);
@@ -255,7 +254,8 @@ public class Lib {
 		return players;
 	}
 	
-	public static void setMsg(Message msg, String group) {
+	public static void setMsg(Message msg, Messager messager) {
+		Message pgmsg = preGenMsg(msg);
 		if (CM.whitelist) {
 			List<String> worlds = CM.worlds;
 			List<Player> players;
@@ -263,30 +263,35 @@ public class Lib {
 				if (Bukkit.getWorld(w) != null) {
 					players = Bukkit.getWorld(w).getPlayers();
 					for (Player p : players) {
-						if (GroupManager.getPlayerGroup(p) == group) {
-							setPlayerMsg(p, preGenMsg(msg.clone()));
+						if (GroupManager.getPlayerGroup(p) == messager) {
+							setPlayerMsg(p, pgmsg);
 						}
 					}
 				}
 			}
 		} else {
 			for (Player p : Bukkit.getOnlinePlayers()) {
-				if (GroupManager.getPlayerGroup(p) == group) {
-					setPlayerMsg(p, preGenMsg(msg));
+				if (GroupManager.getPlayerGroup(p) == messager) {
+					setPlayerMsg(p, pgmsg);
 				}
 			}
 		}
 	}
 	
 	public static Message getPlayerMsg(Player player) {
-		if (Main.useWorldGuard && WorldGuardManager.getRegion(player) != null) {
-			if (WorldGuardManager.hasRegion(player.getWorld().getName(), WorldGuardManager.getRegion(player))) {
+		String region = WorldGuardManager.getRegion(player);
+		if (Main.useWorldGuard && region != null) {
+			if (WorldGuardManager.hasRegion(player.getWorld().getName(), region)) {
 				return WorldGuardManager.getRegionMessage(player.getWorld().getName(), WorldGuardManager.getRegion(player));
 			}
 		}
-		String group = GroupManager.getPlayerGroup(player);
+		String group = GroupManager.getPlayerGroup(player).getGroup();
 		if (group != null) {
-			return Main.messagers.get(group).getCurrentMessage();
+			if (group.charAt(0) == ':') {
+				return PlayerMessager.players.get(player).getCurrentMessage();
+			} else {
+				return Main.messagers.get(group).getCurrentMessage();
+			}
 		}
 		return null;
 	}

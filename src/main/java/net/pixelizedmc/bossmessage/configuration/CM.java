@@ -5,6 +5,7 @@ import net.pixelizedmc.bossmessage.Task;
 import net.pixelizedmc.bossmessage.events.BossEvent;
 import net.pixelizedmc.bossmessage.events.EventBroadcastLevel;
 import net.pixelizedmc.bossmessage.utils.Message;
+import net.pixelizedmc.bossmessage.utils.Messager;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,7 +39,7 @@ public class CM {
 	public static String schedulePercent;
 	public static int broadcastDefaultTime;
 	public static String broadcastPercent;
-	public static Map<String, Map<String, String>> regions;
+	public static Map<String, Map<String, Messager>> regions;
 	public static Map<String, Task> tasks = new HashMap<String, Task>();
 	public static BossEvent onPlayerDeathByPlayer;
 	public static BossEvent onPlayerJoin;
@@ -111,8 +112,8 @@ public class CM {
 		boolean enabled;
 		Message msg;
 		EventBroadcastLevel level;
-		
 		ConfigurationSection events = config.getConfigurationSection("BossMessage.Events");
+		
 		enabled = events.getBoolean("PlayerDeathByPlayer.Enabled");
 		String message = events.getString("PlayerDeathByPlayer.Message");
 		String percent = events.getString("PlayerDeathByPlayer.Percent");
@@ -120,6 +121,14 @@ public class CM {
 		msg = new Message(message, percent, show, 0);
 		level = EventBroadcastLevel.getLevelFromString(events.getString("PlayerDeathByPlayer.Broadcast"));
 		onPlayerDeathByPlayer = new BossEvent(enabled, msg, level);
+		
+		enabled = events.getBoolean("PlayerJoin.Enabled");
+		message = events.getString("PlayerJoin.Message");
+		percent = events.getString("PlayerJoin.Percent");
+		show = events.getInt("PlayerJoin.Show");
+		msg = new Message(message, percent, show, 0);
+		level = EventBroadcastLevel.getLevelFromString(events.getString("PlayerJoin.Broadcast"));
+		onPlayerJoin = new BossEvent(enabled, msg, level);
 		
 		if (broadcastDefaultTime < 1) {
 			Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");
@@ -148,15 +157,15 @@ public class CM {
 		return output;
 	}
 	
-	public static Map<String, Map<String, String>> readRegionGroups() {
-		Map<String, Map<String, String>> output = new HashMap<String, Map<String, String>>();
+	public static Map<String, Map<String, Messager>> readRegionGroups() {
+		Map<String, Map<String, Messager>> output = new HashMap<String, Map<String, Messager>>();
 		ConfigurationSection sec = config.getConfigurationSection("BossMessage.Regions");
 		if (sec != null && sec.getKeys(false).size() > 0) {
 			for (String world : sec.getKeys(false)) {
-				Map<String, String> worldmap = new HashMap<String, String>();
+				Map<String, Messager> worldmap = new HashMap<String, Messager>();
 				ConfigurationSection worldsec = sec.getConfigurationSection(world);
 				for (String region : worldsec.getKeys(false)) {
-					worldmap.put(region, worldsec.getString(region));
+					worldmap.put(region, Main.messagers.get(worldsec.getString(region)));
 				}
 				output.put(world, worldmap);
 			}

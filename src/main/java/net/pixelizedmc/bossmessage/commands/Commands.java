@@ -300,8 +300,8 @@ public class Commands implements CommandExecutor {
 								CM.ignoreplayers.remove(sendername);
 								CM.config.set("BossMessage.IgnoredPlayers", CM.ignoreplayers);
 								CM.save();
-								String group = GroupManager.getPlayerGroup(p);
-								Lib.setPlayerMsg(p, Main.messagers.get(group).getCurrentMessage());
+								Messager group = GroupManager.getPlayerGroup(p);
+								Lib.setPlayerMsg(p, group.getCurrentMessage());
 								sender.sendMessage(ChatColor.GREEN + "BossMessages were successfully enabled");
 							} else {
 								CM.ignoreplayers.add(sendername);
@@ -571,11 +571,11 @@ public class Commands implements CommandExecutor {
 							}
 							if (mngr != null) {
 								if (mngr.hasRegion(region)) {
-									Map<String, String> worldmap = CM.regions.get(world);
+									Map<String, Messager> worldmap = CM.regions.get(world);
 									if (worldmap == null) {
-										CM.regions.put(world, new HashMap<String, String>());
+										CM.regions.put(world, new HashMap<String, Messager>());
 									}
-									CM.regions.get(world).put(region, group);
+									CM.regions.get(world).put(region, Main.messagers.get(group));
 									CM.config.set("BossMessage.Regions." + world + "." + region, group);
 									CM.save();
 									LangUtils.sendMessage(sender, "Region " + region + " was set to message group " + group + " in the world " + world + "!");

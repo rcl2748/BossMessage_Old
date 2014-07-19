@@ -2,6 +2,7 @@ package net.pixelizedmc.bossmessage.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -11,14 +12,18 @@ import org.bukkit.permissions.PermissionDefault;
 
 public class GroupManager {
 	
-	public static String getPlayerGroup(Player p) {
+	public static Messager getPlayerGroup(Player p) {
 		String region = WorldGuardManager.getRegion(p);
 		if (region != null && WorldGuardManager.hasRegion(p.getWorld().getName(), region)) {
 			return CM.regions.get(p.getWorld().getName()).get(region);
 		}
+		Messager pm = PlayerMessager.getPlayerMessager(p);
+		if (pm.isActive()) {
+			return pm;
+		}
 		for (String group : CM.groups) {
 			if (hasAssignedPermission(p, "bossmessage.see." + group)) {
-				return group;
+				return Main.messagers.get(group);
 			}
 		}
 		return null;
@@ -31,7 +36,7 @@ public class GroupManager {
 	public static List<Player> getPlayersInGroup(String group) {
 		List<Player> output = new ArrayList<Player>();
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (getPlayerGroup(player) == group) {
+			if (getPlayerGroup(player).getGroup() == group) {
 				output.add(player);
 			}
 		}

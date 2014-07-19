@@ -36,7 +36,13 @@ BossMessage:
     PlayerDeathByPlayer:
       Enabled: true
       Message: '&ePlayer &a%victim% &ewas killed by &c%killer%'
-      Percent: auto
+      Percent: 100
       Show: 100
       Broadcast: EVERYONE
+    PlayerJoin:
+      Enabled: true
+      Message: '&4Welcome &e%target% &4to %server_name%!'
+      Percent: 100
+      Show: 100
+      Broadcast: TARGET
   ConfigVersion: 0

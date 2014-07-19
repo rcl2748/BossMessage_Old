@@ -48,7 +48,7 @@ public class Main extends JavaPlugin {
 	public static Logger logger = Bukkit.getLogger();
 	public static ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
 	public static Map<String, Messager> messagers = new HashMap<String, Messager>();
-	public static Messager nullGroupMsgr = new Messager(null);
+	public static Messager nullGroupMsgr = new Messager(null, false);
 	
 	public void onEnable() {
 		instance = this;

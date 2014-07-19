@@ -1,42 +1,41 @@
 package net.pixelizedmc.bossmessage.utils;
 
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class Messager {
 	
-	private Message current;
-	private int show;
-	private int interval;
-	private boolean set;
-	private int showingTaskId;
-	private int delayTaskId;
-	private String group;
-	private boolean isClosed = false;
-	private double messageAutoReduceBy;
-	private double messageAutoLastPercent;
-	private Message scheduling;
-	private boolean isScheduling = false;
-	private int scheduleAutoTaskId = -1;
-	private double scheduleAutoLastPercent;
-	private int scheduleTaskId = -1;
-	private Message broadcasting;
-	private int broadcastTaskId = -1;
-	private Thread thread;
-	private boolean messageAutoLoop = false;
-	private double broadcastAutoLastPercent;
-	private boolean isBroadcasting = false;
-	private int broadcastAutoTaskId = -1;
-	private boolean isBroadcastingEvent = false;
-	private int eventAutoTaskId = -1;
-	private int eventTaskId = -1;
-	private Message broadcastingEvent;
-	private double eventAutoLastPercent;
+	protected Message current;
+	protected int show;
+	protected int interval;
+	protected boolean set;
+	protected int showingTaskId;
+	protected int delayTaskId;
+	protected String group;
+	protected double messageAutoReduceBy;
+	protected double messageAutoLastPercent;
+	protected Message scheduling;
+	protected boolean isScheduling = false;
+	protected int scheduleAutoTaskId = -1;
+	protected double scheduleAutoLastPercent;
+	protected int scheduleTaskId = -1;
+	protected Message broadcasting;
+	protected int broadcastTaskId = -1;
+	protected Thread thread;
+	protected boolean messageAutoLoop = false;
+	protected double broadcastAutoLastPercent;
+	protected boolean isBroadcasting = false;
+	protected int broadcastAutoTaskId = -1;
+	protected boolean isBroadcastingEvent = false;
+	protected int eventAutoTaskId = -1;
+	protected int eventTaskId = -1;
+	protected Message broadcastingEvent;
+	protected double eventAutoLastPercent;
 	
 	public Message getCurrent() {
 		return current;
@@ -45,10 +44,10 @@ public class Messager {
 	public boolean isSet() {
 		return set;
 	}
-	
-	public Messager(String group) {
+
+	public Messager(String group, boolean start) {
 		this.group = group;
-		if (group != null) {
+		if (start) {
 			thread = new Thread(new Runnable() {
 				
 				@Override
@@ -60,67 +59,75 @@ public class Messager {
 		}
 	}
 	
-	public void startProcess() {
-		if (!isClosed) {
-			if (!messageAutoLoop) {
-				current = Lib.getMessage(group);
-				if (current.getPercent().equalsIgnoreCase("auto")) {
-					messageAutoLoop = true;
-					messageAutoReduceBy = 100D / (current.getShow() / 20D);
-					show = 20;
-					interval = 0;
-				} else {
-					show = current.getShow();
-					interval = current.getInterval();
-				}
-			}
-			Message toShow = current.clone();
-			if (messageAutoLoop) {
-				int percent;
-				if (Utils.isInteger(current.getPercent())) {
-					messageAutoLastPercent -= messageAutoReduceBy;
-					percent = (int) Math.round(messageAutoLastPercent);
-				} else {
-					percent = 100;
-					messageAutoLastPercent = 100;
-				}
-				if (messageAutoLastPercent <= messageAutoReduceBy) {
-					messageAutoLoop = false;
-				}
-				String spct = Integer.toString(percent);
-				current.setPercent(spct);
-				toShow.setPercent(spct);
-				toShow.setMessage(current.getMessage().replaceAll("(?i)%sec%", Long.toString(Math.round(messageAutoLastPercent / messageAutoReduceBy))));
-			}
-			set = true;
-			if (!isBroadcasting && !isBroadcastingEvent && !isScheduling) {
-				Lib.setMsg(Lib.preGenMsg(toShow), group);
-			}
-			showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-				public void run() {
-					if (!isBroadcasting && !isScheduling) {
-						for (Player p : GroupManager.getPlayersInGroup(group)) {
-							BarAPI.removeBar(p);
-						}
-					}
-					set = false;
-					delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-						public void run() {
-							startProcess();
-						}
-					}, interval);
-				}
-			}, show);
-		}
+	public Messager(String group) {
+		this(group, true);
 	}
 	
-	public void setCurrentMessage() { // ALways resets broadcast percentage!
+	public void startProcess() {
+		if (!messageAutoLoop) {
+			current = Lib.getMessage(group);
+			if (current.getPercent().equalsIgnoreCase("auto")) {
+				messageAutoLoop = true;
+				messageAutoReduceBy = 100D / (current.getShow() / 20D);
+				show = 20;
+				interval = 0;
+			} else {
+				show = current.getShow();
+				interval = current.getInterval();
+			}
+		}
+		Message toShow = current.clone();
+		if (messageAutoLoop) {
+			int percent;
+			if (Utils.isInteger(current.getPercent())) {
+				messageAutoLastPercent -= messageAutoReduceBy;
+				percent = (int) Math.round(messageAutoLastPercent);
+			} else {
+				percent = 100;
+				messageAutoLastPercent = 100;
+			}
+			if (messageAutoLastPercent <= messageAutoReduceBy) {
+				messageAutoLoop = false;
+			}
+			String spct = Integer.toString(percent);
+			current.setPercent(spct);
+			toShow.setPercent(spct);
+			toShow.setMessage(current.getMessage().replaceAll("(?i)%sec%", Long.toString(Math.round(messageAutoLastPercent / messageAutoReduceBy))));
+		}
+		set = true;
+		if (!isBroadcasting && !isBroadcastingEvent && !isScheduling) {
+			Lib.setMsg(toShow, this);
+		}
+		showingTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+			public void run() {
+				if (!isBroadcasting && !isBroadcastingEvent && !isScheduling) {
+					for (Player p : GroupManager.getPlayersInGroup(group)) {
+						BarAPI.removeBar(p);
+					}
+				}
+				set = false;
+				delayTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+					public void run() {
+						startProcess();
+					}
+				}, interval);
+			}
+		}, show);
+	}
+	
+	public void setCurrentMessage() {
 		if (isBroadcasting) {
-			Lib.setMsg(broadcasting, group);
+			Lib.setMsg(broadcasting, this);
+		} else if (isBroadcastingEvent) {
+			Lib.setMsg(broadcastingEvent, this);
 		} else if (isScheduling) {
-			Lib.setMsg(scheduling, group);
+			Lib.setMsg(scheduling, this);
+		} else if (set) {
+			Lib.setMsg(current, this);
 		} else {
-			Lib.setMsg(current, group);
+			for (Player p : GroupManager.getPlayersInGroup(group)) {
+				BarAPI.removeBar(p);
+			}
 		}
 	}
 	
@@ -134,7 +141,7 @@ public class Messager {
 			scheduling = message;
 			isScheduling = true;
 			if (!isBroadcasting && !isBroadcastingEvent) {
-				Lib.setMsg(Lib.preGenMsg(scheduling), group);
+				Lib.setMsg(scheduling, this);
 			}
 			scheduleTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 				public void run() {
@@ -195,7 +202,7 @@ public class Messager {
 			}
 			broadcasting = message;
 			isBroadcasting = true;
-			Lib.setMsg(Lib.preGenMsg(broadcasting), group);
+			Lib.setMsg(broadcasting, this);
 			broadcastTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 				public void run() {
 					isBroadcasting = false;
@@ -238,7 +245,6 @@ public class Messager {
 			}
 		}, 0, 20);
 	}
-
 	
 	public void broadcastEvent(Message message) {
 		if (message.getPercent().equalsIgnoreCase("auto")) {
@@ -250,7 +256,7 @@ public class Messager {
 			broadcastingEvent = message;
 			isBroadcastingEvent = true;
 			if (!isBroadcasting) {
-				Lib.setMsg(Lib.preGenMsg(broadcastingEvent), group);
+				Lib.setMsg(broadcastingEvent, this);
 			}
 			eventTaskId = Main.scr.scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
 				public void run() {
@@ -308,8 +314,19 @@ public class Messager {
 		return null;
 	}
 	
+	public String getGroup() {
+		return group;
+	}
+	
+	public void setGroup(String group) {
+		this.group = group;
+	}
+	
+	public boolean isActive() {
+		return set | isScheduling | isBroadcastingEvent | isBroadcasting;
+	}
+	
 	public void stop() {
-		this.isClosed = true;
 		if (!set) {
 			Main.scr.cancelTask(delayTaskId);
 		}

@@ -26,7 +26,7 @@ public class WorldGuardManager {
 	}
 	
 	public static boolean hasRegion(String world, String region) {
-		Map<String, String> worldmap = CM.regions.get(world.toLowerCase());
+		Map<String, Messager> worldmap = CM.regions.get(world.toLowerCase());
 		if (region != null && worldmap != null && worldmap.containsKey(region)) {
 			return true;
 		}

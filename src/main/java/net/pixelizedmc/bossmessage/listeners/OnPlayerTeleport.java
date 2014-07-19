@@ -12,14 +12,16 @@ public class OnPlayerTeleport implements Listener {
 	
 	@EventHandler
 	public void event(PlayerTeleportEvent e) {
-        Player p = e.getPlayer();
-        Message msg = Lib.getPlayerMsg(p);
-        if (CM.whitelist) {
-        	if (CM.worlds.contains(p.getWorld().getName())) {
-        		Lib.setPlayerMsg(p, msg);
-        	}
-        } else {
-        	Lib.setPlayerMsg(p, msg);
-        }
+		if (e.getFrom().getWorld() != e.getTo().getWorld()) {
+			Player p = e.getPlayer();
+			Message msg = Lib.getPlayerMsg(p);
+			if (CM.whitelist) {
+				if (CM.worlds.contains(p.getWorld().getName())) {
+					Lib.setPlayerMsg(p, Lib.preGenMsg(msg));
+				}
+			} else {
+				Lib.setPlayerMsg(p, Lib.preGenMsg(msg));
+			}
+		}
 	}
 }

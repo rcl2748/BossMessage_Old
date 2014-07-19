@@ -2,6 +2,7 @@ package net.pixelizedmc.bossmessage.listeners;
 
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.events.Events;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
 import net.pixelizedmc.bossmessage.utils.GroupManager;
 import net.pixelizedmc.bossmessage.utils.Lib;
@@ -29,5 +30,6 @@ public class OnPlayerJoin implements Listener {
         	LangUtils.sendMessage(p, "Please type /bm update to update it automatically, or click the link below do download it manually:");
         	LangUtils.sendMessage(p, Main.updater_link);
         }
+        Events.onPlayerJoin(p);
 	}
 }
