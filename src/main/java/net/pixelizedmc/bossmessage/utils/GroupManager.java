@@ -13,13 +13,15 @@ import org.bukkit.permissions.PermissionDefault;
 public class GroupManager {
 	
 	public static Messager getPlayerGroup(Player p) {
-		String region = WorldGuardManager.getRegion(p);
-		if (region != null && WorldGuardManager.hasRegion(p.getWorld().getName(), region)) {
-			return CM.regions.get(p.getWorld().getName()).get(region);
-		}
-		Messager pm = PlayerMessager.getPlayerMessager(p);
+		PlayerMessager pm = PlayerMessager.getPlayerMessager(p);
 		if (pm.isActive()) {
 			return pm;
+		}
+		if (Main.useWorldGuard) {
+			String region = WorldGuardManager.getRegion(p);
+			if (region != null && WorldGuardManager.hasRegion(p.getWorld().getName(), region)) {
+				return CM.regions.get(p.getWorld().getName()).get(region);
+			}
 		}
 		for (String group : CM.groups) {
 			if (hasAssignedPermission(p, "bossmessage.see." + group)) {
@@ -36,7 +38,8 @@ public class GroupManager {
 	public static List<Player> getPlayersInGroup(String group) {
 		List<Player> output = new ArrayList<Player>();
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (getPlayerGroup(player).getGroup() == group) {
+			Messager g = getPlayerGroup(player);
+			if (g != null && g.getGroup() == group) {
 				output.add(player);
 			}
 		}

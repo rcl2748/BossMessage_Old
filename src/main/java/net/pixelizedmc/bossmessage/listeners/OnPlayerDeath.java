@@ -13,6 +13,6 @@ public class OnPlayerDeath implements Listener {
 	public void event(PlayerDeathEvent e) {
         Player victim = e.getEntity();
         Player killer = victim.getKiller();
-        Events.onPlayerDeathByPlayer(killer, victim);
+        Events.onPVPDeath(killer, victim);
 	}
 }

@@ -1,8 +1,6 @@
 package net.pixelizedmc.bossmessage.utils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import me.confuser.barapi.BarAPI;
 import net.pixelizedmc.bossmessage.Main;
 import org.bukkit.Bukkit;
@@ -64,6 +62,7 @@ public class Messager {
 	}
 	
 	public void startProcess() {
+		Bukkit.broadcastMessage("2");
 		if (!messageAutoLoop) {
 			current = Lib.getMessage(group);
 			if (current.getPercent().equalsIgnoreCase("auto")) {

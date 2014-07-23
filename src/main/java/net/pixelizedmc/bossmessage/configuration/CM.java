@@ -41,8 +41,9 @@ public class CM {
 	public static String broadcastPercent;
 	public static Map<String, Map<String, Messager>> regions;
 	public static Map<String, Task> tasks = new HashMap<String, Task>();
-	public static BossEvent onPlayerDeathByPlayer;
+	public static BossEvent onPVPDeath;
 	public static BossEvent onPlayerJoin;
+	public static BossEvent onPlayerQuit;
 	
 	public static void createConfig() {
 		config.options().copyDefaults(true);
@@ -106,7 +107,6 @@ public class CM {
 		schedulePercent = config.getString("BossMessage.Schedule.Percent");
 		broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
 		broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
-		regions = readRegionGroups();
 		tasks = getTasks();
 		
 		boolean enabled;
@@ -114,14 +114,14 @@ public class CM {
 		EventBroadcastLevel level;
 		ConfigurationSection events = config.getConfigurationSection("BossMessage.Events");
 		
-		enabled = events.getBoolean("PlayerDeathByPlayer.Enabled");
-		String message = events.getString("PlayerDeathByPlayer.Message");
-		String percent = events.getString("PlayerDeathByPlayer.Percent");
-		int show = events.getInt("PlayerDeathByPlayer.Show");
+		enabled = events.getBoolean("PVPDeath.Enabled");
+		String message = events.getString("PVPDeath.Message");
+		String percent = events.getString("PVPDeath.Percent");
+		int show = events.getInt("PVPDeath.Show");
 		msg = new Message(message, percent, show, 0);
-		level = EventBroadcastLevel.getLevelFromString(events.getString("PlayerDeathByPlayer.Broadcast"));
-		onPlayerDeathByPlayer = new BossEvent(enabled, msg, level);
-		
+		level = EventBroadcastLevel.getLevelFromString(events.getString("PVPDeath.Broadcast"));
+		onPVPDeath = new BossEvent(enabled, msg, level);
+
 		enabled = events.getBoolean("PlayerJoin.Enabled");
 		message = events.getString("PlayerJoin.Message");
 		percent = events.getString("PlayerJoin.Percent");
@@ -129,6 +129,14 @@ public class CM {
 		msg = new Message(message, percent, show, 0);
 		level = EventBroadcastLevel.getLevelFromString(events.getString("PlayerJoin.Broadcast"));
 		onPlayerJoin = new BossEvent(enabled, msg, level);
+		
+		enabled = events.getBoolean("PlayerQuit.Enabled");
+		message = events.getString("PlayerQuit.Message");
+		percent = events.getString("PlayerQuit.Percent");
+		show = events.getInt("PlayerQuit.Show");
+		msg = new Message(message, percent, show, 0);
+		level = EventBroadcastLevel.getLevelFromString(events.getString("PlayerQuit.Broadcast"));
+		onPlayerQuit = new BossEvent(enabled, msg, level);
 		
 		if (broadcastDefaultTime < 1) {
 			Main.logger.severe(Main.PREFIX_CONSOLE + "QuickBroadcastShowTime must be more than 0!");

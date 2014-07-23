@@ -1,22 +1,5 @@
 package net.pixelizedmc.bossmessage;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-import net.pixelizedmc.bossmessage.commands.Commands;
-import net.pixelizedmc.bossmessage.configuration.CM;
-import net.pixelizedmc.bossmessage.lang.Lang;
-import net.pixelizedmc.bossmessage.listeners.*;
-import net.pixelizedmc.bossmessage.utils.Message;
-import net.pixelizedmc.bossmessage.utils.Messager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,13 +7,39 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+import net.pixelizedmc.bossmessage.commands.Commands;
+import net.pixelizedmc.bossmessage.configuration.CM;
+import net.pixelizedmc.bossmessage.lang.Lang;
+import net.pixelizedmc.bossmessage.listeners.OnPlayerDeath;
+import net.pixelizedmc.bossmessage.listeners.OnPlayerJoin;
+import net.pixelizedmc.bossmessage.listeners.OnPlayerPortal;
+import net.pixelizedmc.bossmessage.listeners.OnPlayerTeleport;
+import net.pixelizedmc.bossmessage.listeners.OnRegionEntered;
+import net.pixelizedmc.bossmessage.listeners.OnRegionLeft;
+import net.pixelizedmc.bossmessage.utils.Message;
+import net.pixelizedmc.bossmessage.utils.Messager;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class Main extends JavaPlugin {
 	
 	private static Main instance = null;
-	public static String PREFIX_ERROR = ChatColor.DARK_RED + "[" + ChatColor.RED + "BossMessage" + ChatColor.DARK_RED + "] " + ChatColor.GOLD;
-	public static String PREFIX_NORMAL = ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "BossMessage" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW;
-	public static String PREFIX_CONSOLE = "[BossMessage] ";
+	public static final String PREFIX_ERROR = "§4[§cBossMessage§4] §6";
+	public static final String PREFIX_NORMAL = "§2[§aBossMessage§2] §e";
+	public static final String PREFIX_ERROR_MULTILINE = "§3============== §4[§cBossMessage§4] §3==============";
+	public static final String PREFIX_NORMAL_MULTILINE = "§3============== §2[§aBossMessage§2] §3==============";
+	public static final String PREFIX_LIVE_MULTILINE = "§3============ §2[§aBossMessage§4§olive§2] §3============";
+	public static final String PREFIX_LIVE = "§2[§aBossMessage§4§olive§2] ";
+	public static final String PREFIX_CONSOLE = "[BossMessage] ";
+	public static final String BUKKIT_LINK = "http://dev.bukkit.org/bukkit-plugins/bossmessage/";
 	public static PluginManager plm = Bukkit.getPluginManager();
 	public static BukkitScheduler scr = Bukkit.getScheduler();
 	public static Map<String, Message> current;
@@ -101,18 +110,17 @@ public class Main extends JavaPlugin {
 		}
 		
 		// Hook in WorldGuard
-		Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
+		Plugin wg = Bukkit.getPluginManager().getPlugin("WorldGuard");
 		Plugin wgEvents = Bukkit.getPluginManager().getPlugin("WGRegionEvents");
-		if (plugin != null && wgEvents != null) {
+		if (wg != null && wgEvents != null) {
 			logger.info(PREFIX_CONSOLE + "Successfully hooked in to WorldGuard");
-			worldGuard = (WorldGuardPlugin) plugin;
+			worldGuard = (WorldGuardPlugin) wg;
 			Bukkit.getPluginManager().registerEvents(new OnRegionEntered(), this);
 			Bukkit.getPluginManager().registerEvents(new OnRegionLeft(), this);
 			useWorldGuard = true;
 		} else {
 			logger.warning(PREFIX_CONSOLE + "WorldGuard and/or WorldGuardRegionEvents are either not installed, or not enabled! Having per-region messages will not be possible!");
 		}
-		Bukkit.getPluginManager().addPermission(new org.bukkit.permissions.Permission("test"));
 		
 		// Updater
 		if (CM.checkUpdates) {
@@ -140,6 +148,7 @@ public class Main extends JavaPlugin {
 		for (String group : CM.groups) {
 			messagers.put(group, new Messager(group));
 		}
+		CM.regions = CM.readRegionGroups();
 	}
 	
 	public static Main getInstance() {
@@ -161,7 +170,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	public static void checkUpdate() {
-		Updater updater = new Updater(getInstance(), 64888, file, Updater.UpdateType.NO_DOWNLOAD, false);
+		Updater updater = new Updater(getInstance(), 64888, file, Updater.UpdateType.NO_DOWNLOAD, false, null);
 		updater_available = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE;
 		updater_name = updater.getLatestName();
 		updater_version = updater.getLatestGameVersion();

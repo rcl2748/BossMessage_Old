@@ -33,8 +33,8 @@ BossMessage:
   Tasks: {}
   Regions: {}
   Events:
-    PlayerDeathByPlayer:
-      Enabled: true
+    PVPDeath:
+      Enabled: false
       Message: '&ePlayer &a%victim% &ewas killed by &c%killer%'
       Percent: 100
       Show: 100
@@ -45,4 +45,10 @@ BossMessage:
       Percent: 100
       Show: 100
       Broadcast: TARGET
+    PlayerQuit:
+      Enabled: false
+      Message: '&bWOW -_- &e%target% &bjust left. We''ll miss him!'
+      Percent: 100
+      Show: 100
+      Broadcast: EVERYONE
   ConfigVersion: 0

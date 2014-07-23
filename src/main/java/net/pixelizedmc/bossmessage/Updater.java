@@ -15,6 +15,9 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import net.pixelizedmc.bossmessage.lang.LangUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONArray;
@@ -69,6 +72,7 @@ public class Updater {
     private final YamlConfiguration config = new YamlConfiguration(); // Config file
     private String updateFolder;// The folder that downloads will be placed in
     private Updater.UpdateResult result = Updater.UpdateResult.SUCCESS; // Used for determining the outcome of the update process
+    private CommandSender sender;
 
     /**
      * Gives the developer the result of the update process. Can be obtained by called {@link #getResult()}
@@ -157,13 +161,14 @@ public class Updater {
      * @param type     Specify the type of update this will be. See {@link UpdateType}
      * @param announce True if the program should announce the progress of new updates in console.
      */
-    public Updater(Plugin plugin, int id, File file, UpdateType type, boolean announce) {
+    public Updater(Plugin plugin, int id, File file, UpdateType type, boolean announce, CommandSender sender) {
         this.plugin = plugin;
         this.type = type;
         this.announce = announce;
         this.file = file;
         this.id = id;
         this.updateFolder = plugin.getServer().getUpdateFolder();
+        this.sender = sender;
 
         final File pluginFile = plugin.getDataFolder().getParentFile();
         final File updaterFile = new File(pluginFile, "Updater");
@@ -341,9 +346,10 @@ public class Updater {
             }
             if (this.announce) {
                 this.plugin.getLogger().info("Finished updating.");
+                LangUtils.sendMessage(sender, "BossMessage was updated! The update will take effect upon server restart!");
             }
         } catch (final Exception ex) {
-            this.plugin.getLogger().warning("The auto-updater tried to download a new update, but was unsuccessful.");
+            LangUtils.sendError(sender, "The auto-updater tried to download a new update, but was unsuccessful! Please try downloading the update manually.");
             this.result = Updater.UpdateResult.FAIL_DOWNLOAD;
         } finally {
             try {

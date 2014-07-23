@@ -41,6 +41,9 @@ public class Lib {
 	}
 	
 	public static Message preGenMsg(Message m) {
+		if (m == null) {
+			return null;
+		}
 		// Generate string output message
 		Message msg = m.clone();
 		String rawmsg = msg.getMessage();
@@ -121,9 +124,6 @@ public class Lib {
 	}
 	
 	public static void setPlayerMsg(Player p, Message msg) {
-		for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
-			System.out.println(e.toString());
-		}
 		if (msg == null) {
 			BarAPI.removeBar(p);
 			return;
@@ -255,6 +255,7 @@ public class Lib {
 	}
 	
 	public static void setMsg(Message msg, Messager messager) {
+		Bukkit.broadcastMessage("1");
 		Message pgmsg = preGenMsg(msg);
 		if (CM.whitelist) {
 			List<String> worlds = CM.worlds;
@@ -270,10 +271,8 @@ public class Lib {
 				}
 			}
 		} else {
-			for (Player p : Bukkit.getOnlinePlayers()) {
-				if (GroupManager.getPlayerGroup(p) == messager) {
-					setPlayerMsg(p, pgmsg);
-				}
+			for (Player p : GroupManager.getPlayersInGroup(messager.getGroup())) {
+				setPlayerMsg(p, pgmsg);
 			}
 		}
 	}
@@ -285,12 +284,12 @@ public class Lib {
 				return WorldGuardManager.getRegionMessage(player.getWorld().getName(), WorldGuardManager.getRegion(player));
 			}
 		}
-		String group = GroupManager.getPlayerGroup(player).getGroup();
+		Messager group = GroupManager.getPlayerGroup(player);
 		if (group != null) {
-			if (group.charAt(0) == ':') {
+			if (group.getGroup().charAt(0) == ':') {
 				return PlayerMessager.players.get(player).getCurrentMessage();
 			} else {
-				return Main.messagers.get(group).getCurrentMessage();
+				return group.getCurrentMessage();
 			}
 		}
 		return null;

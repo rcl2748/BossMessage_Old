@@ -37,7 +37,7 @@ public class PlayerMessager extends Messager {
 		this.player = player;
 	}
 	
-	public static Messager getPlayerMessager(Player p) {
+	public static PlayerMessager getPlayerMessager(Player p) {
 		if (players.containsKey(p)) {
 			return players.get(p);
 		} else {

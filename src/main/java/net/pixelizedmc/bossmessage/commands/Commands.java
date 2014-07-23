@@ -11,6 +11,8 @@ import net.pixelizedmc.bossmessage.Updater;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.Lang;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
+import net.pixelizedmc.bossmessage.live.LiveConversation;
+import net.pixelizedmc.bossmessage.live.LiveUtils;
 import net.pixelizedmc.bossmessage.utils.GroupManager;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
@@ -427,8 +429,8 @@ public class Commands implements CommandExecutor {
 					}
 					if (args.length <= 1) {
 						if (Main.updater_available) {
-							new Updater(Main.getInstance(), 64888, Main.file, Updater.UpdateType.NO_VERSION_CHECK, true);
-							LangUtils.sendMessage(sender, "BossMessage is updated! It will be working upon restart!");
+							new Updater(Main.getInstance(), 64888, Main.file, Updater.UpdateType.NO_VERSION_CHECK, true, sender);
+							LangUtils.sendMessage(sender, "BossMessage is being update, Please wait...");
 						} else {
 							LangUtils.sendError(sender, "No update currently available!");
 						}
@@ -448,14 +450,12 @@ public class Commands implements CommandExecutor {
 						if (Main.updater_available) {
 							Main.checkUpdate();
 							if (Main.updater_available) {
-								LangUtils.sendMessage(sender, "A new update (" + Main.updater_name + ") is available!");
-								LangUtils.sendMessage(sender, "Please type /bm update to update it automatically, or click the link below do download it manually:");
-								LangUtils.sendMessage(sender, Main.updater_link);
+								LangUtils.updateMessage(sender);
 							} else {
-								LangUtils.sendMessage(sender, "Your BossMessage is up to date.");
+								LangUtils.sendMessage(sender, "BossMessage is up to date.");
 							}
 						} else {
-							LangUtils.sendMessage(sender, "Your BossMessage is up to date.");
+							LangUtils.sendMessage(sender, "BossMessage is up to date.");
 						}
 					} else {
 						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm check");
@@ -789,15 +789,65 @@ public class Commands implements CommandExecutor {
 						sender.sendMessage(CM.noperm);
 						return true;
 					}
-					if (args.length <= 1) {
+					if (args.length == 1) {
 						sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by Victor2748 " + ChatColor.DARK_AQUA + "===");
-						sender.sendMessage(ChatColor.YELLOW + "Website: " + ChatColor.GREEN + "http://pixelizedmc.net");
-						sender.sendMessage(ChatColor.YELLOW + "Official server: " + ChatColor.GREEN + "play.pixelizedmc.net");
 						sender.sendMessage(ChatColor.YELLOW + "Author: " + ChatColor.GREEN + "Victor2748");
 						sender.sendMessage(ChatColor.YELLOW + "Version: " + ChatColor.GREEN + Main.version);
 						sender.sendMessage(ChatColor.YELLOW + "BukkitDev page: " + ChatColor.GREEN + "http://dev.bukkit.org/bukkit-plugins/bossmessage/");
 					} else {
 						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm info");
+					}
+					
+				}
+				// Contact
+				else if (args[0].equalsIgnoreCase("contact")) {
+					
+					if (!GroupManager.hasPermission(sender, "bossmessage.contact")) {
+						sender.sendMessage(CM.noperm);
+						return true;
+					}
+					if (args.length > 1) {
+						if (!LiveUtils.isActive) {
+						List<String> listquestion = new ArrayList<String>();
+							for (int i = 1 ; i < args.length ; i++) {
+								listquestion.add(args[i]);
+							}
+							String question = StringUtils.join(listquestion, ' ');
+							if (LiveUtils.startConversation(sender)) {
+								LiveUtils.sendMessage(question);
+							}
+							LangUtils.sendLiveMessage(sender, "Contact request sent, please wait while a staff member replies. your question: §4" + question); // change
+						} else {
+							LangUtils.sendError(sender, "Conversation is already running");
+						}
+					} else {
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm contact <question>");
+					}
+					
+				}
+				// sendlive
+				else if (args[0].equalsIgnoreCase("sendlive")) {
+					
+					if (!GroupManager.hasPermission(sender, "bossmessage.contact")) {
+						sender.sendMessage(CM.noperm);
+						return true;
+					}
+					if (args.length > 1) {
+						if (!LiveUtils.isActive) {
+						List<String> listquestion = new ArrayList<String>();
+							for (int i = 1 ; i < args.length ; i++) {
+								listquestion.add(args[i]);
+							}
+							String question = StringUtils.join(listquestion, ' ');
+							if (LiveUtils.startConversation(sender)) {
+								LiveUtils.sendMessage(question);
+							}
+							LangUtils.sendLiveMessage(sender, "Contact request sent, please wait while a staff member replies. your question: §4" + question); // change
+						} else {
+							LangUtils.sendError(sender, "Conversation is already running");
+						}
+					} else {
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm contact <question>");
 					}
 					
 				}
@@ -816,7 +866,7 @@ public class Commands implements CommandExecutor {
 	}
 	
 	public static void printHelp(CommandSender sender) {
-		sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by the Pixelized Network " + ChatColor.DARK_AQUA + "===");
+		sender.sendMessage(ChatColor.DARK_AQUA + "===" + ChatColor.AQUA + " BossMessage by Victor2748 " + ChatColor.DARK_AQUA + "===");
 		sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
 		sender.sendMessage(ChatColor.ITALIC + "HOVER commands to see desc. and examples");
 		for (HelpCommand cmd : Lang.commands) {
