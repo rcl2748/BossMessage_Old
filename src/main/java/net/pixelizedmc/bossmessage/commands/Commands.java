@@ -12,7 +12,6 @@ import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.Lang;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
 import net.pixelizedmc.bossmessage.live.LiveConversation;
-import net.pixelizedmc.bossmessage.live.LiveUtils;
 import net.pixelizedmc.bossmessage.utils.GroupManager;
 import net.pixelizedmc.bossmessage.utils.Lib;
 import net.pixelizedmc.bossmessage.utils.Message;
@@ -802,21 +801,21 @@ public class Commands implements CommandExecutor {
 				// Contact
 				else if (args[0].equalsIgnoreCase("contact")) {
 					
-					if (!GroupManager.hasPermission(sender, "bossmessage.contact")) {
+					if (!GroupManager.hasPermission(sender, "bossmessage.live.contact")) {
 						sender.sendMessage(CM.noperm);
 						return true;
 					}
 					if (args.length > 1) {
-						if (!LiveUtils.isActive) {
-						List<String> listquestion = new ArrayList<String>();
+						if (!LiveConversation.isActive) {
+							List<String> listquestion = new ArrayList<String>();
 							for (int i = 1 ; i < args.length ; i++) {
 								listquestion.add(args[i]);
 							}
 							String question = StringUtils.join(listquestion, ' ');
-							if (LiveUtils.startConversation(sender)) {
-								LiveUtils.sendMessage(question);
+							if (LiveConversation.startConversation(sender)) {
+								LiveConversation.sendQuestion(question);
 							}
-							LangUtils.sendLiveMessage(sender, "Contact request sent, please wait while a staff member replies. your question: §4" + question); // change
+//							LangUtils.sendLiveMessage(sender, "Contact request sent, please wait while a staff member replies. your question: §4" + question); // change
 						} else {
 							LangUtils.sendError(sender, "Conversation is already running");
 						}
@@ -825,26 +824,23 @@ public class Commands implements CommandExecutor {
 					}
 					
 				}
-				// sendlive
-				else if (args[0].equalsIgnoreCase("sendlive")) {
+				// Send
+				else if (args[0].equalsIgnoreCase("send")) {
 					
-					if (!GroupManager.hasPermission(sender, "bossmessage.contact")) {
+					if (!GroupManager.hasPermission(sender, "bossmessage.live.send")) {
 						sender.sendMessage(CM.noperm);
 						return true;
 					}
 					if (args.length > 1) {
-						if (!LiveUtils.isActive) {
-						List<String> listquestion = new ArrayList<String>();
+						if (LiveConversation.isActive) {
+							List<String> listmsg = new ArrayList<String>();
 							for (int i = 1 ; i < args.length ; i++) {
-								listquestion.add(args[i]);
+								listmsg.add(args[i]);
 							}
-							String question = StringUtils.join(listquestion, ' ');
-							if (LiveUtils.startConversation(sender)) {
-								LiveUtils.sendMessage(question);
-							}
-							LangUtils.sendLiveMessage(sender, "Contact request sent, please wait while a staff member replies. your question: §4" + question); // change
+							String message = StringUtils.join(listmsg, ' ');
+							LiveConversation.sendMessage(message);
 						} else {
-							LangUtils.sendError(sender, "Conversation is already running");
+							LangUtils.sendError(sender, "You are not chatting with anyone, please contact us first using /bm contact");
 						}
 					} else {
 						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm contact <question>");

@@ -1,67 +1,95 @@
 package net.pixelizedmc.bossmessage.live;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
 
 public class LiveConversation {
-	
-	public static Socket socket;
+	private static Socket socket;
+	private static ObjectOutputStream output;
 	public static InputStreamListener listener;
-	public static String summary;
-	public static CommandSender user;
+	private static CommandSender conversationLeader;
 	public static boolean isActive = false;
 	
-	public static void startConversation(String question) {
-		summary = question;
+	public static boolean startConversation(CommandSender sender) {
+		if (isActive) {
+			LangUtils.sendLiveMessage(sender, "Conversation is already running!");
+			return false;
+		}
+		conversationLeader = sender;
 		isActive = true;
 		try {
 	        socket = new Socket("localhost", 6789);
-        } catch (UnknownHostException e) {
-	        e.printStackTrace();
-	        Main.logger.severe(Main.PREFIX_CONSOLE + "THIS SHOULD NEVER OCCUR! PLEASE REPORT THIS STACKTRACE TO THE AUTHOR!");
-        } catch (IOException e) {
-        	System.out.println(1);
-        } finally {
-    		isActive = false;
-        	if (socket != null && !socket.isClosed()) {
-        		try {
-	                socket.close();
-                } catch (IOException e) {
-                	System.out.println(1);
-	                e.printStackTrace();
-                }
-        	}
+        } catch (UnknownHostException e1) {
+        	return false;
+        } catch (IOException e1) {
+        	LangUtils.sendError(sender, "Couldn't connect, please try again later.");
+        	return false;
         }
-		listener = new InputStreamListener(socket) {
+		try {
+			output = new ObjectOutputStream(socket.getOutputStream());
+			output.flush();
 			
-			@Override
-			public void socketClosed(SocketException e) {
-				isActive = false;
-				LangUtils.sendError(user, "Conversation ended!");
-			}
+			listener = new InputStreamListener(socket) {
+				
+				@Override
+				public void socketClosed(SocketException e) {
+					isActive = false;
+					LangUtils.sendError(conversationLeader, "Conversation ended!");
+				}
+				
+				@Override
+				public void objectRecieved(Object object, InputStreamListener listener) {
+					LangUtils.sendLiveMessage(Bukkit.getConsoleSender(), (String) object);
+				}
+			};
 			
-			@Override
-			public void objectRecieved(Object object, InputStreamListener listener) {
-				LangUtils.sendLiveMessage(user, (String) object);
-			}
-		};
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 	
 	public static void stopConversation() {
 		if (isActive) {
-			isActive = false;
 			if (!socket.isClosed()) {
 				try {
-	                socket.close();
-                } catch (IOException e) {
-	                e.printStackTrace();
-                }
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+			try {
+				output.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			isActive = false;
+		} else {
+			LangUtils.sendLiveMessage(conversationLeader, "Conversation is not running!");
 		}
+	}
+	
+	public static void sendPacket(ClientLivePacket packet) {
+		try {
+			output.writeObject(packet);
+	        output.flush();
+        } catch (IOException e) {
+	        e.printStackTrace();
+        }
+	}
+	
+	public static void sendMessage(String msg) {
+		sendPacket(new ClientLivePacket(ClientLivePacketType.MESSAGE, msg));
+	}
+	
+	public static void sendQuestion(String question) {
+		sendPacket(new ClientLivePacket(ClientLivePacketType.QUESTION, question));
 	}
 }

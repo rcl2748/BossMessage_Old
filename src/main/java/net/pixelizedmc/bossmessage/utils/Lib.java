@@ -255,7 +255,6 @@ public class Lib {
 	}
 	
 	public static void setMsg(Message msg, Messager messager) {
-		Bukkit.broadcastMessage("1");
 		Message pgmsg = preGenMsg(msg);
 		if (CM.whitelist) {
 			List<String> worlds = CM.worlds;

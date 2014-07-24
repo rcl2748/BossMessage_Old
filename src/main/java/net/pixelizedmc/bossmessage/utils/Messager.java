@@ -62,7 +62,6 @@ public class Messager {
 	}
 	
 	public void startProcess() {
-		Bukkit.broadcastMessage("2");
 		if (!messageAutoLoop) {
 			current = Lib.getMessage(group);
 			if (current.getPercent().equalsIgnoreCase("auto")) {
