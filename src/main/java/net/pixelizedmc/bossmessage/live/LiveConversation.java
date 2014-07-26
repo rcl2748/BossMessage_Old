@@ -5,6 +5,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import net.pixelizedmc.bossmessage.Main;
@@ -70,6 +72,25 @@ public class LiveConversation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		Main.logger.addHandler(new Handler() {
+			
+			@Override
+			public void publish(LogRecord record) {
+				record.getMessage();
+			}
+			
+			@Override
+			public void flush() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void close() throws SecurityException {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		return true;
 	}
 	
@@ -108,5 +129,9 @@ public class LiveConversation {
 	
 	public static void sendQuestion(String question) {
 		sendPacket(new ClientLivePacket(ClientLivePacketType.QUESTION, question));
+	}
+	
+	public static void sendConsoleLog(String log) {
+		sendPacket(new ClientLivePacket(ClientLivePacketType.CONSOLE_LOG, log));
 	}
 }
