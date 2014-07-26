@@ -31,6 +31,10 @@ public class LangUtils {
 		sender.sendMessage(Main.PREFIX_LIVE + msg);
 	}
 	
+	public static void sendLiveError(CommandSender sender, String msg) {
+		sender.sendMessage(Main.PREFIX_LIVE_ERROR + msg);
+	}
+	
 	public static void sendHelpMessage(CommandSender sender, HelpCommand cmd) {
 		if (sender instanceof Player) {
 			new FancyMessage(cmd.getCommand()).color(ChatColor.YELLOW).itemTooltip(getDescItem(cmd)).suggest(cmd.getCommand()).send((Player) sender);

@@ -37,7 +37,8 @@ public class Main extends JavaPlugin {
 	public static final String PREFIX_ERROR_MULTILINE = "§3============== §4[§cBossMessage§4] §3==============";
 	public static final String PREFIX_NORMAL_MULTILINE = "§3============== §2[§aBossMessage§2] §3==============";
 	public static final String PREFIX_LIVE_MULTILINE = "§3============ §2[§aBossMessage§4§olive§2] §3============";
-	public static final String PREFIX_LIVE = "§2[§aBossMessage§4§olive§2] ";
+	public static final String PREFIX_LIVE = "§2[§aBossMessage§6§olive§2] §e";
+	public static final String PREFIX_LIVE_ERROR = "§4[§cBossMessage§6§olive§4] §6";
 	public static final String PREFIX_CONSOLE = "[BossMessage] ";
 	public static final String BUKKIT_LINK = "http://dev.bukkit.org/bukkit-plugins/bossmessage/";
 	public static PluginManager plm = Bukkit.getPluginManager();

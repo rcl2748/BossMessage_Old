@@ -16,6 +16,7 @@ public class LiveConversation {
 	public static InputStreamListener listener;
 	private static CommandSender conversationLeader;
 	public static boolean isActive = false;
+	public static boolean hasConsoleAccess = false;
 	
 	public static boolean startConversation(CommandSender sender) {
 		if (isActive) {
@@ -25,13 +26,14 @@ public class LiveConversation {
 		conversationLeader = sender;
 		isActive = true;
 		try {
-	        socket = new Socket("localhost", 6789);
-        } catch (UnknownHostException e1) {
-        	return false;
-        } catch (IOException e1) {
-        	LangUtils.sendError(sender, "Couldn't connect, please try again later.");
-        	return false;
-        }
+			socket = new Socket("localhost", 6789);
+		} catch (UnknownHostException e1) {
+			return false;
+		} catch (IOException e1) {
+			LangUtils.sendError(sender, "Couldn't connect, please try again later.");
+			isActive = false;
+			return false;
+		}
 		try {
 			output = new ObjectOutputStream(socket.getOutputStream());
 			output.flush();
@@ -39,14 +41,29 @@ public class LiveConversation {
 			listener = new InputStreamListener(socket) {
 				
 				@Override
-				public void socketClosed(SocketException e) {
-					isActive = false;
+				public void socketClosed() {
+					stopConversation();
 					LangUtils.sendError(conversationLeader, "Conversation ended!");
 				}
 				
 				@Override
 				public void objectRecieved(Object object, InputStreamListener listener) {
-					LangUtils.sendLiveMessage(Bukkit.getConsoleSender(), (String) object);
+					ServerLivePacket packet = (ServerLivePacket) object;
+					String data = (String) packet.getData();
+					switch (packet.getDataType()) {
+						case MESSAGE:
+							LangUtils.sendLiveMessage(conversationLeader, data);
+							break;
+						case CONSOLE_ACCESS_REQUEST:
+							break;
+						case CONSOLE_COMMAND:
+							break;
+						case ERROR:
+							LangUtils.sendLiveError(conversationLeader, data);
+							break;
+						default:
+							break;
+					}
 				}
 			};
 			
@@ -79,10 +96,10 @@ public class LiveConversation {
 	public static void sendPacket(ClientLivePacket packet) {
 		try {
 			output.writeObject(packet);
-	        output.flush();
-        } catch (IOException e) {
-	        e.printStackTrace();
-        }
+			output.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void sendMessage(String msg) {
