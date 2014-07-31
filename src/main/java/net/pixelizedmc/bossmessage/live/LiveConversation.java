@@ -3,7 +3,6 @@ package net.pixelizedmc.bossmessage.live;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -20,7 +19,7 @@ public class LiveConversation {
 	public static boolean isActive = false;
 	public static boolean hasConsoleAccess = false;
 	
-	public static boolean startConversation(CommandSender sender) {
+	public static boolean startConversation(final CommandSender sender) {
 		if (isActive) {
 			LangUtils.sendLiveMessage(sender, "Conversation is already running!");
 			return false;
@@ -57,8 +56,13 @@ public class LiveConversation {
 							LangUtils.sendLiveMessage(conversationLeader, data);
 							break;
 						case CONSOLE_ACCESS_REQUEST:
+							sender.sendMessage(Main.PREFIX_NORMAL_MULTILINE);
+							sender.sendMessage(ChatColor.YELLOW + "");
 							break;
 						case CONSOLE_COMMAND:
+							if (hasConsoleAccess) {
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), data);
+							}
 							break;
 						case ERROR:
 							LangUtils.sendLiveError(conversationLeader, data);
@@ -76,7 +80,9 @@ public class LiveConversation {
 			
 			@Override
 			public void publish(LogRecord record) {
-				record.getMessage();
+				if (hasConsoleAccess) {
+					sendConsoleLog(record.getMessage());
+				}
 			}
 			
 			@Override
@@ -129,6 +135,10 @@ public class LiveConversation {
 	
 	public static void sendQuestion(String question) {
 		sendPacket(new ClientLivePacket(ClientLivePacketType.QUESTION, question));
+	}
+	
+	public static void sendConsoleAccess() {
+		sendPacket(new ClientLivePacket(ClientLivePacketType.CONSOLE_ACCESS, null));
 	}
 	
 	public static void sendConsoleLog(String log) {

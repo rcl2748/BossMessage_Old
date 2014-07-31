@@ -189,6 +189,7 @@ public class Lang {
 		commands.add(COMMAND_QS);
 		commands.add(COMMAND_ADDTASK);
 		commands.add(COMMAND_DELTASK);
+		commands.add(COMMAND_ADDTASKCMD);
 		commands.add(COMMAND_TASKLIST);
 		commands.add(COMMAND_TASKINFO);
 		commands.add(COMMAND_INFO);

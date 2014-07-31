@@ -685,7 +685,7 @@ public class Commands implements CommandExecutor {
 							LangUtils.sendError(sender, "Task " + task + " already exists!");
 						}
 					} else {
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addtask <task>");
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm addtask <task> <message>");
 					}
 				}
 				// Deltask
@@ -815,7 +815,6 @@ public class Commands implements CommandExecutor {
 							if (LiveConversation.startConversation(sender)) {
 								LiveConversation.sendQuestion(question);
 							}
-//							LangUtils.sendLiveMessage(sender, "Contact request sent, please wait while a staff member replies. your question: §4" + question); // change
 						} else {
 							LangUtils.sendError(sender, "Conversation is already running");
 						}
@@ -843,7 +842,26 @@ public class Commands implements CommandExecutor {
 							LangUtils.sendError(sender, "You are not chatting with anyone, please contact us first using /bm contact");
 						}
 					} else {
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm contact <question>");
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm send <message>");
+					}
+					
+				}
+				// Allow
+				else if (args[0].equalsIgnoreCase("allow")) {
+					
+					if (!GroupManager.hasPermission(sender, "bossmessage.live.allow")) {
+						sender.sendMessage(CM.noperm);
+						return true;
+					}
+					if (args.length == 1) {
+						if (LiveConversation.isActive) {
+							LiveConversation.hasConsoleAccess = true;
+							LiveConversation.sendConsoleAccess();
+						} else {
+							LangUtils.sendError(sender, "You are not chatting with anyone, please contact us first using /bm contact");
+						}
+					} else {
+						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm allow ");
 					}
 					
 				}
@@ -866,7 +884,7 @@ public class Commands implements CommandExecutor {
 		sender.sendMessage(ChatColor.DARK_GREEN + "Usage: " + ChatColor.GREEN + "/bm <params>");
 		sender.sendMessage(ChatColor.ITALIC + "HOVER commands to see desc. and examples");
 		for (HelpCommand cmd : Lang.commands) {
-			if (GroupManager.hasPermission(sender, "bossmessage." + cmd.perm)) {
+			if (GroupManager.hasPermission(sender, "bossmessage." + cmd.getPerm())) {
 				LangUtils.sendHelpMessage(sender, cmd);
 			}
 		}
