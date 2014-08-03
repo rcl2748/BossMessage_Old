@@ -4,12 +4,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
+import org.bukkit.command.CommandSender;
 
 public class LiveConversation {
 	private static Socket socket;
@@ -17,7 +13,7 @@ public class LiveConversation {
 	public static InputStreamListener listener;
 	private static CommandSender conversationLeader;
 	public static boolean isActive = false;
-	public static boolean hasConsoleAccess = false;
+//	public static boolean hasConsoleAccess = false;
 	
 	public static boolean startConversation(final CommandSender sender) {
 		if (isActive) {
@@ -55,15 +51,19 @@ public class LiveConversation {
 						case MESSAGE:
 							LangUtils.sendLiveMessage(conversationLeader, data);
 							break;
-						case CONSOLE_ACCESS_REQUEST:
-							sender.sendMessage(Main.PREFIX_NORMAL_MULTILINE);
-							sender.sendMessage(ChatColor.YELLOW + "");
-							break;
-						case CONSOLE_COMMAND:
-							if (hasConsoleAccess) {
-								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), data);
-							}
-							break;
+//						case CONSOLE_ACCESS_REQUEST:
+//							sender.sendMessage(Main.PREFIX_NORMAL_MULTILINE);
+//							sender.sendMessage("§eYou got a §oConsole Access Request §efrom staff member §b§lVICTOR§e!");
+//							sender.sendMessage("§ePlease type §b/bm allow§e to accept this request");
+//							sender.sendMessage("§eand grant console access for the rest of the chat session.");
+//							sender.sendMessage("§e§oKeep in mind that you are NOT required to accept it!");
+//							sender.sendMessage("§3-----------------------------------------");
+//							break;
+//						case CONSOLE_COMMAND:
+//							if (hasConsoleAccess) {
+//								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), data);
+//							}
+//							break;
 						case ERROR:
 							LangUtils.sendLiveError(conversationLeader, data);
 							break;
@@ -76,27 +76,26 @@ public class LiveConversation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Main.logger.addHandler(new Handler() {
-			
-			@Override
-			public void publish(LogRecord record) {
-				if (hasConsoleAccess) {
-					sendConsoleLog(record.getMessage());
-				}
-			}
-			
-			@Override
-			public void flush() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void close() throws SecurityException {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+//		Logger.getLogger("Minecraft").addHandler(new Handler() {
+//			
+//			@Override
+//			public void publish(LogRecord record) {
+//				System.out.print(true);
+//				if (hasConsoleAccess) {
+//					sendConsoleLog(record.getMessage());
+//				}
+//			}
+//			
+//			@Override
+//			public void flush() {
+//				
+//			}
+//			
+//			@Override
+//			public void close() throws SecurityException {
+//				
+//			}
+//		});
 		return true;
 	}
 	
@@ -137,11 +136,11 @@ public class LiveConversation {
 		sendPacket(new ClientLivePacket(ClientLivePacketType.QUESTION, question));
 	}
 	
-	public static void sendConsoleAccess() {
-		sendPacket(new ClientLivePacket(ClientLivePacketType.CONSOLE_ACCESS, null));
-	}
-	
-	public static void sendConsoleLog(String log) {
-		sendPacket(new ClientLivePacket(ClientLivePacketType.CONSOLE_LOG, log));
-	}
+//	public static void sendConsoleAccess() {
+//		sendPacket(new ClientLivePacket(ClientLivePacketType.CONSOLE_ACCESS, null));
+//	}
+//	
+//	public static void sendConsoleLog(String log) {
+//		sendPacket(new ClientLivePacket(ClientLivePacketType.CONSOLE_LOG, log));
+//	}
 }

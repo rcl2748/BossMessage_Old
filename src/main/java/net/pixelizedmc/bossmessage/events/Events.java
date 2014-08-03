@@ -49,7 +49,9 @@ public class Events {
 	}
 	
 	public static void onPlayerQuit(Player player) {
+		System.out.println("1234");
 		if (CM.onPlayerQuit.isEnabled() && player != null) {
+			System.out.println("123");
 			Message message = CM.onPlayerQuit.getMessage().color();
 			String msg = message.getMessage();
 			msg = msg.replaceAll("(?i)%target%", player.getName());
@@ -58,6 +60,7 @@ public class Events {
 				for (Messager m : Main.messagers.values()) {
 					m.broadcastEvent(message);
 				}
+				System.out.println("12");
 				Main.nullGroupMsgr.broadcastEvent(message);
 			} 
 		}

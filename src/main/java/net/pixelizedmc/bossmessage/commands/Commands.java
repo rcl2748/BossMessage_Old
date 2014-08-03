@@ -846,25 +846,25 @@ public class Commands implements CommandExecutor {
 					}
 					
 				}
-				// Allow
-				else if (args[0].equalsIgnoreCase("allow")) {
-					
-					if (!GroupManager.hasPermission(sender, "bossmessage.live.allow")) {
-						sender.sendMessage(CM.noperm);
-						return true;
-					}
-					if (args.length == 1) {
-						if (LiveConversation.isActive) {
-							LiveConversation.hasConsoleAccess = true;
-							LiveConversation.sendConsoleAccess();
-						} else {
-							LangUtils.sendError(sender, "You are not chatting with anyone, please contact us first using /bm contact");
-						}
-					} else {
-						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm allow ");
-					}
-					
-				}
+//				// Allow
+//				else if (args[0].equalsIgnoreCase("allow")) {
+//					
+//					if (!GroupManager.hasPermission(sender, "bossmessage.live.allow")) {
+//						sender.sendMessage(CM.noperm);
+//						return true;
+//					}
+//					if (args.length == 1) {
+//						if (LiveConversation.isActive) {
+//							LiveConversation.hasConsoleAccess = true;
+//							LiveConversation.sendConsoleAccess();
+//						} else {
+//							LangUtils.sendError(sender, "You are not chatting with anyone, please contact us first using /bm contact");
+//						}
+//					} else {
+//						sender.sendMessage(ChatColor.DARK_RED + "Usage: " + ChatColor.RED + "/bm allow ");
+//					}
+//					
+//				}
 				// Help
 				else if (args[0].equalsIgnoreCase("help")) {
 					

@@ -152,6 +152,16 @@ public class Lang {
 			"Displays the info for the specified task.",
 			"/bm taskinfo makeitrain",
 			"task.info");
+	public static HelpCommand COMMAND_CONTACT = new HelpCommand(
+			"/bm contact <question>",
+			"Contacts us! Only contact us if you found a bug, or\nneed help that you couldn't find anywhere else! Specify\nthe question/problem that you have.",
+			"/bm contact Need help with per-region messages",
+			"live.contact");
+	public static HelpCommand COMMAND_SEND = new HelpCommand(
+			"/bm send <message>",
+			"Sends us the message while chatting with us.",
+			"/bm send Hey, how are you doing? :)",
+			"live.send");
 	public static HelpCommand COMMAND_INFO = new HelpCommand(
 			"/bm info",
 			"Displays information about the plugin, everyone has\naccess to this command by default.",

@@ -164,7 +164,7 @@ public class Lib {
 	
 	public static Message generateMsg(Player p, Message current) {
 		String playername = p.getName();
-		Message msg = current;
+		Message msg = current.clone();
 		// Generate msg
 		String message = msg.getMessage();
 		String rawmsg = message;
@@ -205,10 +205,8 @@ public class Lib {
 		// Generate pst
 		String percent = msg.getPercent();
 		if (percent.toLowerCase().contains("health".toLowerCase())) {
-			percent = percent.replaceAll("(?i)health", Double.toString(p.getHealth()));
-		}
-		if (percent.toLowerCase().contains("max_health".toLowerCase())) {
-			percent = percent.replaceAll("(?i)health", Double.toString(p.getMaxHealth()));
+			percent = percent.replaceAll("(?i)health", Integer.toString((int) p.getHealth()));
+//			Bukkit.broadcastMessage(percent);
 		}
 		if (percent.toLowerCase().contains("econ_dollars".toLowerCase())) {
 			if (Main.useVault) {

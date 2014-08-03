@@ -15,6 +15,7 @@ import net.pixelizedmc.bossmessage.lang.Lang;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerDeath;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerJoin;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerPortal;
+import net.pixelizedmc.bossmessage.listeners.OnPlayerQuit;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerTeleport;
 import net.pixelizedmc.bossmessage.listeners.OnRegionEntered;
 import net.pixelizedmc.bossmessage.listeners.OnRegionLeft;
@@ -130,6 +131,7 @@ public class Main extends JavaPlugin {
 		
 		// Register events
 		Bukkit.getPluginManager().registerEvents(new OnPlayerJoin(), this);
+		Bukkit.getPluginManager().registerEvents(new OnPlayerQuit(), this);
 		Bukkit.getPluginManager().registerEvents(new OnPlayerTeleport(), this);
 		Bukkit.getPluginManager().registerEvents(new OnPlayerPortal(), this);
 		Bukkit.getPluginManager().registerEvents(new OnPlayerDeath(), this);
