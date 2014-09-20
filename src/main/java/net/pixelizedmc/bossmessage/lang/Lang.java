@@ -202,6 +202,8 @@ public class Lang {
 		commands.add(COMMAND_ADDTASKCMD);
 		commands.add(COMMAND_TASKLIST);
 		commands.add(COMMAND_TASKINFO);
+		commands.add(COMMAND_CONTACT);
+		commands.add(COMMAND_SEND);
 		commands.add(COMMAND_INFO);
 		commands.add(COMMAND_HELP);
 	}

@@ -24,6 +24,7 @@ BossMessage:
   RepeatRandomColors: true
   RepeatRandomPlayers: true
   VanishNoPacketSupport: false
+  BungeeCordSupport: false
   Messages: {}
   WhitelistedWorlds:
   - world

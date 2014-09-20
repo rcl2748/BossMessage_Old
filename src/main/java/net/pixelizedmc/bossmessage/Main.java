@@ -19,6 +19,7 @@ import net.pixelizedmc.bossmessage.listeners.OnPlayerQuit;
 import net.pixelizedmc.bossmessage.listeners.OnPlayerTeleport;
 import net.pixelizedmc.bossmessage.listeners.OnRegionEntered;
 import net.pixelizedmc.bossmessage.listeners.OnRegionLeft;
+import net.pixelizedmc.bossmessage.utils.BungeeCordChannelListener;
 import net.pixelizedmc.bossmessage.utils.Message;
 import net.pixelizedmc.bossmessage.utils.Messager;
 import org.bukkit.Bukkit;
@@ -123,6 +124,10 @@ public class Main extends JavaPlugin {
 		} else {
 			logger.warning(PREFIX_CONSOLE + "WorldGuard and/or WorldGuardRegionEvents are either not installed, or not enabled! Having per-region messages will not be possible!");
 		}
+		
+		// BungeeCord
+		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeCordChannelListener());
 		
 		// Updater
 		if (CM.checkUpdates) {

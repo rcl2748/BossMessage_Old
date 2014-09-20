@@ -41,6 +41,7 @@ public class CM {
 	public static String broadcastPercent;
 	public static Map<String, Map<String, Messager>> regions;
 	public static Map<String, Task> tasks = new HashMap<String, Task>();
+	public static boolean useBungeeCord;
 	public static BossEvent onPVPDeath;
 	public static BossEvent onPlayerJoin;
 	public static BossEvent onPlayerQuit;
@@ -108,6 +109,7 @@ public class CM {
 		broadcastDefaultTime = config.getInt("BossMessage.Broadcast.DefaultTime");
 		broadcastPercent = config.getString("BossMessage.Broadcast.Percent");
 		tasks = getTasks();
+		useBungeeCord = config.getBoolean("BossMessage.BungeeCordSupport");
 		
 		boolean enabled;
 		Message msg;
@@ -121,7 +123,7 @@ public class CM {
 		msg = new Message(message, percent, show, 0);
 		level = EventBroadcastLevel.getLevelFromString(events.getString("PVPDeath.Broadcast"));
 		onPVPDeath = new BossEvent(enabled, msg, level);
-
+		
 		enabled = events.getBoolean("PlayerJoin.Enabled");
 		message = events.getString("PlayerJoin.Message");
 		percent = events.getString("PlayerJoin.Percent");

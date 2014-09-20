@@ -17,6 +17,7 @@ public class Messager {
 	protected String group;
 	protected double messageAutoReduceBy;
 	protected double messageAutoLastPercent;
+	protected int autoInterval;
 	protected Message scheduling;
 	protected boolean isScheduling = false;
 	protected int scheduleAutoTaskId = -1;
@@ -68,6 +69,7 @@ public class Messager {
 				messageAutoLoop = true;
 				messageAutoReduceBy = 100D / (current.getShow() / 20D);
 				show = 20;
+				autoInterval = current.getInterval();
 				interval = 0;
 			} else {
 				show = current.getShow();
@@ -86,6 +88,9 @@ public class Messager {
 			}
 			if (messageAutoLastPercent <= messageAutoReduceBy) {
 				messageAutoLoop = false;
+				interval = autoInterval;
+			} else {
+				interval = 0;
 			}
 			String spct = Integer.toString(percent);
 			current.setPercent(spct);

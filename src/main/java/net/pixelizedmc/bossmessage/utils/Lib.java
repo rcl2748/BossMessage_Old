@@ -1,10 +1,14 @@
 package net.pixelizedmc.bossmessage.utils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.script.ScriptException;
+import me.confuser.barapi.BarAPI;
+import net.minecraft.util.com.google.common.io.ByteArrayDataOutput;
+import net.minecraft.util.com.google.common.io.ByteStreams;
 import net.pixelizedmc.bossmessage.Main;
 import net.pixelizedmc.bossmessage.configuration.CM;
 import net.pixelizedmc.bossmessage.lang.LangUtils;
@@ -12,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.kitteh.vanish.staticaccess.VanishNoPacket;
-import me.confuser.barapi.BarAPI;
 
 @SuppressWarnings("deprecation")
 public class Lib {
@@ -102,6 +105,23 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%server_name%".toLowerCase())) {
 			message = message.replaceAll("(?i)%server_name%", Bukkit.getServerName());
 		}
+		if (rawmsg.toLowerCase().contains("%online_players:".toLowerCase())) {
+			System.out.println("1");
+			while (true) {
+				int index = message.indexOf("%online_players:");
+				if (index == -1) {
+					System.out.println("3");
+					break;
+				}
+				System.out.println("2");
+				int endIndex = message.indexOf("%", index + 1);
+				String variable = message.substring(index, endIndex + 1);
+				String server = message.substring(index + 16, endIndex);
+				message = message.replaceAll(variable, getBungeeCordPlayers(server));
+				System.out.println(variable);
+				System.out.println(server);
+			}
+		}
 		msg.setMessage(message);
 		// Generate precentage
 		String percent = msg.getPercent();
@@ -150,18 +170,6 @@ public class Lib {
 		}
 	}
 	
-	public static void setMsgs() {
-		for (String group : CM.groups) {
-			if (Main.messagers.get(group).isSet()) {
-				setMsg(Main.messagers.get(group).getCurrent(), Main.messagers.get(group));
-			} else {
-				for (Player p : GroupManager.getPlayersInGroup(group)) {
-					BarAPI.removeBar(p);
-				}
-			}
-		}
-	}
-	
 	public static Message generateMsg(Player p, Message current) {
 		String playername = p.getName();
 		Message msg = current.clone();
@@ -174,8 +182,8 @@ public class Lib {
 		if (rawmsg.toLowerCase().contains("%world%".toLowerCase())) {
 			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
 		}
-		if (rawmsg.toLowerCase().contains("%world%".toLowerCase())) {
-			message = message.replaceAll("(?i)%world%", Bukkit.getPlayerExact(playername).getWorld().getName());
+		if (rawmsg.toLowerCase().contains("%world_time%".toLowerCase())) {
+			message = message.replaceAll("(?i)%world_time%", Long.toString(Bukkit.getPlayerExact(playername).getWorld().getTime()));
 		}
 		if (rawmsg.toLowerCase().contains("%rank%".toLowerCase())) {
 			if (Main.useVault) {
@@ -186,7 +194,7 @@ public class Lib {
 		}
 		if (rawmsg.toLowerCase().contains("%econ_dollars%".toLowerCase())) {
 			if (Main.useVault) {
-				String money = Double.toString(Main.econ.getBalance(p.getName()));
+				String money = new BigDecimal(Main.econ.getBalance(p.getName())).toString();
 				String dollars = money.split("\\.")[0];
 				message = message.replaceAll("(?i)%econ_dollars%", dollars);
 			} else {
@@ -195,7 +203,7 @@ public class Lib {
 		}
 		if (rawmsg.toLowerCase().contains("%econ_cents%".toLowerCase())) {
 			if (Main.useVault) {
-				String money = Double.toString(Main.econ.getBalance(p.getName()));
+				String money = new BigDecimal(Main.econ.getBalance(p.getName())).toString();
 				String cents = money.split("\\.")[1];
 				message = message.replaceAll("(?i)%econ_cents%", cents.length() > 1 ? cents : cents + "0");
 			} else {
@@ -206,7 +214,7 @@ public class Lib {
 		String percent = msg.getPercent();
 		if (percent.toLowerCase().contains("health".toLowerCase())) {
 			percent = percent.replaceAll("(?i)health", Integer.toString((int) p.getHealth()));
-//			Bukkit.broadcastMessage(percent);
+			// Bukkit.broadcastMessage(percent);
 		}
 		if (percent.toLowerCase().contains("econ_dollars".toLowerCase())) {
 			if (Main.useVault) {
@@ -252,6 +260,18 @@ public class Lib {
 		return players;
 	}
 	
+	public static void setMsgs() {
+		for (String group : CM.groups) {
+			if (Main.messagers.get(group).isSet()) {
+				setMsg(Main.messagers.get(group).getCurrent(), Main.messagers.get(group));
+			} else {
+				for (Player p : GroupManager.getPlayersInGroup(group)) {
+					BarAPI.removeBar(p);
+				}
+			}
+		}
+	}
+
 	public static void setMsg(Message msg, Messager messager) {
 		Message pgmsg = preGenMsg(msg);
 		if (CM.whitelist) {
@@ -314,5 +334,16 @@ public class Lib {
 			LangUtils.broadcastError("FAILED to parse message: output bossbar script is INVALID!");
 			return "100";
 		}
+	}
+	
+	public static String getBungeeCordPlayers(String server) {
+		  ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		  out.writeUTF("PlayerCount");
+		  out.writeUTF(server);
+
+		  Player player = Bukkit.getOnlinePlayers()[0];
+
+		  player.sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
+		  return null;
 	}
 }

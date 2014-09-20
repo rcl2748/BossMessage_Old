@@ -23,7 +23,7 @@ public class LiveConversation {
 		conversationLeader = sender;
 		isActive = true;
 		try {
-			socket = new Socket("localhost", 6789);
+			socket = new Socket("174.5.145.42", 6789);
 		} catch (UnknownHostException e1) {
 			return false;
 		} catch (IOException e1) {
